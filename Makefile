@@ -10,7 +10,7 @@ pip:
 	@pip install -r requirements.txt
 
 start:
-	@honcho start
+	@honcho start &
 
 stop:
 	@sh scripts/stop_server.sh

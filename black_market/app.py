@@ -1,9 +1,10 @@
 from flask import Flask
 from werkzeug.utils import import_string
-from black_market.config import SECRET_KEY
+from black_market.config import SECRET_KEY, MYSQL_DSN
 
 extensions = [
-    'black_market.ext:sentry'
+    'black_market.ext:sentry',
+    'black_market.ext:db'
 ]
 
 blueprints = [
@@ -16,6 +17,7 @@ def create_app(config=None):
     app.config.from_object('envcfg.json.black_market')
     app.config.from_object(config)
     app.secret_key = SECRET_KEY
+    app.config['SQLALCHEMY_DATABASE_URI'] = MYSQL_DSN
     for ext_name in extensions:
         extension = import_string(ext_name)
         extension.init_app(app)

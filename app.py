@@ -8,4 +8,4 @@ app.wsgi_app = ProxyFix(app.wsgi_app)
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(port=HTTP_PORT)
+    app.run(host='0.0.0.0', port=HTTP_PORT)

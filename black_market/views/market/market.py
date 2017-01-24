@@ -1,5 +1,6 @@
 from flask import Blueprint
-
+#from black_market.ext import db
+#from black_market.models.models import Course
 
 bp = Blueprint('market', __name__)
 
@@ -11,7 +12,7 @@ def index():
 
 @bp.route('/course')
 def get_all_courses():
-    return "Here are all the courses of this semester."
+    return 'Here are all the courses!'
 
 
 @bp.route('/course/<int:id>')
