@@ -1,26 +1,41 @@
-from flask import Blueprint
-#from black_market.ext import db
-#from black_market.models.models import Course
+from flask import Blueprint, request
+
+from black_market.libs.api import course as course_api
+
 
 bp = Blueprint('market', __name__)
 
 
-@bp.route('/')
+@bp.route('/', methods=['GET'])
 def index():
     return "Hello, Welcome to NSD Black Market!"
 
 
-@bp.route('/course')
+@bp.route('/course', methods=['GET'])
 def get_all_courses():
-    return 'Here are all the courses!'
+    courses = course_api.get_all_courses()
+    s = ''
+    for course in courses:
+        s = s + str(course.id) + '.\t' + course.name + '<br>'
+    return s
 
 
-@bp.route('/course/<int:id>')
+@bp.route('/course/<int:id>', methods=['GET'])
 def get_course(id=None):
-    courses = {'1': 'Microeconomics',
-               '2': 'Macroeconomics',
-               '3': 'Econometrics'}
-    name = courses.get(id)
-    if not name:
-        return "The course you are looking for is not in the list."
-    return "This is course {id}: {name}".format(id=id, name=name)
+    course = course_api.get_course_by_id(id)
+    if not course:
+        return 'NULL'
+    return str(id) + '. ' + course.name
+
+
+@bp.route('/course/search', methods=['GET'])
+def search_course():
+    name = request.values.get('name')
+    credit = request.values.get('credit')
+    days = request.values.get('days')
+    courses = course_api.search_course_by_filters(name, days, credit)
+    s = ''
+    if courses:
+        for course in courses:
+            s = s + str(course.id) + '.\t' + course.name + '<br>'
+    return s

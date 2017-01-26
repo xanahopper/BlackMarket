@@ -1,0 +1,764 @@
+[
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "203"
+      }
+    ],
+    "credit": 4,
+    "id": 1,
+    "name": "概率统计1班",
+    "prerequisites": "微积分、线代",
+    "schedule": [
+      {
+        "day": 3,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 6,
+        "end": "8",
+        "start": "7"
+      }
+    ],
+    "teacher": "董镇喜",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "102"
+      }
+    ],
+    "credit": 4,
+    "id": 2,
+    "name": "概率统计2班",
+    "prerequisites": "微积分、线代",
+    "schedule": [
+      {
+        "day": 4,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 6,
+        "end": "4",
+        "start": "3"
+      }
+    ],
+    "teacher": "董镇喜",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "205"
+      }
+    ],
+    "credit": 4,
+    "id": 3,
+    "name": "中级微观经济学1班",
+    "prerequisites": "微积分、原理",
+    "schedule": [
+      {
+        "day": 4,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 6,
+        "end": "4",
+        "start": "3"
+      }
+    ],
+    "teacher": "雷晓燕",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "205"
+      },
+      {
+        "building": "理教",
+        "room": "202"
+      }
+    ],
+    "credit": 4,
+    "id": 4,
+    "name": "中级微观经济学2班",
+    "prerequisites": "微积分、原理",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 5,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "李力行、胡岠",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "202"
+      }
+    ],
+    "credit": 4,
+    "id": 5,
+    "name": "中级微观经济学3班",
+    "prerequisites": "微积分、原理",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 3,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "王敏",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "205"
+      }
+    ],
+    "credit": 4,
+    "id": 6,
+    "name": "中级宏观经济学1班",
+    "prerequisites": "微积分、原理",
+    "schedule": [
+      {
+        "day": 2,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 7,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "张帆",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "203"
+      }
+    ],
+    "credit": 4,
+    "id": 7,
+    "name": "中级宏观经济学2班",
+    "prerequisites": "微积分、原理",
+    "schedule": [
+      {
+        "day": 2,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 5,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "赵波",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "307"
+      }
+    ],
+    "credit": 4,
+    "id": 8,
+    "name": "中级宏观经济学3班",
+    "prerequisites": "微积分、原理",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 4,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "霍德明",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "207"
+      }
+    ],
+    "credit": 4,
+    "id": 9,
+    "name": "计量经济学1班",
+    "prerequisites": "中微、中宏、概率",
+    "schedule": [
+      {
+        "day": 3,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 4,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "沈艳",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "208"
+      },
+      {
+        "building": "二教",
+        "room": "102"
+      }
+    ],
+    "credit": 4,
+    "id": 10,
+    "name": "计量经济学2班",
+    "prerequisites": "中微、中宏、概率",
+    "schedule": [
+      {
+        "day": 5,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 6,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "张丹丹",
+    "type": "必修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "203"
+      },
+      {
+        "building": "二教",
+        "room": "207"
+      }
+    ],
+    "credit": 4,
+    "id": 11,
+    "name": "国际贸易",
+    "prerequisites": "中微",
+    "schedule": [
+      {
+        "day": 3,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 5,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "余淼杰",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "203"
+      }
+    ],
+    "credit": 4,
+    "id": 12,
+    "name": "金融经济学",
+    "prerequisites": "线代、中微、计量",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 7,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "徐高",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "202"
+      },
+      {
+        "building": "二教",
+        "room": "207"
+      }
+    ],
+    "credit": 4,
+    "id": 13,
+    "name": "发展经济学",
+    "prerequisites": "中微、中宏",
+    "schedule": [
+      {
+        "day": 2,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 3,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "姚洋",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "205"
+      },
+      {
+        "building": "二教",
+        "room": "107"
+      }
+    ],
+    "credit": 4,
+    "id": 14,
+    "name": "公共财政学",
+    "prerequisites": "原理",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 7,
+        "end": "8",
+        "start": "7"
+      }
+    ],
+    "teacher": "李玲",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "203"
+      }
+    ],
+    "credit": 4,
+    "id": 15,
+    "name": "环境经济学",
+    "prerequisites": "中微、中宏",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 7,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "徐晋涛",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "207"
+      }
+    ],
+    "credit": 2,
+    "id": 16,
+    "name": "中国经济专题",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 5,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "林毅夫",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "107"
+      }
+    ],
+    "credit": 3,
+    "id": 17,
+    "name": "财务会计",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 4,
+        "end": "12",
+        "start": "10"
+      }
+    ],
+    "teacher": "张昕",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "308"
+      }
+    ],
+    "credit": 2,
+    "id": 18,
+    "name": "PPE讨论班",
+    "prerequisites": "中微、中宏",
+    "schedule": [
+      {
+        "day": 3,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "王歆",
+    "type": "PPE"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "105"
+      }
+    ],
+    "credit": 3,
+    "id": 19,
+    "name": "财务报表分析",
+    "prerequisites": "财务会计",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "12",
+        "start": "10"
+      }
+    ],
+    "teacher": "张昕",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "205"
+      }
+    ],
+    "credit": 4,
+    "id": 20,
+    "name": "城市经济学",
+    "prerequisites": "中微",
+    "schedule": [
+      {
+        "day": 2,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 7,
+        "end": "8",
+        "start": "7"
+      }
+    ],
+    "teacher": "张帆",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "203"
+      }
+    ],
+    "credit": 4,
+    "id": 21,
+    "name": "低碳经济与碳金融",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 2,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "唐方方",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "206"
+      },
+      {
+        "building": "理教",
+        "room": "203"
+      }
+    ],
+    "credit": 4,
+    "id": 22,
+    "name": "社会经济调查理论方法与实践",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 6,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 7,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "赵耀辉",
+    "type": "公选"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "202"
+      },
+      {
+        "building": "理教",
+        "room": "211"
+      }
+    ],
+    "credit": 4,
+    "id": 23,
+    "name": "教育经济学",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 2,
+        "end": "10",
+        "start": "9"
+      },
+      {
+        "day": 4,
+        "end": "10",
+        "start": "9"
+      }
+    ],
+    "teacher": "闵维方",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "302"
+      }
+    ],
+    "credit": 3,
+    "id": 24,
+    "name": "经济增长导论(英文)",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 7,
+        "end": "9",
+        "start": "7"
+      }
+    ],
+    "teacher": "刘国恩",
+    "type": "公选"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "207"
+      }
+    ],
+    "credit": 4,
+    "id": 25,
+    "name": "博弈与社会",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 2,
+        "end": "12",
+        "start": "10"
+      }
+    ],
+    "teacher": "张维迎",
+    "type": "通选"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "202"
+      },
+      {
+        "building": "二教",
+        "room": "102"
+      }
+    ],
+    "credit": 4,
+    "id": 26,
+    "name": "博弈论与信息经济学",
+    "prerequisites": "概率、中微",
+    "schedule": [
+      {
+        "day": 3,
+        "end": "12",
+        "start": "11"
+      },
+      {
+        "day": 4,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "汪浩、席天扬",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "207"
+      }
+    ],
+    "credit": 2,
+    "id": 27,
+    "name": "新结构经济学导论",
+    "prerequisites": "无",
+    "schedule": [
+      {
+        "day": 4,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "付才辉",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "二教",
+        "room": "308"
+      }
+    ],
+    "credit": 2,
+    "id": 28,
+    "name": "创新经济学与知识产权（英文）",
+    "prerequisites": "中微",
+    "schedule": [
+      {
+        "day": 3,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "雷震",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "303"
+      }
+    ],
+    "credit": 2,
+    "id": 29,
+    "name": "互联网金融学导论",
+    "prerequisites": "原理",
+    "schedule": [
+      {
+        "day": 6,
+        "end": "4",
+        "start": "3"
+      }
+    ],
+    "teacher": "郭峰",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "208"
+      }
+    ],
+    "credit": 2,
+    "id": 30,
+    "name": "中国改革专题",
+    "prerequisites": "原理",
+    "schedule": [
+      {
+        "day": 5,
+        "end": "12",
+        "start": "11"
+      }
+    ],
+    "teacher": "周其仁",
+    "type": "选修"
+  }
+]

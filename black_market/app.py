@@ -18,6 +18,7 @@ def create_app(config=None):
     app.config.from_object(config)
     app.secret_key = SECRET_KEY
     app.config['SQLALCHEMY_DATABASE_URI'] = MYSQL_DSN
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS']= 'true'
     for ext_name in extensions:
         extension = import_string(ext_name)
         extension.init_app(app)
