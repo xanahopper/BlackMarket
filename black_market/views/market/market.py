@@ -16,6 +16,10 @@ def posts():
     return render_template('posts.html')
 
 
+@bp.route('/newpost', methods=['GET'])
+def newpost():
+    return render_template('newpost.html')
+
 
 def get_all_courses():
     courses = course_api.get_all_courses()
