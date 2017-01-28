@@ -11,7 +11,12 @@ def index():
     return render_template('index.html')
 
 
-@bp.route('/course', methods=['GET'])
+@bp.route('/home', methods=['GET'])
+def home():
+    return render_template('home.html')
+
+
+
 def get_all_courses():
     courses = course_api.get_all_courses()
     s = ''
