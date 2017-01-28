@@ -11,9 +11,9 @@ def index():
     return render_template('index.html')
 
 
-@bp.route('/home', methods=['GET'])
-def home():
-    return render_template('home.html')
+@bp.route('/posts', methods=['GET'])
+def posts():
+    return render_template('posts.html')
 
 
 
