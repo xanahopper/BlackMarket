@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, render_template
 
 from black_market.libs.api import course as course_api
 
@@ -8,7 +8,7 @@ bp = Blueprint('market', __name__)
 
 @bp.route('/', methods=['GET'])
 def index():
-    return "Hello, Welcome to NSD Black Market!"
+    return render_template('index.html')
 
 
 @bp.route('/course', methods=['GET'])
