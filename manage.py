@@ -36,7 +36,7 @@ def init_test_database():
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
-        for i in range(0, 30):
+        for i in range(0, 15):
             post = Post(i % 2 + 1, 1485335704 + 12 * i, 'I am post' + str(i))
             demand = Demand(i+1, i + 10)
             supply = Supply(i+1, i + 14)
