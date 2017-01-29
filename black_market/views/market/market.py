@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template, redirect
+from flask_login import login_user, logout_user, current_user, login_required
 
 from black_market.libs.api import course as course_api
 
@@ -9,6 +10,7 @@ bp = Blueprint('market', __name__)
 
 def timestamp_to_datetime(timestamp):
     return timestamp
+
 
 
 @bp.route('/', methods=['GET'])

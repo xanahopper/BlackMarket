@@ -5,6 +5,7 @@ raven
 blinker
 Flask-SQLAlchemy
 Flask-Script
+flask-login
 flake8
 python-envcfg
 ipython
