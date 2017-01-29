@@ -54,92 +54,42 @@
                 <div class="header-content-inner">
                     <h1 id="homeHeading">Demand & Supply</h1>
                     <hr>
-                    
                     <div class="container-fluid">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
-                                    <div class="panel-body">
-                                        <div class="row-fluid">
-                                            <div class="row">
-                                                <em>2017-01-28 20:45</em>
-                                                <p>我是<strong>大四狗</strong>跪求xxxx课，我可以拿xxx课来换外加请吃饭。</p>
-                                            </div>
-                                            <div class="row">
-                                                <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">计量经济学1班</a>&nbsp;&nbsp;
-                                                <a class="fa fa-search sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">中国改革专题</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
-                                    <div class="panel-body">
-                                        <div class="row-fluid">
-                                            <div class="row">
-                                                <em>2017-01-28 20:45</em>
-                                                <p>我是<strong>大四狗</strong>跪求xxxx课，我可以拿跪求xxxx课跪求xxxx课跪求xxxx课xxx课来换外加请吃饭。</p>
-                                            </div>
-                                            <div class="row">
-                                                <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">计量经济学2班</a>&nbsp;&nbsp;
-                                                <a class="fa fa-search sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">互联网金融学</a>
+                            {% for post in posts %}
+                                <div class="col-md-6">
+                                    <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
+                                        <div class="panel-body">
+                                            <div class="row-fluid">
+                                                <div class="row">
+                                                    <em>{{post.time}}</em>
+                                                    <p>{{post.message}}</p>
+                                                </div>
+                                                <div class="row">
+                                                    <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
+                                                    <a style="font-size:12px;" class="btn btn-default">{{post.supply.course_name}}</a>&nbsp;&nbsp;
+                                                    <a class="fa fa-search sr-icons"></a>&nbsp;
+                                                    <a style="font-size:12px;" class="btn btn-default">{{post.demand.course_name}}</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
-                                    <div class="panel-body">
-                                        <div class="row-fluid">
-                                            <div class="row">
-                                                <em>2017-01-28 20:45</em>
-                                                <p>我是<strong>大四狗</strong>跪求xxxx课，我可以拿xxx课来换外加请吃饭。</p>
-                                            </div>
-                                            <div class="row">
-                                                <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">计量经济学1班</a>&nbsp;&nbsp;
-                                                <a class="fa fa-search sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">财务会计</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
-                                    <div class="panel-body">
-                                        <div class="row-fluid">
-                                            <div class="row">
-                                                <em>2017-01-28 20:45</em>
-                                                <p>我是<strong>大四狗</strong>跪求xxxxx课跪求xxxx课，我可以拿xxx课来换外加请吃饭。</p>
-                                            </div>
-                                            <div class="row">
-                                                <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">创新经济学与知识产权(英文)</a>&nbsp;&nbsp;
-                                                <a class="fa fa-search sr-icons"></a>&nbsp;
-                                                <a style="font-size:12px;" class="btn btn-default">社会经济调查理论方法与实践</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
                 <nav aria-label="Page navigation">
                     <ul class="pager"><br>
-                        <li><a href="#">Previous</a></li>
-                        <li><a href="#">Next</a></li>
+                        {% if page != 1 %}
+                            <li><a id="pre" href="javascript:void(0)" onclick="previous_page()">Previous Page</a></li>
+                        {% endif %}
+                        {% if has_next %}
+                            <li><a id="next" href="javascript:void(0)" onclick="next_page()">Next Page</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
-            
         </header>
         <section class="bg-primary" id="about">
             <div class="container">
@@ -153,6 +103,19 @@
                 </div>
             </div>
         </section>
+        <!-- Previous & Next -->
+        <script type="text/javascript">
+        function previous_page(){
+        var previous_page_index = {{page}} - 1;
+        var previous_href = "http://blackmarket.wangzhihao.com.cn/posts/" + previous_page_index;
+        document.getElementById("pre").href = previous_href;
+        }
+        function next_page(){
+        var next_page_index = {{page}} + 1;
+        var next_href = "http://blackmarket.wangzhihao.com.cn/posts/" + next_page_index;
+        document.getElementById("next").href = next_href;
+        }
+        </script>
         <!-- jQuery -->
         <script src="../static/vendor/jquery/jquery.min.js"></script>
         <!-- Bootstrap Core JavaScript -->
