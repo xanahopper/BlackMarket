@@ -61,7 +61,7 @@ def search_course():
 
 
 @bp.route('/posts/<int:page>', methods=['GET'])
-def post_paginate(page, per_page=4):
+def post_paginate(page, per_page=6):
     paginate = Post.query.order_by(Post.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
     posts = []
     for post in paginate.items:
