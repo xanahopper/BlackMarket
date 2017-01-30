@@ -16,7 +16,8 @@ def get_course_by_id(id):
 def get_course_ids_by_name(name):
     if not name:
         return set()
-    return get_ids_set(Course.query.filter(Course.name.ilike('%'+ name + '%')))
+    return get_ids_set(
+        Course.query.filter(Course.name.ilike('%' + name + '%')))
 
 
 def get_course_ids_by_credit(credit):

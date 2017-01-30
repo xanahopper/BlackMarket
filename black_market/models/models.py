@@ -76,6 +76,7 @@ class User(db.Model):
     def load_user(user_id):
         return User.query.get(user_id)
 
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

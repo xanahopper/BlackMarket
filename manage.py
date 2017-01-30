@@ -7,7 +7,7 @@ from flask_script import Manager
 from black_market.ext import db
 from black_market.app import create_app
 from black_market.models.models import (
-    Course, CourseSchedule, User, Post, Demand, Supply, Comment)
+    Course, CourseSchedule, User, Post, Demand, Supply)
 
 app = create_app()
 manager = Manager(app)
@@ -31,15 +31,19 @@ def init_database():
 def init_test_database():
     init_database()
     with app.app_context():
-        user1 = User('test_user1', '15612345678', 'user1@qq.com', 'password1', 2013)
-        user2 = User('test_user2', '18812345678', 'user2@qq.com', 'password2', 2014)
+        user1 = User(
+            'test_user1', '15612345678', 'user1@qq.com', 'password1', 2013)
+        user2 = User(
+            'test_user2', '18812345678', 'user2@qq.com', 'password2', 2014)
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
         for i in range(0, 15):
-            post = Post(i % 2 + 1, 1485335704 + 12 * i, 'I am post' + str(i))
-            demand = Demand(i+1, i + 10)
-            supply = Supply(i+1, i + 14)
+            post = Post(
+                i % 2 + 1, 1485335704 + 12 * i,
+                'I am post' + str(i))
+            demand = Demand(i + 1, i + 10)
+            supply = Supply(i + 1, i + 14)
             db.session.add(post)
             db.session.add(demand)
             db.session.add(supply)
@@ -51,7 +55,8 @@ def init_test_database():
         # post1_supply = Supply(1, 16)
         # post2_demand = Demand(2, 16)
         # post2_supply = Supply(2, 12)
-        # comment = Comment(2, 1, 'Hello, I wanna exchange my A for your B.', 1485337804)
+        # comment = Comment(
+        # 2, 1, 'Hello, I wanna exchange my A for your B.', 1485337804)
         # db.session.add(post1)
         # db.session.add(post2)
         # db.session.add(post1_demand)
@@ -71,7 +76,10 @@ def convert(raw_course):
         classroom.append(dict(building=raw_course.classroom2[0:2],
                               room=raw_course.classroom2[2:5]))
     schedule = []
-    days = {1: 'mon', 2: 'tue', 3: 'wed', 4: 'thu', 5: 'fri', 6: 'sat', 7: 'sun'}
+    days = {1: 'mon', 2: 'tue',
+            3: 'wed', 4: 'thu',
+            5: 'fri', 6: 'sat',
+            7: 'sun'}
     for i in range(1, 8):
         s = getattr(raw_course, (days.get(i)))
         if s and '--' in s:
@@ -105,7 +113,8 @@ def init_courses():
         schedule = course_data.get('schedule')
         classroom = course_data.get('classroom')
         pre = course_data.get('prerequisites')
-        courses.append(Course(name, teacher, credit, course_type, classroom, pre))
+        courses.append(
+            Course(name, teacher, credit, course_type, classroom, pre))
         for s in schedule:
             course_schedules.append(CourseSchedule(
                 id, s.get('day'), s.get('start'), s.get('end')))
@@ -123,7 +132,8 @@ def generate_json():
                    'num_of_week', 'teacher', 'mon', 'tue', 'wed', 'thu',
                    'fri', 'sat', 'sun', 'classroom1', 'classroom2'])
 
-    raw_courses = [RawCourse._make(table.row_values(i)) for i in range(1, nrows)]
+    raw_courses = [
+        RawCourse._make(table.row_values(i)) for i in range(1, nrows)]
 
     courses = []
     for rc in raw_courses:

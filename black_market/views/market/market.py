@@ -2,8 +2,13 @@ import re
 import datetime
 import hashlib
 
-from flask import Blueprint, flash, request, render_template, redirect, get_flashed_messages
-from flask_login import login_user, logout_user, current_user, login_required
+from flask import (
+    Blueprint, flash, request,
+    render_template, redirect,
+    get_flashed_messages)
+from flask_login import (
+    login_user, logout_user,
+    current_user, login_required)
 
 from black_market.ext import db
 from black_market.libs.api import course as course_api
@@ -18,7 +23,7 @@ def timestamp_to_datetime(timestamp):
 
 
 def redirect_with_msg(target, msg, category):
-    if msg != None:
+    if not msg:
         flash(msg, category=category)
     return redirect(target)
 
@@ -29,12 +34,14 @@ def check_phone(phone):
 
 
 def check_email(email):
-    pattern = re.compile('\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}')
+    pattern = re.compile(
+        '\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}')
     return bool(pattern.match(email))
 
 
 def check_exist(phone):
     return bool(User.query.filter_by(phone=phone).first())
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
@@ -43,7 +50,8 @@ def index():
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register_page(msg=''):
-    for m in get_flashed_messages(with_categories=False, category_filter=['reg']):
+    for m in get_flashed_messages(
+            with_categories=False, category_filter=['reg']):
         msg = msg + m
     return render_template('register.html', msg=msg)
 
@@ -77,7 +85,8 @@ def reg():
             '/register', u'Wrong phone number!', category='reg')
     if check_exist(phone):
         return redirect_with_msg(
-            '/register', u'This phone number has been registered!', category='reg')
+            '/register', u'This phone number has been registered!',
+            category='reg')
     if check_email(email) == '':
         return redirect_with_msg(
             '/register', u'Wrong email address!', category='reg')
@@ -86,7 +95,7 @@ def reg():
             '/register', u'Empty username is not allowed', category='reg')
     if raw_password == '':
         return redirect_with_msg(
-            '/register',u'Empty password is not allowed',category='reg')
+            '/register', u'Empty password is not allowed', category='reg')
     m = hashlib.md5()
     m.update(raw_password.encode('utf-8'))
     password = m.hexdigest()
@@ -101,7 +110,8 @@ def reg():
 def loginpage(msg=''):
     if current_user.is_authenticated:
         return redirect('/posts')
-    for m in get_flashed_messages(with_categories=False, category_filter=['login']):
+    for m in get_flashed_messages(
+            with_categories=False, category_filter=['login']):
         msg = msg + m
     return render_template('loginpage.html', msg=msg)
 
@@ -111,16 +121,21 @@ def login():
     phone = request.values.get('phone').strip()
     password = request.values.get('password').strip()
     if not check_phone(phone):
-        return redirect_with_msg('/loginpage', u'Incorrect format of phone number!', category='login')
+        return redirect_with_msg(
+            '/loginpage', u'Incorrect format of phone number!',
+            category='login')
     if password == '':
-        return redirect_with_msg('/loginpage', u'Empty password!', category='login')
+        return redirect_with_msg(
+            '/loginpage', u'Empty password!', category='login')
     user = User.query.filter_by(phone=phone).first()
-    if user == None:
-        return redirect_with_msg('/loginpage',u'The user does not exist!',category='login')
+    if not user:
+        return redirect_with_msg(
+            '/loginpage', u'The user does not exist!', category='login')
     m = hashlib.md5()
     m.update(password.encode('utf-8'))
     if(m.hexdigest() != user.password):
-        return redirect_with_msg('/loginpage',u'Wrong password',category='login')
+        return redirect_with_msg(
+            '/loginpage', u'Wrong password', category='login')
     login_user(user)
     return redirect('/posts')
 
@@ -137,6 +152,7 @@ def get_posts():
 
 
 @bp.route('/newpost', methods=['GET'])
+@login_required
 def newpost_page():
     return render_template('newpost.html')
 
@@ -179,12 +195,15 @@ def search_course():
 def post_paginate(page, per_page=6):
     if not current_user.is_authenticated:
         return redirect('/loginpage')
-    paginate = Post.query.order_by(Post.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
+    paginate = Post.query.order_by(
+        Post.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
     posts = []
     for post in paginate.items:
         time = timestamp_to_datetime(post.created_time)
-        supply_course_id = Supply.query.filter_by(post_id=post.id).first().course_id
-        demand_course_id = Demand.query.filter_by(post_id=post.id).first().course_id
+        supply_course_id = Supply.query.filter_by(
+            post_id=post.id).first().course_id
+        demand_course_id = Demand.query.filter_by(
+            post_id=post.id).first().course_id
         supply = dict(
             course_id=supply_course_id,
             course_name=course_api.get_course_by_id(supply_course_id).name)
@@ -193,4 +212,5 @@ def post_paginate(page, per_page=6):
             course_name=course_api.get_course_by_id(demand_course_id).name)
         p = dict(time=time, supply=supply, demand=demand, message=post.message)
         posts.append(p)
-    return render_template('posts.html', posts=posts, has_next=paginate.has_next, page=page)
+    return render_template(
+        'posts.html', posts=posts, has_next=paginate.has_next, page=page)
