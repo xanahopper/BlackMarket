@@ -1,4 +1,5 @@
 import re
+import datetime
 import hashlib
 
 from flask import Blueprint, flash, request, render_template, redirect, get_flashed_messages
@@ -12,7 +13,8 @@ bp = Blueprint('market', __name__)
 
 
 def timestamp_to_datetime(timestamp):
-    return timestamp
+    d = datetime.datetime.fromtimestamp(timestamp)
+    return d.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def redirect_with_msg(target, msg, category):
