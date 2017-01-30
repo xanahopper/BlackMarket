@@ -110,7 +110,6 @@ def loginpage(msg=''):
 def login():
     phone = request.values.get('phone').strip()
     password = request.values.get('password').strip()
-    User.query.filter_by(phone)
     if not check_phone(phone):
         return redirect_with_msg('/loginpage', u'Incorrect format of phone number!', category='login')
     if password == '':
