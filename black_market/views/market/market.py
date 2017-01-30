@@ -106,9 +106,23 @@ def loginpage(msg=''):
     return render_template('loginpage.html', msg=msg)
 
 
-@bp.route('/login')
+@bp.route('/login', methods=['POST'])
 def login():
-    # check tel & password
+    phone = request.values.get('phone').strip()
+    password = request.values.get('password').strip()
+    User.query.filter_by(phone)
+    if not check_phone(phone):
+        return redirect_with_msg('/loginpage', u'Incorrect format of phone number!', category='login')
+    if password == '':
+        return redirect_with_msg('/loginpage', u'Empty password!', category='login')
+    user = User.query.filter_by(phone=phone).first()
+    if user == None:
+        return redirect_with_msg('/loginpage',u'The user does not exist!',category='login')
+    m = hashlib.md5()
+    m.update(password)
+    if(m.hexdigest() != user.password):
+        return redirect_with_msg('/loginpage',u'Wrong password',category='login')
+    login_user(user)
     return redirect('/posts')
 
 
