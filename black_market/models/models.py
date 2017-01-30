@@ -40,7 +40,7 @@ class CourseSchedule(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(80), unique=True)
+    name = db.Column(db.String(80))
     tel = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(128))
     password = db.Column(db.String(128))

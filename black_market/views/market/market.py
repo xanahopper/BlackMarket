@@ -95,7 +95,7 @@ def reg():
     return redirect('/posts')
 
 
-@bp.route('/loginpage')
+@bp.route('/loginpage', methods=['GET', 'POST'])
 def loginpage(msg=''):
     if current_user.is_authenticated:
         return redirect('/posts')
@@ -163,6 +163,7 @@ def search_course():
 @bp.route('/posts/<int:page>', methods=['GET'])
 def post_paginate(page, per_page=6):
     if not current_user.is_authenticated:
+
         print(current_user.is_authenticated)
         return redirect('/loginpage')
     paginate = Post.query.order_by(Post.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
