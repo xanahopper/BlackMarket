@@ -24,12 +24,12 @@ def redirect_with_msg(target, msg, category):
 
 
 def check_phone(phone):
-    pattern = re.compile('^0\d{2,3}\d{7,8}$|^1[358]\d{9}$|^147\d{8}')
+    pattern = re.compile(u'0?(13|14|15|17|18)[0-9]{9}')
     return bool(pattern.match(phone))
 
 
 def check_email(email):
-    pattern = re.compile("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$")
+    pattern = re.compile('\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}')
     return bool(pattern.match(email))
 
 
