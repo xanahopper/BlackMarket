@@ -49,7 +49,7 @@ class User(db.Model):
 
     def __init__(self, name, phone, email, password, grade):
         self.name = name
-        self.pphonee = phone
+        self.phonee = phone
         self.email = email
         self.password = password
         self.grade = grade

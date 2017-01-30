@@ -31,8 +31,8 @@ def init_database():
 def init_test_database():
     init_database()
     with app.app_context():
-        user1 = User('test_user1', '156xxxxxxxx', 'xxxxx@qq.com', 'password1', 2013)
-        user2 = User('test_user2', '188xxxxxxxx', 'yyyyy@qq.com', 'password2', 2014)
+        user1 = User('test_user1', '15612345678', 'user1@qq.com', 'password1', 2013)
+        user2 = User('test_user2', '18812345678', 'user2@qq.com', 'password2', 2014)
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()

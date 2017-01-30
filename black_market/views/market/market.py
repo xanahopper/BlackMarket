@@ -90,8 +90,6 @@ def reg():
     m = hashlib.md5()
     m.update(raw_password.encode('utf-8'))
     password = m.hexdigest()
-    print('*' * 50)
-    print(phone)
     user = User(username, phone, email, password, grade)
     db.session.add(user)
     db.session.commit()
@@ -180,8 +178,6 @@ def search_course():
 @bp.route('/posts/<int:page>', methods=['GET'])
 def post_paginate(page, per_page=6):
     if not current_user.is_authenticated:
-
-        print(current_user.is_authenticated)
         return redirect('/loginpage')
     paginate = Post.query.order_by(Post.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
     posts = []
