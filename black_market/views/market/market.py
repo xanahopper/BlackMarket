@@ -152,12 +152,14 @@ def get_posts():
 
 
 @bp.route('/newpost', methods=['GET'])
-@login_required
 def newpost_page():
+    if not current_user.is_authenticated:
+        return redirect('/loginpage')
     return render_template('newpost.html')
 
 
 @bp.route('/post', methods=['POST'])
+@login_required
 def post():
     return
 
