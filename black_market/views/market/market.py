@@ -90,6 +90,8 @@ def reg():
     m = hashlib.md5()
     m.update(raw_password.encode('utf-8'))
     password = m.hexdigest()
+    print('*' * 50)
+    print(phone)
     user = User(username, phone, email, password, grade)
     db.session.add(user)
     db.session.commit()
@@ -118,7 +120,7 @@ def login():
     if user == None:
         return redirect_with_msg('/loginpage',u'The user does not exist!',category='login')
     m = hashlib.md5()
-    m.update(password)
+    m.update(password.encode('utf-8'))
     if(m.hexdigest() != user.password):
         return redirect_with_msg('/loginpage',u'Wrong password',category='login')
     login_user(user)
