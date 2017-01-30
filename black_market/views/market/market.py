@@ -36,7 +36,7 @@ def check_email(email):
 def check_exist(phone):
     return bool(User.query.filter_by(phone=phone).first())
 
-@bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
 
