@@ -41,15 +41,15 @@ class CourseSchedule(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(80))
-    tel = db.Column(db.String(80), unique=True)
+    phone = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(128))
     password = db.Column(db.String(128))
     grade = db.Column(db.String(56))
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
-    def __init__(self, name, tel, email, password, grade):
+    def __init__(self, name, phone, email, password, grade):
         self.name = name
-        self.tel = tel
+        self.pphonee = phone
         self.email = email
         self.password = password
         self.grade = grade
