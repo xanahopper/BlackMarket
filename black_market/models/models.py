@@ -1,4 +1,4 @@
-from black_market.ext import db
+from black_market.ext import db, login_manager
 
 
 class Course(db.Model):
@@ -57,6 +57,24 @@ class User(db.Model):
     def __repr__(self):
         return '<User %s>' % self.name
 
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

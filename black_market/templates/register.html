@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Black Market | Easy To Exchange Your Courses</title>
+        <title>Black Market | Register</title>
         <!-- Bootstrap Core CSS -->
         <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <!-- Custom Fonts -->
@@ -53,55 +53,58 @@
             <div class="header-content">
                 <div class="header-content-inner">
                     <!-- <h1 id="homeHeading">Black Market</h1> -->
-                    <h1 id="homeHeading">What is Black Market</h1>
+                    <h1 id="homeHeading">Register</h1>
                     <hr>
-                    <p>Black Market is an infomation exchange platform that helps NSDers trade their courses in the first week of every semester. It is intended to reduce the asymmetry of infomation during the grabbing-course period.</p><br>
-                    <a href="/posts" class="btn btn-default btn-xl sr-button">Enter Black Market</a>
-                    <br><br>
-                    <a href="#about" class="btn btn-primary btn-xl page-scroll">Find Out More</a>
+                    <div class="login-wrapper">
+                        <div class="login-box">
+                            <form method="post" id="regloginform">
+                                <h4 class="login-hd">
+                                {% if (msg | length) > 0 %}
+                                    {{msg}}
+                                {% endif %}
+                                </h4><br>
+                                
+                                <form class="form-inline">
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number *</label>
+                                        <input type="tel" class="form-control"  aria-label="Email Address" aria-required="true" autocapitalize="off" autocorrect="off" maxlength="30" name="phone" placeholder="Phone Number" value="" type="text">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="username">Username *</label>
+                                        <input class="form-control"  aria-label="Username" aria-required="true" autocapitalize="off" autocorrect="off" maxlength="30" name="username" placeholder="Username" value="" type="text" >
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password">Password *</label>
+                                        <input class="form-control" aria-describedby="" aria-label="Password" aria-required="true" autocapitalize="off" autocorrect="off" name="password" placeholder="Password" type="password" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="grade">Grade *</label>
+                                        <select class="form-control" id="grade" name="grade">
+                                            <option value="2014">经双2014级</option>
+                                            <option value="2015">经双2015级</option>
+                                            <option value="2016">经双2016级</option>
+                                        </div>
+                                    </select><br>
+                                    <div class="form-group">
+                                        <label for="email">Email *</label>
+                                        <input type="email" class="form-control"  aria-label="Email Address" aria-required="true" autocapitalize="off" autocorrect="off" maxlength="30" name="email" placeholder="Email Address" value="" type="text">
+                                    </div>
+                                </div>
+                                <br><br>
+                                <div class="btn-wrapper">
+                                    <!-- <button class="btn btn-default btn-xl " onclick="form=document.getElementById('regloginform');form.action='/verify';">Register</button> -->
+                                    <button class="btn btn-default btn-xl " onclick="form=document.getElementById('regloginform');form.action='/reg';">Register</button>
+                                    <button class="btn btn-primary btn-xl " onclick="form.action='/loginpage';">Already registered</button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </header>
-        <section class="bg-primary" id="about">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <h2 class="section-heading">We've got what you need!</h2>
-                        <hr class="light">
-                        <p class="text-faded">You can ... </p>
-                        <a href="#get_started" class="page-scroll btn btn-default btn-xl sr-button">Get Started!</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <aside class="bg-dark" id="get_started">
-            <div class="container text-center">
-                <div class="call-to-action">
-                    <h2>What are you waiting for?</h2>
-                    <a href="/posts" class="btn btn-default btn-xl sr-button">Enter Black Market</a>
-                </div>
-            </div>
-        </aside>
-        <section id="contact">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <h2 class="section-heading">We need your feedback!</h2>
-                        <hr class="primary">
-                        <p>Black Market is not perfect. We nned your feedback to improve our product.</p>
-                    </div>
-                    <div class="col-lg-4 col-lg-offset-2 text-center">
-                        <i class="fa fa-qrcode fa-3x sr-contact"></i>
-                        <!-- TODO -->
-                        <p><a href="">nsdblackmarket</a></p>
-                    </div>
-                    <div class="col-lg-4 text-center">
-                        <i class="fa fa-envelope-o fa-3x sr-contact"></i><br>
-                        <p><a href="mailto:nsdblackmarket@163.com">nsdblackmarket@163.com</a></p>
-                    </div>
-                </div>
-            </div>
-        </section>
+        
         <!-- jQuery -->
         <script src="../static/vendor/jquery/jquery.min.js"></script>
         <!-- Bootstrap Core JavaScript -->
