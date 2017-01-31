@@ -1,46 +1,20 @@
-import re
-import datetime
 import hashlib
 
 from flask import (
-    Blueprint, flash, request,
-    render_template, redirect,
-    get_flashed_messages)
+    Blueprint, request, render_template,
+    redirect, get_flashed_messages)
 from flask_login import (
-    login_user, logout_user,
-    current_user, login_required)
+    login_user, logout_user, current_user,
+    login_required)
 
 from black_market.ext import db
 from black_market.libs.api import course as course_api
 from black_market.models.models import Post, Supply, Demand, User
+from black_market.views.utils import (
+    timestamp_to_datetime, redirect_with_msg, check_phone,
+    check_email, check_exist)
 
 bp = Blueprint('market', __name__)
-
-
-def timestamp_to_datetime(timestamp):
-    d = datetime.datetime.fromtimestamp(timestamp)
-    return d.strftime("%Y-%m-%d %H:%M:%S")
-
-
-def redirect_with_msg(target, msg, category):
-    if not msg:
-        flash(msg, category=category)
-    return redirect(target)
-
-
-def check_phone(phone):
-    pattern = re.compile(u'0?(13|14|15|17|18)[0-9]{9}')
-    return bool(pattern.match(phone))
-
-
-def check_email(email):
-    pattern = re.compile(
-        '\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}')
-    return bool(pattern.match(email))
-
-
-def check_exist(phone):
-    return bool(User.query.filter_by(phone=phone).first())
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -162,14 +136,6 @@ def newpost_page():
 @login_required
 def post():
     return
-
-
-def get_all_courses():
-    courses = course_api.get_all_courses()
-    s = ''
-    for course in courses:
-        s = s + str(course.id) + '.\t' + course.name + '<br>'
-    return s
 
 
 @bp.route('/course/<int:id>', methods=['GET'])
