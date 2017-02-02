@@ -12,7 +12,7 @@ def timestamp_to_datetime(timestamp):
 
 
 def redirect_with_msg(target, msg, category):
-    if not msg:
+    if msg:
         flash(msg, category=category)
     return redirect(target)
 
@@ -30,3 +30,16 @@ def check_email(email):
 
 def check_exist(phone):
     return bool(User.query.filter_by(phone=phone).first())
+
+
+def get_paginate_from_list(target, page, per_page):
+    has_next = False
+    start = per_page * (page - 1)
+    end = per_page * page
+    if len(target) <= start:
+        return target, has_next
+    elif len(target) <= end:
+        return target[start:], has_next
+    else:
+        has_next = True
+        return target[start:end], has_next

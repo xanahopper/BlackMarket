@@ -52,65 +52,192 @@
         <header>
             <div class="header-content">
                 <div class="header-content-inner">
-                    <!-- <h1 id="homeHeading">Black Market</h1> -->
-                    <h1 id="homeHeading">What is Black Market</h1>
-                    <hr>
-                    <p>Black Market is an infomation exchange platform that helps NSDers trade their courses in the first week of every semester. It is intended to reduce the asymmetry of infomation during the grabbing-course period.</p><br>
-                    <a href="/posts" class="btn btn-default btn-xl sr-button">Enter Black Market</a>
-                    <br><br>
-                    <a href="#about" class="btn btn-primary btn-xl page-scroll">Find Out More</a>
-                </div>
-            </div>
-        </header>
-        <section class="bg-primary" id="about">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <h2 class="section-heading">We've got what you need!</h2>
-                        <hr class="light">
-                        <p class="text-faded">You can ... </p>
-                        <a href="#get_started" class="page-scroll btn btn-default btn-xl sr-button">Get Started!</a>
+                    <!--                     <h1 id="homeHeading">Black Market</h1>
+                    <hr> -->
+                    <div class="container-fluid">
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <form method="get" id="newpostform" class="form-inline">
+                                    <a class="fa fa-paper-plane"></a>&nbsp;
+                                    <input id="supplyCourse" name="supply" class="input-medium search-query" value="" type="text" style="color:#6699ee; width:120px;height:30px">&nbsp;
+                                    <a class="fa fa-magnet"></a>&nbsp;
+                                    <input id="demandCourse" name="demand" class="input-medium search-query" value="" type="text" style="color:#6699ee; width:120px;height:30px">&nbsp;
+                                    <button class="btn btn-default"><a class="fa fa-search"></a></button>
+                                </form><br>
+                            </div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    {% for post in posts %}
+                                        <div class="col-md-6">
+                                            <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
+                                                <div class="panel-body">
+                                                    <div class="row-fluid">
+                                                        <div class="row">
+                                                            <em>{{post.time}}</em>
+                                                            <p style="font-size:14px;">{{post.message}}</p>
+                                                        </div>
+                                                        <div class="row">
+                                                            <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
+                                                            <a style="font-size:10px;" class="btn btn-default">{{post.supply.course_name}}</a>&nbsp;&nbsp;
+                                                            <a class="fa fa-magnet sr-icons"></a>&nbsp;
+                                                            <a style="font-size:10px;" class="btn btn-default">{{post.demand.course_name}}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <nav aria-label="Page navigation">
+                            <ul class="pager"><br>
+                                {% if page != 1 %}
+                                    <li><a id="pre" onclick="post('/', {page: 1, demand: getDemand(), supply: getSupply()});">First Page</a></li>
+                                    <li><a id="pre" onclick="post('/', {page: previousPage(), demand: getDemand(), supply: getSupply()});">Previous Page</a></li>
+                                {% endif %}
+                                {% if has_next %}
+                                    <li><a id="next" onclick="post('/', {page: nextPage(), demand: getDemand(), supply: getSupply()});">Next Page</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
                     </div>
-                </div>
-            </div>
-        </section>
-        <aside class="bg-dark" id="get_started">
-            <div class="container text-center">
-                <div class="call-to-action">
-                    <h2>What are you waiting for?</h2>
-                    <a href="/posts" class="btn btn-default btn-xl sr-button">Enter Black Market</a>
-                </div>
-            </div>
-        </aside>
-        <section id="contact">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <h2 class="section-heading">We need your feedback!</h2>
-                        <hr class="primary">
-                        <p>Black Market is not perfect. We nned your feedback to improve our product.</p>
+                </header>
+                
+                <section class="bg-primary" id="newpost">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2 text-center">
+                                <h1 class="section-heading">NEW POST</h1>
+                                <hr class="light">
+                                <p class="text-faded">Immediately post your <strong><em>Supply</em></strong> and <strong><em>Demand</em></strong> and get contacted at the first time.</p>
+                                <a class="page-scroll btn btn-default btn-xl sr-button" href="/newpost">MAKE A POST</a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-lg-4 col-lg-offset-2 text-center">
-                        <i class="fa fa-qrcode fa-3x sr-contact"></i>
-                        <!-- TODO -->
-                        <p><a href="">nsdblackmarket</a></p>
+                </section>
+                <section id="services">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12 text-center">
+                                <h2 class="section-heading">We've got what you need!</h2>
+                                <hr class="primary">
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-lg-4 text-center">
-                        <i class="fa fa-envelope-o fa-3x sr-contact"></i><br>
-                        <p><a href="mailto:nsdblackmarket@163.com">nsdblackmarket@163.com</a></p>
+                    <div class="container">
+                        <div class="row">
+                            <!--                 <div class="col-lg-3 col-md-6 text-center">
+                                <div class="service-box">
+                                    <i class="fa fa-4x fa-diamond text-primary sr-icons" data-sr-id="2" style="; visibility: visible;  -webkit-transform: scale(1); opacity: 1;transform: scale(1); opacity: 1;-webkit-transition: -webkit-transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; transition: transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; "></i>
+                                    <h3>Sturdy Templates</h3>
+                                    <p class="text-muted">Our templates are updated regularly so they don't break.</p>
+                                </div>
+                            </div> -->
+                            <div class="col-lg-4 col-md-6 text-center">
+                                <div class="service-box">
+                                    <i class="fa fa-4x fa-search text-primary sr-icons" data-sr-id="4" style="; visibility: visible;  -webkit-transform: scale(1); opacity: 1;transform: scale(1); opacity: 1;-webkit-transition: -webkit-transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; transition: transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; "></i>
+                                    <h3>Search</h3>
+                                    <p class="text-muted">Search for target courses by multiple filter conditions.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 text-center">
+                                <div class="service-box">
+                                    <i class="fa fa-4x fa-paper-plane text-primary sr-icons" data-sr-id="3" style="; visibility: visible;  -webkit-transform: scale(1); opacity: 1;transform: scale(1); opacity: 1;-webkit-transition: -webkit-transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; transition: transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; "></i>
+                                    <h3>Post</h3>
+                                    <p class="text-muted">Make a post to tell everybody your demand and supply with messages.</p>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 text-center">
+                                <div class="service-box">
+                                    <i class="fa fa-4x fa-exchange text-primary sr-icons" data-sr-id="5" style="; visibility: visible;  -webkit-transform: scale(1); opacity: 1;transform: scale(1); opacity: 1;-webkit-transition: -webkit-transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; transition: transform 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s, opacity 0.6s cubic-bezier(0.6, 0.2, 0.1, 1) 0s; "></i>
+                                    <h3>Exchange</h3>
+                                    <p class="text-muted">Contact him or her to exchange courses through <a href="http://ss.nsd.edu.cn:8080/ccer/CourseCCER/CourseCCER.html">official course management system</a>.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </section>
-        <!-- jQuery -->
-        <script src="../static/vendor/jquery/jquery.min.js"></script>
-        <!-- Bootstrap Core JavaScript -->
-        <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
-        <!-- Plugin JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-        <script src="../static/vendor/scrollreveal/scrollreveal.min.js"></script>
-        <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-        <!-- Theme JavaScript -->
-        <script src="../static/js/creative.min.js"></script>
-    </body>
-</html>
+                </section>
+                <aside class="bg-dark" id="get_started">
+                    <div class="container text-center">
+                        <div class="call-to-action">
+                            <h2>What are you waiting for?</h2>
+                            <a href="/posts" class="btn btn-default btn-xl sr-button">Enter Black Market</a>
+                        </div>
+                    </div>
+                </aside>
+                <section id="contact">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-8 col-lg-offset-2 text-center">
+                                <h2 class="section-heading">We need your feedback!</h2>
+                                <hr class="primary">
+                                <p>Black Market is not nearly perfect. Your feedback is needed to improve our product.</p>
+                            </div>
+                            <div class="col-lg-4 col-lg-offset-2 text-center">
+                                <i class="fa fa-qrcode fa-3x sr-contact"></i>
+                                <!-- TODO -->
+                                <p><a href="">nsdblackmarket</a></p>
+                            </div>
+                            <div class="col-lg-4 text-center">
+                                <i class="fa fa-envelope-o fa-3x sr-contact"></i><br>
+                                <p><a href="mailto:nsdblackmarket@163.com">nsdblackmarket@163.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- Make A Post  Request -->
+                <script type="text/javascript">
+                function post(path, params, method) {
+                method = method || "post";
+                var form = document.createElement("form");
+                form.setAttribute("method", method);
+                form.setAttribute("action", path);
+                for(var key in params) {
+                if(params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+                form.appendChild(hiddenField);
+                }
+                }
+                document.body.appendChild(form);
+                form.submit();
+                }
+                window.onload=function(){setSupply();setDemand();}
+                function setSupply(){
+                document.getElementById("supplyCourse").value = "{{target_supply}}";;
+                }
+                function setDemand(){
+                document.getElementById("demandCourse").value = "{{target_demand}}";
+                }
+                function getSupply(){
+                return document.getElementById("supplyCourse").value;
+                }
+                function getDemand(){
+                return document.getElementById("demandCourse").value;
+                }
+                function previousPage(){
+                var previousPageIndex = {{page}} - 1;
+                return previousPageIndex;
+                }
+                function nextPage(){
+                var nextPageIndex = {{page}} + 1;
+                return nextPageIndex;
+                }
+                </script>
+                </script>
+                <!-- jQuery -->
+                <script src="../static/vendor/jquery/jquery.min.js"></script>
+                <!-- Bootstrap Core JavaScript -->
+                <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+                <!-- Plugin JavaScript -->
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+                <script src="../static/vendor/scrollreveal/scrollreveal.min.js"></script>
+                <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+                <!-- Theme JavaScript -->
+                <script src="../static/js/creative.min.js"></script>
+            </body>
+        </html>

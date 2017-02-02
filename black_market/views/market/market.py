@@ -12,14 +12,54 @@ from black_market.libs.api import course as course_api
 from black_market.models.models import Post, Supply, Demand, User
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
-    check_email, check_exist)
+    check_email, check_exist, get_paginate_from_list)
 
 bp = Blueprint('market', __name__)
 
 
 @bp.route('/', methods=['GET', 'POST'])
-def index():
-    return render_template('index.html')
+def search(per_page=6):
+    page = request.values.get('page') or 1
+    page = int(page)
+    target_supply_name = request.values.get('supply') or ''
+    target_demand_name = request.values.get('demand') or ''
+    target_ss = course_api.search_course_by_filters(target_supply_name)
+    target_ds = course_api.search_course_by_filters(target_demand_name)
+    target_supply_ids = [c.id for c in target_ss] if target_ss else []
+    target_demand_ids = [c.id for c in target_ds] if target_ds else []
+    all_posts = [p for p in Post.query.order_by(Post.id.desc()).all()]
+    target_posts = []
+    for post in all_posts:
+        supply_course_id = Supply.query.filter_by(
+            post_id=post.id).first().course_id
+        if target_ss is not None:
+            if supply_course_id not in target_supply_ids:
+                continue
+        demand_course_id = Demand.query.filter_by(
+            post_id=post.id).first().course_id
+        if target_ds is not None:
+            if demand_course_id not in target_demand_ids:
+                continue
+        target_posts.append(post)
+    paginate, has_next = get_paginate_from_list(target_posts, page, per_page)
+    posts = []
+    for post in paginate:
+        time = timestamp_to_datetime(post.created_time)
+        supply_course_id = Supply.query.filter_by(
+            post_id=post.id).first().course_id
+        demand_course_id = Demand.query.filter_by(
+            post_id=post.id).first().course_id
+        supply = dict(
+            course_id=supply_course_id,
+            course_name=course_api.get_course_by_id(supply_course_id).name)
+        demand = dict(
+            course_id=demand_course_id,
+            course_name=course_api.get_course_by_id(demand_course_id).name)
+        p = dict(time=time, supply=supply, demand=demand, message=post.message)
+        posts.append(p)
+    return render_template('index.html', posts=posts, has_next=has_next,
+                           page=page, target_supply=target_supply_name,
+                           target_demand=target_demand_name)
 
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -77,13 +117,13 @@ def reg():
     db.session.add(user)
     db.session.commit()
     login_user(user)
-    return redirect('/posts')
+    return redirect('/')
 
 
 @bp.route('/loginpage', methods=['GET', 'POST'])
 def loginpage(msg=''):
     if current_user.is_authenticated:
-        return redirect('/posts')
+        return redirect('/')
     for m in get_flashed_messages(
             with_categories=False, category_filter=['login']):
         msg = msg + m
@@ -111,18 +151,13 @@ def login():
         return redirect_with_msg(
             '/loginpage', u'Wrong password', category='login')
     login_user(user)
-    return redirect('/posts')
+    return redirect('/')
 
 
 @bp.route('/logout')
 def logout():
     logout_user()
     return redirect('/')
-
-
-@bp.route('/posts', methods=['GET'])
-def get_posts():
-    return redirect('/posts/1')
 
 
 @bp.route('/newpost', methods=['GET'])
@@ -157,28 +192,3 @@ def search_course():
         for course in courses:
             s = s + str(course.id) + '.\t' + course.name + '<br>'
     return s
-
-
-@bp.route('/posts/<int:page>', methods=['GET'])
-def post_paginate(page, per_page=6):
-    if not current_user.is_authenticated:
-        return redirect('/loginpage')
-    paginate = Post.query.order_by(
-        Post.id.desc()).paginate(page=page, per_page=per_page, error_out=False)
-    posts = []
-    for post in paginate.items:
-        time = timestamp_to_datetime(post.created_time)
-        supply_course_id = Supply.query.filter_by(
-            post_id=post.id).first().course_id
-        demand_course_id = Demand.query.filter_by(
-            post_id=post.id).first().course_id
-        supply = dict(
-            course_id=supply_course_id,
-            course_name=course_api.get_course_by_id(supply_course_id).name)
-        demand = dict(
-            course_id=demand_course_id,
-            course_name=course_api.get_course_by_id(demand_course_id).name)
-        p = dict(time=time, supply=supply, demand=demand, message=post.message)
-        posts.append(p)
-    return render_template(
-        'posts.html', posts=posts, has_next=paginate.has_next, page=page)

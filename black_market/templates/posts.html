@@ -41,7 +41,7 @@
                             <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn/logout">LOGOUT</a>
                         </li>
                         <li>
-                            <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn">HOME PAGE</a>
+                            <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn/">HOME PAGE</a>
                         </li>
                         <li>
                             <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn/newpost">NEW POST</a>
@@ -109,14 +109,15 @@
         </section>
         <!-- Previous & Next -->
         <script type="text/javascript">
+        var host = window.location.host;
         function previous_page(){
         var previous_page_index = {{page}} - 1;
-        var previous_href = "http://blackmarket.wangzhihao.com.cn/posts/" + previous_page_index;
+        var previous_href = host + "/posts/" + previous_page_index;
         document.getElementById("pre").href = previous_href;
         }
         function next_page(){
         var next_page_index = {{page}} + 1;
-        var next_href = "http://blackmarket.wangzhihao.com.cn/posts/" + next_page_index;
+        var next_href = host + "/posts/" + next_page_index;
         document.getElementById("next").href = next_href;
         }
         </script>
