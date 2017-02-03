@@ -1,5 +1,6 @@
 import re
 import datetime
+import random
 
 from flask import flash, redirect
 
@@ -9,6 +10,22 @@ from black_market.models.models import User
 def timestamp_to_datetime(timestamp):
     d = datetime.datetime.fromtimestamp(timestamp)
     return d.strftime("%Y-%m-%d %H:%M:%S")
+
+
+def num_to_word(day):
+    d = {1: '周一', 2: '周二', 3: '周三', 4: '周四',
+         5: '周五', 6: '周六', 7: '周日'}
+    return d.get(int(day))
+
+
+def get_phone_words(phone):
+    d = {0: '零', 1: '壹', 2: '贰', 3: '叁', 4: '肆',
+         5: '伍', 6: '陆', 7: '柒', 8: '捌', 9: '玖'}
+    s = ''
+    nums = random.sample([i for i in range(0, 10)], 5)
+    for i in phone:
+        s = s + d.get(int(i)) if int(i) in nums else s + i
+    return s
 
 
 def redirect_with_msg(target, msg, category):

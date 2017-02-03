@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Black Market | Demand & Supply</title>
+        <!-- Bootstrap Core CSS -->
+        <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Custom Fonts -->
+        <link href="../static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+        <!-- Plugin CSS -->
+        <link href="../static/vendor/magnific-popup/magnific-popup.css" rel="stylesheet">
+        <!-- Theme CSS -->
+        <link href="../static/css/creative.min.css" rel="stylesheet">
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <body id="page-top">
+        <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand page-scroll" href="http://blackmarket.wangzhihao.com.cn">Black Market</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn/logout">LOGOUT</a>
+                        </li>
+                        <li>
+                            <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn/">HOME PAGE</a>
+                        </li>
+                        <li>
+                            <a class="page-scroll" href="http://blackmarket.wangzhihao.com.cn/newpost">NEW POST</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container-fluid -->
+        </nav>
+        <header>
+            <div class="header-content">
+                <div class="header-content-inner">
+                    <h1 id="homeHeading">Post Detail</h1>
+                    <hr>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
+                                    
+                                    <div class="panel-body">
+                                        <div class="row-fluid">
+                                            <div class="row">
+                                                <em>{{post.time}}</em>
+                                                <p>{{post.message}}</p><br>
+                                            </div>
+                                            <div class="row">
+                                                <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
+                                                <a style="font-size:10px;" class="btn btn-default">{{post.supply.name}}</a><br><br>
+                                                <p style="font-size:15px;">学分: {{post.supply.credit}} &nbsp; 教师: {{post.supply.teacher}}</p>
+                                                {% for schedule in post.supply.schedule %}
+                                                    <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
+                                                {% endfor %}
+                                                <a class="fa fa-magnet sr-icons"></a>&nbsp;
+                                                <a style="font-size:10px;" class="btn btn-default">{{post.demand.name}}</a><br><br>
+                                                <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
+                                                {% for schedule in post.demand.schedule %}
+                                                    <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
+                                                {% endfor %}<br>
+                                                <p style="font-size:15px;"><a class="fa fa-user sr-icons"></a> {{post.user.name}}</p>
+                                                <p style="font-size:15px;"><a class="fa fa-book sr-icons"></a> 经双 {{post.user.grade}} 级</p>
+                                                <p style="font-size:15px;"><a class="fa fa-phone sr-icons"></a> {{post.user.phone}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </header>
+            <section class="bg-primary" id="about">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-2 text-center">
+                            <h1 class="section-heading">NEW POST</h1>
+                            <hr class="light">
+                            <p class="text-faded">发布你的「供给」和「需求」，并在第一时间收到通知。</p>
+                            <a class="page-scroll btn btn-default btn-xl sr-button" href="http://blackmarket.wangzhihao.com.cn/newpost">MAKE A POST</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Previous & Next -->
+            <script type="text/javascript">
+            var host = window.location.host;
+            function previous_page(){
+            var previous_page_index = {{page}} - 1;
+            var previous_href = host + "/posts/" + previous_page_index;
+            document.getElementById("pre").href = previous_href;
+            }
+            function next_page(){
+            var next_page_index = {{page}} + 1;
+            var next_href = host + "/posts/" + next_page_index;
+            document.getElementById("next").href = next_href;
+            }
+            </script>
+            <!-- jQuery -->
+            <script src="../static/vendor/jquery/jquery.min.js"></script>
+            <!-- Bootstrap Core JavaScript -->
+            <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+            <!-- Plugin JavaScript -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+            <script src="../static/vendor/scrollreveal/scrollreveal.min.js"></script>
+            <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+            <!-- Theme JavaScript -->
+            <script src="../static/js/creative.min.js"></script>
+        </body>
+    </html>

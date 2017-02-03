@@ -4,17 +4,20 @@ from flask import (
     Blueprint, request, render_template,
     redirect, get_flashed_messages)
 from flask_login import (
-    login_user, logout_user, current_user,
-    login_required)
+    login_user, logout_user, current_user)
 
 from black_market.ext import db
 from black_market.libs.api import course as course_api
-from black_market.models.models import Post, Supply, Demand, User
+from black_market.models.models import (
+    Post, Supply, Demand, User, CourseSchedule)
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
-    check_email, check_exist, get_paginate_from_list)
+    check_email, check_exist, get_paginate_from_list,
+    num_to_word, get_phone_words)
 
 bp = Blueprint('market', __name__)
+
+next_path = ''
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -127,7 +130,8 @@ def loginpage(msg=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['login']):
         msg = msg + m
-    return render_template('loginpage.html', msg=msg)
+    return render_template('loginpage.html', msg=msg,
+                           next=request.values.get('next'))
 
 
 @bp.route('/login', methods=['POST'])
@@ -151,7 +155,7 @@ def login():
         return redirect_with_msg(
             '/loginpage', u'Wrong password', category='login')
     login_user(user)
-    return redirect('/')
+    return redirect(next_path)
 
 
 @bp.route('/logout')
@@ -160,17 +164,36 @@ def logout():
     return redirect('/')
 
 
-@bp.route('/newpost', methods=['GET'])
+@bp.route('/newpost', methods=['GET', 'POST'])
 def newpost_page():
+    next_path = request.values.get('next')
     if not current_user.is_authenticated:
         return redirect('/loginpage')
-    return render_template('newpost.html')
+    return render_template('newpost.html', next=next_path)
 
 
-@bp.route('/post', methods=['POST'])
-@login_required
-def post():
-    return
+@bp.route('/posts/<int:id>', methods=['GET'])
+def posts(id):
+    if not current_user.is_authenticated:
+        return redirect('/loginpage')
+    p = Post.query.get(id)
+    u = User.query.get(p.user_id)
+    s = Supply.query.filter_by(post_id=id).first()
+    d = Demand.query.filter_by(post_id=id).first()
+    sc = course_api.get_course_by_id(s.course_id)
+    dc = course_api.get_course_by_id(d.course_id)
+    scs = CourseSchedule.query.filter_by(course_id=sc.id).all()
+    dcs = CourseSchedule.query.filter_by(course_id=dc.id).all()
+    supply_schedule = [dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in scs]
+    demand_schedule = [dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in dcs]
+    user = dict(name=u.name, phone=get_phone_words(u.phone), grade=u.grade)
+    supply = dict(name=sc.name, teacher=sc.teacher, credit=sc.credit,
+                  schedule=supply_schedule)
+    demand = dict(name=dc.name, teacher=dc.teacher, credit=dc.credit,
+                  schedule=demand_schedule)
+    post = dict(time=timestamp_to_datetime(p.created_time), message=p.message,
+                user=user, supply=supply, demand=demand)
+    return render_template('post.html', post=post)
 
 
 @bp.route('/course/<int:id>', methods=['GET'])
