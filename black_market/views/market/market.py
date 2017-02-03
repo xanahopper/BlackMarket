@@ -14,11 +14,9 @@ from black_market.models.models import (
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
     check_email, check_exist, get_paginate_from_list,
-    num_to_word, get_phone_words)
+    num_to_word, get_phone_words, get_short_message)
 
 bp = Blueprint('market', __name__)
-
-next_path = ''
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -59,7 +57,7 @@ def search(per_page=6):
         demand = dict(
             course_id=demand_course_id,
             course_name=course_api.get_course_by_id(demand_course_id).name)
-        p = dict(time=time, supply=supply, demand=demand, message=post.message,
+        p = dict(time=time, supply=supply, demand=demand, message=get_short_message(post.message),
                  id=post.id)
         posts.append(p)
     return render_template('index.html', posts=posts, has_next=has_next,
@@ -132,8 +130,7 @@ def loginpage(msg=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['login']):
         msg = msg + m
-    return render_template('loginpage.html', msg=msg,
-                           next=request.values.get('next'))
+    return render_template('loginpage.html', msg=msg)
 
 
 @bp.route('/login', methods=['POST'])
@@ -157,7 +154,7 @@ def login():
         return redirect_with_msg(
             '/loginpage', u'Wrong password', category='login')
     login_user(user)
-    return redirect(next_path)
+    return redirect('/newpost')
 
 
 @bp.route('/logout')
@@ -167,11 +164,13 @@ def logout():
 
 
 @bp.route('/newpost', methods=['GET', 'POST'])
-def newpost_page():
-    next_path = request.values.get('next')
+def newpost_page(msg=''):
     if not current_user.is_authenticated:
         return redirect('/loginpage')
-    return render_template('newpost.html', next=next_path)
+    for m in get_flashed_messages(
+            with_categories=False, category_filter=['post']):
+        msg = msg + m
+    return render_template('newpost.html', msg=msg)
 
 
 @bp.route('/post', methods=['POST'])
@@ -179,7 +178,17 @@ def post():
     user_id = int(current_user.id)
     supply_course_id = int(request.values.get('supplyCourse'))
     demand_course_id = int(request.values.get('demandCourse'))
-    message = request.values.get('message')
+    if supply_course_id == 31 and demand_course_id == 32:
+        return redirect_with_msg(
+            '/newpost', u'同学你使用的姿势不正确吼！还要再学习一个！', category='post')
+    message = request.values.get('message').strip()
+    if not message:
+        return redirect_with_msg(
+            '/newpost', u'同学你好像什么言都没有留呐！', category='post')
+    msg_max_len = 180
+    if len(message) > msg_max_len:
+        return redirect_with_msg(
+            '/newpost', u'同学你留的言太多啦数据库有小情绪了！', category='post')
     created_time = int(time.time())
     p = Post(user_id, created_time, message)
     db.session.add(p)

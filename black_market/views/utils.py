@@ -61,3 +61,8 @@ def get_paginate_from_list(target, page, per_page):
     else:
         has_next = True
         return target[start:end], has_next
+
+
+def get_short_message(message):
+    max_len = 30
+    return message[:max_len] + '...' if len(message) > max_len else message

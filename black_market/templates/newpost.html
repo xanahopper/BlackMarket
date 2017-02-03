@@ -60,10 +60,13 @@
                 <div class="col-lg-8 col-lg-offset-2 text-center">
                     <h1 class="section-heading">NEW POST</h1>
                     <hr class="light">
-                    <p class="text-faded">
-                        Immediately post your <strong><em>Supply</em></strong> and <strong><em>Demand</em></strong> and get contacted at the first time.
-                    </p>
+                    <p class="text-faded">立即发布你的 <strong>「供给」</strong> 和 <strong>「需求」</strong> 并在第一时间得到联系。</p>
                     <form method="post" id="newpostform">
+                        <h4 class="newpost-hd">
+                        {% if (msg | length) > 0 %}
+                            {{msg}}
+                        {% endif %}
+                        </h4><br>
                         <label for="demand_course">I Have</label>
                         <select class="form-control" id="supplyCourse" name="supplyCourse">
                             <option value="31">我只是来求课的TvT</option>
@@ -134,7 +137,7 @@
                         </select><br>
                         <div class="form-group">
                             <label for="message">Leave A Message</label>
-                            <textarea class="form-control" id="message" name="message"></textarea>
+                            <textarea class="form-control" id="message" name="message" placeholder="比如：我是大四毕业狗，跪求张老师的博弈与社会课，我的微信是xxx，我可以请两顿饭！"></textarea>
                         </div>
                     <button button class="btn btn-default btn-xl" onclick="form=document.getElementById('newpostform');form.action='/post';">POST</a>
                     </button>
