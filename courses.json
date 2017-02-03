@@ -760,5 +760,47 @@
     ],
     "teacher": "周其仁",
     "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "666"
+      }
+    ],
+    "credit": 2,
+    "id": 31,
+    "name": "我只是来求课的TvT",
+    "prerequisites": "原理",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "12",
+        "start": "1"
+      }
+    ],
+    "teacher": "无",
+    "type": "选修"
+  },
+  {
+    "classroom": [
+      {
+        "building": "理教",
+        "room": "666"
+      }
+    ],
+    "credit": 2,
+    "id": 32,
+    "name": "我是雷锋我就是来出课的",
+    "prerequisites": "原理",
+    "schedule": [
+      {
+        "day": 1,
+        "end": "12",
+        "start": "1"
+      }
+    ],
+    "teacher": "无",
+    "type": "选修"
   }
 ]

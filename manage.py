@@ -49,23 +49,6 @@ def init_test_database():
             db.session.add(supply)
         db.session.commit()
 
-        # post1 = Post(1, 1485335704, 'I am wzh and I want A.')
-        # post2 = Post(2, 1485337704, 'I am hsy and I want B.')
-        # post1_demand = Demand(1, 12)
-        # post1_supply = Supply(1, 16)
-        # post2_demand = Demand(2, 16)
-        # post2_supply = Supply(2, 12)
-        # comment = Comment(
-        # 2, 1, 'Hello, I wanna exchange my A for your B.', 1485337804)
-        # db.session.add(post1)
-        # db.session.add(post2)
-        # db.session.add(post1_demand)
-        # db.session.add(post1_supply)
-        # db.session.add(post2_demand)
-        # db.session.add(post2_supply)
-        # db.session.add(comment)
-        # db.session.commit()
-
 
 def convert(raw_course):
     if '习题课' in raw_course.name:
