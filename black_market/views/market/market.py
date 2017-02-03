@@ -84,13 +84,6 @@ def verify():
 
 @bp.route('/reg', methods=['POST'])
 def reg():
-    # get data from g and g = None
-    # get phone number
-    # get username
-    # get password
-    # get grade
-    # get email
-    # go to posts
     phone = request.values.get('phone').strip()
     username = request.values.get('username').strip()
     raw_password = request.values.get('password').strip()
@@ -111,6 +104,9 @@ def reg():
     if username == '':
         return redirect_with_msg(
             '/register', u'同学你怎么没有名字啊？！', category='reg')
+    if not int(grade):
+        return redirect_with_msg(
+            '/register', u'同学你没有填写年级喔！', category='reg')
     min_password_len = 8
     if len(raw_password) < min_password_len:
         return redirect_with_msg(
