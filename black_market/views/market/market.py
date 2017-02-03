@@ -25,10 +25,10 @@ next_path = ''
 def search(per_page=6):
     page = request.values.get('page') or 1
     page = int(page)
-    target_supply_name = request.values.get('supply') or ''
-    target_demand_name = request.values.get('demand') or ''
-    target_ss = course_api.search_course_by_filters(target_supply_name)
-    target_ds = course_api.search_course_by_filters(target_demand_name)
+    target_supply_text = request.values.get('supply') or ''
+    target_demand_text = request.values.get('demand') or ''
+    target_ss = course_api.search_course(target_supply_text)
+    target_ds = course_api.search_course(target_demand_text)
     target_supply_ids = [c.id for c in target_ss] if target_ss else []
     target_demand_ids = [c.id for c in target_ds] if target_ds else []
     all_posts = [p for p in Post.query.order_by(Post.id.desc()).all()]
@@ -63,8 +63,8 @@ def search(per_page=6):
                  id=post.id)
         posts.append(p)
     return render_template('index.html', posts=posts, has_next=has_next,
-                           page=page, target_supply=target_supply_name,
-                           target_demand=target_demand_name)
+                           page=page, target_supply=target_supply_text,
+                           target_demand=target_demand_text)
 
 
 @bp.route('/register', methods=['GET', 'POST'])

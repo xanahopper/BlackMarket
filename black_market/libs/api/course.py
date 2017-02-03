@@ -20,6 +20,13 @@ def get_course_ids_by_name(name):
         Course.query.filter(Course.name.ilike('%' + name + '%')))
 
 
+def get_course_ids_by_teacher(teacher):
+    if not teacher:
+        return set()
+    return get_ids_set(
+        Course.query.filter(Course.teacher.ilike('%' + teacher + '%')))
+
+
 def get_course_ids_by_credit(credit):
     if not credit:
         return set()
@@ -36,18 +43,10 @@ def get_course_ids_by_days(days):
     return course_ids
 
 
-def search_course_by_filters(name=None, days=None, credit=None):
-    if not any([name, days, credit]):
+def search_course(text):
+    if not text:
         return
-    days = days.split(',') if days else None
-    ids_by_days = get_course_ids_by_days(days)
-    ids_by_name = get_course_ids_by_name(name)
-    ids_by_credit = get_course_ids_by_credit(credit)
-    course_ids = ids_by_days.union(ids_by_name).union(ids_by_credit)
-    if name:
-        course_ids = course_ids.intersection(ids_by_name)
-    if days:
-        course_ids = course_ids.intersection(ids_by_days)
-    if credit:
-        course_ids = course_ids.intersection(ids_by_credit)
+    ids_by_name = get_course_ids_by_name(text)
+    ids_by_teacher = get_course_ids_by_teacher(text)
+    course_ids = ids_by_name.union(ids_by_teacher)
     return [get_course_by_id(id) for id in course_ids]

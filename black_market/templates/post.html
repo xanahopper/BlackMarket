@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <title>Black Market | Demand & Supply</title>
+        <title>Black Market | Post Detail</title>
         <!-- Bootstrap Core CSS -->
         <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
         <!-- Custom Fonts -->
@@ -72,13 +72,13 @@
                                                 <p style="font-size:15px;"><a class="fa fa-phone"></a> {{post.user.phone}}</p><br>
                                             </div>
                                             <div class="row">
-                                                <a class="fa fa-paper-plane"></a>&nbsp;
+                                                <img src="/static/img/supply.png" width="20px">&nbsp;
                                                 <a style="font-size:10px;" class="btn btn-default">{{post.supply.name}}</a><br><br>
                                                 <p style="font-size:15px;">学分: {{post.supply.credit}} &nbsp; 教师: {{post.supply.teacher}}</p>
                                                 {% for schedule in post.supply.schedule %}
                                                     <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
                                                 {% endfor %}
-                                                <a class="fa fa-magnet"></a>&nbsp;
+                                                <img src="/static/img/demand.png" width="20px">&nbsp;
                                                 <a style="font-size:10px;" class="btn btn-default">{{post.demand.name}}</a><br><br>
                                                 <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
                                                 {% for schedule in post.demand.schedule %}
@@ -118,5 +118,14 @@
             <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
             <!-- Theme JavaScript -->
             <script src="../static/js/creative.min.js"></script>
+            <script>
+            var _hmt = _hmt || [];
+            (function() {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?0069ccbd994c77897aa8cde71d9269f4";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+            })();
+            </script>
         </body>
     </html>

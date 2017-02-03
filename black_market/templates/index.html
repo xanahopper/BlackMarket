@@ -58,10 +58,10 @@
                         <div class="row-fluid">
                             <div class="span4">
                                 <form method="get" id="newpostform" class="form-inline">
-                                    <a class="fa fa-paper-plane"></a>&nbsp;
-                                    <input id="supplyCourse" name="supply" class="input-medium search-query" placeholder="搜供给" value="" type="text" style="color:#6699ee; width:100px;height:30px">&nbsp;
-                                    <a class="fa fa-magnet"></a>&nbsp;
-                                    <input id="demandCourse" name="demand" class="input-medium search-query" placeholder="搜需求" value="" type="text" style="color:#6699ee; width:100px;height:30px">&nbsp;
+                                    <img src="static/img/supply.png" width="17px">
+                                    <input id="supplyCourse" name="supply" class="input-medium search-query" placeholder="搜供给" value="" type="text" style="color:#6699ee; width:100px;height:30px">
+                                    <img src="static/img/demand.png" width="17px">
+                                    <input id="demandCourse" name="demand" class="input-medium search-query" placeholder="搜需求" value="" type="text" style="color:#6699ee; width:100px;height:30px">
                                     <button class="btn btn-default"><a class="fa fa-search"></a></button>
                                 </form><br>
                             </div>
@@ -77,9 +77,9 @@
                                                             <p style="font-size:15px;"><a style="color:#FFFFFF;">{{post.message}}</a></p>
                                                         </div>
                                                         <div class="row">
-                                                            <a class="fa fa-paper-plane"></a>&nbsp;
-                                                            <a style="font-size:10px;" class="btn btn-default">{{post.supply.course_name}}</a>&nbsp;&nbsp;
-                                                            <a class="fa fa-magnet"></a>&nbsp;
+                                                            <img src="static/img/supply.png" width="18px">
+                                                            <a style="font-size:10px;" class="btn btn-default">{{post.supply.course_name}}</a>
+                                                            <img src="static/img/demand.png" width="18px">
                                                             <a style="font-size:10px;" class="btn btn-default">{{post.demand.course_name}}</a>
                                                         </div>
                                                     </div>
@@ -243,5 +243,14 @@
                 <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
                 <!-- Theme JavaScript -->
                 <script src="../static/js/creative.min.js"></script>
+                <script>
+                var _hmt = _hmt || [];
+                (function() {
+                var hm = document.createElement("script");
+                hm.src = "https://hm.baidu.com/hm.js?0069ccbd994c77897aa8cde71d9269f4";
+                var s = document.getElementsByTagName("script")[0];
+                s.parentNode.insertBefore(hm, s);
+                })();
+                </script>
             </body>
         </html>
