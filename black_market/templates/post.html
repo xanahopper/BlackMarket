@@ -67,6 +67,9 @@
                                             <div class="row">
                                                 <em>{{post.time}}</em>
                                                 <p>{{post.message}}</p><br>
+                                                <p style="font-size:15px;"><a class="fa fa-user"></a> {{post.user.name}}</p>
+                                                <p style="font-size:15px;"><a class="fa fa-book"></a> 经双 {{post.user.grade}} 级</p>
+                                                <p style="font-size:15px;"><a class="fa fa-phone"></a> {{post.user.phone}}</p><br>
                                             </div>
                                             <div class="row">
                                                 <a class="fa fa-paper-plane"></a>&nbsp;
@@ -80,11 +83,7 @@
                                                 <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
                                                 {% for schedule in post.demand.schedule %}
                                                     <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
-                                                {% endfor %}<br>
-                                                <p style="font-size:15px;"><a class="fa fa-user"></a> {{post.user.name}}</p>
-                                                <p style="font-size:15px;"><a class="fa fa-book"></a> 经双 {{post.user.grade}} 级</p>
-                                                <p style="font-size:15px;"><a class="fa fa-phone
-                                                "></a> {{post.user.phone}}</p>
+                                                {% endfor %}
                                             </div>
                                         </div>
                                     </div>
