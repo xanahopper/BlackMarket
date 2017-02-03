@@ -88,7 +88,7 @@ def reg():
     username = request.values.get('username').strip()
     raw_password = request.values.get('password').strip()
     confirm_password = request.values.get('confirmPassword').strip()
-    grade = request.values.get('grade').strip()
+    grade = request.values.get('grade')
     email = request.values.get('email').strip()
 
     if not check_phone(phone):
@@ -104,7 +104,7 @@ def reg():
     if username == '':
         return redirect_with_msg(
             '/register', u'同学你怎么没有名字啊？！', category='reg')
-    if not int(grade):
+    if not grade:
         return redirect_with_msg(
             '/register', u'同学你没有填写年级喔！', category='reg')
     min_password_len = 8
