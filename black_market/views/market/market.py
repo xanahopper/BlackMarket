@@ -94,25 +94,30 @@ def reg():
     phone = request.values.get('phone').strip()
     username = request.values.get('username').strip()
     raw_password = request.values.get('password').strip()
+    confirm_password = request.values.get('confirmPassword').strip
     grade = request.values.get('grade').strip()
     email = request.values.get('email').strip()
 
     if not check_phone(phone):
         return redirect_with_msg(
-            '/register', u'Wrong phone number!', category='reg')
+            '/register', u'你输入的手机号看上去有些奇怪！', category='reg')
     if check_exist(phone):
         return redirect_with_msg(
-            '/register', u'This phone number has been registered!',
+            '/register', u'此帐号已经被注册了！',
             category='reg')
     if check_email(email) == '':
         return redirect_with_msg(
-            '/register', u'Wrong email address!', category='reg')
+            '/register', u'你输入的邮箱地址看上去有些奇怪！', category='reg')
     if username == '':
         return redirect_with_msg(
-            '/register', u'Empty username is not allowed', category='reg')
-    if raw_password == '':
+            '/register', u'同学你怎么没有名字啊？！', category='reg')
+    min_password_len = 8
+    if len(raw_password) < min_password_len:
         return redirect_with_msg(
-            '/register', u'Empty password is not allowed', category='reg')
+            '/register', u'密码不能太短喔！', category='reg')
+    if raw_password != confirm_password:
+        return redirect_with_msg(
+            '/register', u'两次密码输入不一致！', category='reg')
     m = hashlib.md5()
     m.update(raw_password.encode('utf-8'))
     password = m.hexdigest()
