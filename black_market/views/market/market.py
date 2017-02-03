@@ -189,7 +189,7 @@ def post():
     db.session.add(d)
     db.session.add(s)
     db.session.commit()
-    return redirect('/newpost')
+    return redirect('/')
 
 
 @bp.route('/posts/<int:id>', methods=['GET'])
