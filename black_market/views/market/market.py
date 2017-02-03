@@ -94,7 +94,7 @@ def reg():
     phone = request.values.get('phone').strip()
     username = request.values.get('username').strip()
     raw_password = request.values.get('password').strip()
-    confirm_password = request.values.get('confirmPassword').strip
+    confirm_password = request.values.get('confirmPassword').strip()
     grade = request.values.get('grade').strip()
     email = request.values.get('email').strip()
 
