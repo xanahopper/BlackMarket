@@ -69,21 +69,22 @@
                                                 <p>{{post.message}}</p><br>
                                             </div>
                                             <div class="row">
-                                                <a class="fa fa-paper-plane sr-icons"></a>&nbsp;
+                                                <a class="fa fa-paper-plane"></a>&nbsp;
                                                 <a style="font-size:10px;" class="btn btn-default">{{post.supply.name}}</a><br><br>
                                                 <p style="font-size:15px;">学分: {{post.supply.credit}} &nbsp; 教师: {{post.supply.teacher}}</p>
                                                 {% for schedule in post.supply.schedule %}
                                                     <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
                                                 {% endfor %}
-                                                <a class="fa fa-magnet sr-icons"></a>&nbsp;
+                                                <a class="fa fa-magnet"></a>&nbsp;
                                                 <a style="font-size:10px;" class="btn btn-default">{{post.demand.name}}</a><br><br>
                                                 <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
                                                 {% for schedule in post.demand.schedule %}
                                                     <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
                                                 {% endfor %}<br>
-                                                <p style="font-size:15px;"><a class="fa fa-user sr-icons"></a> {{post.user.name}}</p>
-                                                <p style="font-size:15px;"><a class="fa fa-book sr-icons"></a> 经双 {{post.user.grade}} 级</p>
-                                                <p style="font-size:15px;"><a class="fa fa-phone sr-icons"></a> {{post.user.phone}}</p>
+                                                <p style="font-size:15px;"><a class="fa fa-user"></a> {{post.user.name}}</p>
+                                                <p style="font-size:15px;"><a class="fa fa-book"></a> 经双 {{post.user.grade}} 级</p>
+                                                <p style="font-size:15px;"><a class="fa fa-phone
+                                                "></a> {{post.user.phone}}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -94,6 +95,7 @@
                     </div>
                     
                 </div>
+                <a class="page-scroll btn btn-default" onclick="window.history.go(-1);">Go Back</a>
             </header>
             <section class="bg-primary" id="newpost">
                 <div class="container">
@@ -107,20 +109,6 @@
                     </div>
                 </div>
             </section>
-            <!-- Previous & Next -->
-            <script type="text/javascript">
-            var host = window.location.host;
-            function previous_page(){
-            var previous_page_index = {{page}} - 1;
-            var previous_href = host + "/posts/" + previous_page_index;
-            document.getElementById("pre").href = previous_href;
-            }
-            function next_page(){
-            var next_page_index = {{page}} + 1;
-            var next_href = host + "/posts/" + next_page_index;
-            document.getElementById("next").href = next_href;
-            }
-            </script>
             <!-- jQuery -->
             <script src="../static/vendor/jquery/jquery.min.js"></script>
             <!-- Bootstrap Core JavaScript -->

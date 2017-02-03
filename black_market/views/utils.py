@@ -22,7 +22,8 @@ def get_phone_words(phone):
     d = {0: '零', 1: '壹', 2: '贰', 3: '叁', 4: '肆',
          5: '伍', 6: '陆', 7: '柒', 8: '捌', 9: '玖'}
     s = ''
-    nums = random.sample([i for i in range(0, 10)], 5)
+    nums = random.sample(
+        [i for i in range(0, len(phone))], int(len(phone) / 2))
     for i in phone:
         s = s + d.get(int(i)) if int(i) in nums else s + i
     return s

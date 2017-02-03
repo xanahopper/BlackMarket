@@ -190,8 +190,8 @@
                 <!-- JS Code -->
                 <script type="text/javascript">
                 function openPostPgae(postId){
-                var url = "http://" + document.domain + "/posts/" + postId
-                window.open(url)
+                var url = "http://" + window.location.host + "/posts/" + postId
+                window.location.href = url
                 }
                 function post(path, params, method) {
                 method = method || "post";

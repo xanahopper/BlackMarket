@@ -1,3 +1,4 @@
+import time
 import hashlib
 
 from flask import (
@@ -171,6 +172,24 @@ def newpost_page():
     if not current_user.is_authenticated:
         return redirect('/loginpage')
     return render_template('newpost.html', next=next_path)
+
+
+@bp.route('/post', methods=['POST'])
+def post():
+    user_id = int(current_user.id)
+    supply_course_id = int(request.values.get('supplyCourse'))
+    demand_course_id = int(request.values.get('demandCourse'))
+    message = request.values.get('message')
+    created_time = int(time.time())
+    p = Post(user_id, created_time, message)
+    db.session.add(p)
+    db.session.commit()
+    d = Demand(int(p.id), demand_course_id)
+    s = Supply(int(p.id), supply_course_id)
+    db.session.add(d)
+    db.session.add(s)
+    db.session.commit()
+    return redirect('/newpost')
 
 
 @bp.route('/posts/<int:id>', methods=['GET'])
