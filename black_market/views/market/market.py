@@ -58,7 +58,8 @@ def search(per_page=6):
         demand = dict(
             course_id=demand_course_id,
             course_name=course_api.get_course_by_id(demand_course_id).name)
-        p = dict(time=time, supply=supply, demand=demand, message=post.message)
+        p = dict(time=time, supply=supply, demand=demand, message=post.message,
+                 id=post.id)
         posts.append(p)
     return render_template('index.html', posts=posts, has_next=has_next,
                            page=page, target_supply=target_supply_name,
