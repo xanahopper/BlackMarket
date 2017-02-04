@@ -67,65 +67,77 @@
                                             <div class="row">
                                                 <em>{{post.time}}</em>
                                                 <p>{{post.message}}</p><br>
-                                                <p style="font-size:15px;"><a class="fa fa-user"></a> {{post.user.name}}</p>
-                                                <p style="font-size:15px;"><a class="fa fa-book"></a> 经双 {{post.user.grade}} 级</p>
+                                                <p style="font-size:15px;"><a class="fa fa-user"></a> {{post.user.name}}&nbsp;&nbsp;<a class="fa fa-book"></a> 经双 {{post.user.grade}} 级</p>
+                                                {%  if post.status == 0 %}
                                                 <p style="font-size:15px;"><a class="fa fa-phone"></a> {{post.contact}}</p><br>
-                                            </div>
-                                            <div class="row">
-                                                <img src="/static/img/supply.png" width="20px">&nbsp;
-                                                <a style="font-size:14px;" class="btn btn-default">{{post.supply.name}}</a><br><br>
-                                                <p style="font-size:15px;">学分: {{post.supply.credit}} &nbsp; 教师: {{post.supply.teacher}}</p>
-                                                {% for schedule in post.supply.schedule %}
-                                                    <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
-                                                {% endfor %}
-                                                <img src="/static/img/demand.png" width="20px">&nbsp;
-                                                <a style="font-size:14px;" class="btn btn-default">{{post.demand.name}}</a><br><br>
-                                                <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
-                                                {% for schedule in post.demand.schedule %}
-                                                    <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
-                                                {% endfor %}
-                                            </div>
+                                            {% else %}
+                                                <p style="font-size:15px;"><a class="fa fa-phone"></a> 交易已完成，联系方式不再显示。</p><br>
+                                            {% endif %}
+                                        </div>
+                                        <div class="row">
+                                            <img src="/static/img/supply.png" width="20px">&nbsp;
+                                            <a style="font-size:14px;" class="btn btn-default">{{post.supply.name}}</a><br><br>
+                                            <p style="font-size:15px;">学分: {{post.supply.credit}} &nbsp; 教师: {{post.supply.teacher}}</p>
+                                            {% for schedule in post.supply.schedule %}
+                                                <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
+                                            {% endfor %}
+                                            <img src="/static/img/demand.png" width="20px">&nbsp;
+                                            <a style="font-size:14px;" class="btn btn-default">{{post.demand.name}}</a><br><br>
+                                            <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
+                                            {% for schedule in post.demand.schedule %}
+                                                <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
+                                            {% endfor %}
                                         </div>
                                     </div>
-                                    
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
                 </div>
-                <a class="page-scroll btn btn-default" onclick="window.history.go(-1);">Go Back</a>
-            </header>
-            <section class="bg-primary" id="newpost">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-8 col-lg-offset-2 text-center">
-                            <h1 class="section-heading">NEW POST</h1>
-                            <hr class="light">
-                            <p class="text-faded">立即发布你的 <strong>「供给」</strong> 和 <strong>「需求」</strong> 并在第一时间得到联系。</p>
-                            <a class="page-scroll btn btn-default btn-xl sr-button" href="/newpost">MAKE A POST</a>
-                        </div>
-                    </div>
+                
+            </div>
+            {%  if post.status == 0 and current_user_id == post.user.id %}
+            <a class="page-scroll btn btn-default" onclick="markDone();"> 交易已完成 </a>
+        {% endif %}
+        <a class="page-scroll btn btn-default" onclick="window.history.go(-1);"> 返回 </a>
+    </header>
+    <section class="bg-primary" id="newpost">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 text-center">
+                    <h1 class="section-heading">NEW POST</h1>
+                    <hr class="light">
+                    <p class="text-faded">立即发布你的 <strong>「供给」</strong> 和 <strong>「需求」</strong> 并在第一时间得到联系。</p>
+                    <a class="page-scroll btn btn-default btn-xl sr-button" href="/newpost">MAKE A POST</a>
                 </div>
-            </section>
-            <!-- jQuery -->
-            <script src="../static/vendor/jquery/jquery.min.js"></script>
-            <!-- Bootstrap Core JavaScript -->
-            <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
-            <!-- Plugin JavaScript -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-            <script src="../static/vendor/scrollreveal/scrollreveal.min.js"></script>
-            <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
-            <!-- Theme JavaScript -->
-            <script src="../static/js/creative.min.js"></script>
-            <script>
-            var _hmt = _hmt || [];
-            (function() {
-            var hm = document.createElement("script");
-            hm.src = "https://hm.baidu.com/hm.js?0069ccbd994c77897aa8cde71d9269f4";
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(hm, s);
-            })();
-            </script>
-        </body>
-    </html>
+            </div>
+        </div>
+    </section>
+    <script type="text/javascript">
+    function markDone(){
+    var postId = {{post.id}}
+    var url = "http://" + window.location.host + "/posts/markdone/" + postId
+    window.location.href = url
+    }
+    </script>
+    <!-- jQuery -->
+    <script src="../static/vendor/jquery/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script src="../static/vendor/scrollreveal/scrollreveal.min.js"></script>
+    <script src="../static/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <!-- Theme JavaScript -->
+    <script src="../static/js/creative.min.js"></script>
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?0069ccbd994c77897aa8cde71d9269f4";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+</body>
+</html>

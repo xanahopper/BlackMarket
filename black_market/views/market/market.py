@@ -223,15 +223,28 @@ def posts(id):
         dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in scs]
     demand_schedule = [
         dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in dcs]
-    user = dict(name=u.name, grade=u.grade)
+    user = dict(id=u.id, name=u.name, grade=u.grade)
     supply = dict(name=sc.name, teacher=sc.teacher, credit=sc.credit,
                   schedule=supply_schedule)
     demand = dict(name=dc.name, teacher=dc.teacher, credit=dc.credit,
                   schedule=demand_schedule)
-    post = dict(time=timestamp_to_datetime(p.created_time),
-                contact=parse_contact(p.contact, u.phone),
+    post = dict(id=id, time=timestamp_to_datetime(p.created_time),
+                contact=parse_contact(p.contact, u.phone), status=p.status,
                 message=p.message, user=user, supply=supply, demand=demand)
-    return render_template('post.html', post=post)
+    return render_template('post.html', post=post,
+                           current_user_id=current_user.id)
+
+
+@bp.route('/posts/markdone/<int:id>', methods=['GET'])
+def markdone(id):
+    if not current_user.is_authenticated:
+        return redirect('/loginpage')
+    p = Post.query.get(id)
+    if int(current_user.id) != int(p.user_id):
+        return redirect('/posts/' + str(id))
+    p.status = 1
+    db.session.commit()
+    return redirect('/posts/' + str(id))
 
 
 @bp.route('/course/<int:id>', methods=['GET'])
