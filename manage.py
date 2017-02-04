@@ -32,16 +32,16 @@ def init_test_database():
     init_database()
     with app.app_context():
         user1 = User(
-            'test_user1', '15612345678', 'user1@qq.com', 'password1', 2013)
+            'test_user1', '15612345671', 'user1@qq.com', 'password1', 2013)
         user2 = User(
-            'test_user2', '18812345678', 'user2@qq.com', 'password2', 2014)
+            'test_user2', '15612345672', 'user2@qq.com', 'password2', 2014)
         db.session.add(user1)
         db.session.add(user2)
         db.session.commit()
         for i in range(0, 15):
             post = Post(
-                i % 2 + 1, 1485335704 + 12 * i,
-                'I am post' + str(i))
+                i % 2 + 1, 1486200246 + 1800 * i, '1561234567%d' % (i % 2 + 1),
+                '我是xxx，跪求xxx课，请联系我！')
             demand = Demand(i + 1, i + 10)
             supply = Supply(i + 1, i + 14)
             db.session.add(post)

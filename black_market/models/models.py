@@ -82,14 +82,16 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     status = db.Column(db.Integer)
     created_time = db.Column(db.Integer)
+    contact = db.Column(db.String(80))
     message = db.Column(db.String(256))
     demand = db.relationship('Demand', backref='post', lazy='dynamic')
     supply = db.relationship('Supply', backref='post', lazy='dynamic')
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
 
-    def __init__(self, user_id, created_time, message, status=0):
+    def __init__(self, user_id, created_time, contact, message, status=0):
         self.user_id = user_id
         self.created_time = created_time
+        self.contact = contact
         self.message = message
         self.status = status
 

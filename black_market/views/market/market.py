@@ -14,7 +14,7 @@ from black_market.models.models import (
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
     check_email, check_exist, get_paginate_from_list,
-    num_to_word, get_phone_words, get_short_message)
+    num_to_word, parse_contact, get_short_message)
 
 bp = Blueprint('market', __name__)
 
@@ -57,7 +57,8 @@ def search(per_page=6):
         demand = dict(
             course_id=demand_course_id,
             course_name=course_api.get_course_by_id(demand_course_id).name)
-        p = dict(time=time, supply=supply, demand=demand, message=get_short_message(post.message),
+        p = dict(time=time, supply=supply, demand=demand,
+                 message=get_short_message(post.message),
                  id=post.id)
         posts.append(p)
     return render_template('index.html', posts=posts, has_next=has_next,
@@ -155,7 +156,7 @@ def login():
         return redirect_with_msg(
             '/loginpage', u'Wrong password', category='login')
     login_user(user)
-    return redirect('/newpost')
+    return redirect('/')
 
 
 @bp.route('/logout')
@@ -171,7 +172,7 @@ def newpost_page(msg=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['post']):
         msg = msg + m
-    return render_template('newpost.html', msg=msg)
+    return render_template('newpost.html', phone=current_user.phone, msg=msg)
 
 
 @bp.route('/post', methods=['POST'])
@@ -179,10 +180,14 @@ def post():
     user_id = int(current_user.id)
     supply_course_id = int(request.values.get('supplyCourse'))
     demand_course_id = int(request.values.get('demandCourse'))
+    contact = request.values.get('contact').strip()
+    message = request.values.get('message').strip()
     if supply_course_id == 31 and demand_course_id == 32:
         return redirect_with_msg(
-            '/newpost', u'同学你使用的姿势不正确吼！还要再学习一个！', category='post')
-    message = request.values.get('message').strip()
+            '/newpost', u'同学你使用姿势不对吼！还要再学习一个！', category='post')
+    if not contact:
+        return redirect_with_msg(
+            '/newpost', u'同学你要留个联系方式啊！', category='post')
     if not message:
         return redirect_with_msg(
             '/newpost', u'同学你好像什么言都没有留呐！', category='post')
@@ -191,7 +196,7 @@ def post():
         return redirect_with_msg(
             '/newpost', u'同学你留的言太多啦数据库有小情绪了！', category='post')
     created_time = int(time.time())
-    p = Post(user_id, created_time, message)
+    p = Post(user_id, created_time, contact, message)
     db.session.add(p)
     db.session.commit()
     d = Demand(int(p.id), demand_course_id)
@@ -208,21 +213,24 @@ def posts(id):
         return redirect('/loginpage')
     p = Post.query.get(id)
     u = User.query.get(p.user_id)
-    s = Supply.query.filter_by(post_id=id).first()
-    d = Demand.query.filter_by(post_id=id).first()
-    sc = course_api.get_course_by_id(s.course_id)
-    dc = course_api.get_course_by_id(d.course_id)
+    supply = Supply.query.filter_by(post_id=id).first()
+    demand = Demand.query.filter_by(post_id=id).first()
+    sc = course_api.get_course_by_id(supply.course_id)
+    dc = course_api.get_course_by_id(demand.course_id)
     scs = CourseSchedule.query.filter_by(course_id=sc.id).all()
     dcs = CourseSchedule.query.filter_by(course_id=dc.id).all()
-    supply_schedule = [dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in scs]
-    demand_schedule = [dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in dcs]
-    user = dict(name=u.name, phone=get_phone_words(u.phone), grade=u.grade)
+    supply_schedule = [
+        dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in scs]
+    demand_schedule = [
+        dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in dcs]
+    user = dict(name=u.name, grade=u.grade)
     supply = dict(name=sc.name, teacher=sc.teacher, credit=sc.credit,
                   schedule=supply_schedule)
     demand = dict(name=dc.name, teacher=dc.teacher, credit=dc.credit,
                   schedule=demand_schedule)
-    post = dict(time=timestamp_to_datetime(p.created_time), message=p.message,
-                user=user, supply=supply, demand=demand)
+    post = dict(time=timestamp_to_datetime(p.created_time),
+                contact=parse_contact(p.contact, u.phone),
+                message=p.message, user=user, supply=supply, demand=demand)
     return render_template('post.html', post=post)
 
 
