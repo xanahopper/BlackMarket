@@ -40,18 +40,22 @@
                         <li>
                             <a class="page-scroll" href="/newpost">New Post</a>
                         </li>
-                        <li>
-                            <a class="page-scroll" href="/loginpage">Login</a>
-                        </li>
-                        <li>
-                            <a class="page-scroll" href="/logout">Logout</a>
-                        </li>
+                        
                         <li>
                             <a class="page-scroll" href="#about">About</a>
                         </li>
                         <li>
                             <a class="page-scroll" href="#contact">Contact</a>
                         </li>
+                        {% if is_login %}
+                            <li>
+                                <a class="page-scroll" href="/logout">Logout</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a class="page-scroll" href="/loginpage">Login</a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- /.navbar-collapse -->
@@ -76,26 +80,42 @@
                             </div>
                             <div class="container-fluid">
                                 <div class="row">
-                                    {% for post in posts %}
-                                        <div class="col-md-6" onclick="openPostPgae('{{post.id}}');">
+                                    {% if posts %}
+                                        {% for post in posts %}
+                                            <div class="col-md-6" onclick="openPostPgae('{{post.id}}');">
+                                                <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
+                                                    <div class="panel-body">
+                                                        <div class="row-fluid">
+                                                            <div class="row">
+                                                                <a style="color:#CCCCCC;"><em>{{post.time}}</em></a>
+                                                                <p style="font-size:15px;"><a style="color:#FFFFFF;">{{post.message}}</a></p>
+                                                            </div>
+                                                            <div class="row">
+                                                                <img src="static/img/supply.png" width="18px">
+                                                                <a style="font-size:10px;" class="btn btn-default">{{post.supply.course_name}}</a>
+                                                                <img src="static/img/demand.png" width="18px">
+                                                                <a style="font-size:10px;" class="btn btn-default">{{post.demand.course_name}}</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="col-md-12">
                                             <div class="panel panel-default" style="background-color: rgba(0,0,0,.5);">
                                                 <div class="panel-body">
                                                     <div class="row-fluid">
                                                         <div class="row">
-                                                            <a style="color:#CCCCCC;"><em>{{post.time}}</em></a>
-                                                            <p style="font-size:15px;"><a style="color:#FFFFFF;">{{post.message}}</a></p>
-                                                        </div>
-                                                        <div class="row">
-                                                            <img src="static/img/supply.png" width="18px">
-                                                            <a style="font-size:10px;" class="btn btn-default">{{post.supply.course_name}}</a>
-                                                            <img src="static/img/demand.png" width="18px">
-                                                            <a style="font-size:10px;" class="btn btn-default">{{post.demand.course_name}}</a>
+                                                            <p style="font-size:15px;"><a style="color:#FFFFFF;">哎呦我去，暂时一个都没搜到。</a></p>
+
+                                                            <p style="font-size:15px;"><a style="color:#FFFFFF;">换个搜索词（课程名或教师名）试试吧。</a></p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    {% endfor %}
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

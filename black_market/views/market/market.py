@@ -21,6 +21,7 @@ bp = Blueprint('market', __name__)
 
 @bp.route('/', methods=['GET', 'POST'])
 def search(per_page=6):
+    is_login = True if current_user.is_authenticated else False
     page = request.values.get('page') or 1
     page = int(page)
     target_supply_text = request.values.get('supply') or ''
@@ -63,7 +64,7 @@ def search(per_page=6):
         posts.append(p)
     return render_template('index.html', posts=posts, has_next=has_next,
                            page=page, target_supply=target_supply_text,
-                           target_demand=target_demand_text)
+                           target_demand=target_demand_text, is_login=is_login)
 
 
 @bp.route('/register', methods=['GET', 'POST'])
