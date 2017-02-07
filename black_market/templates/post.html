@@ -73,18 +73,22 @@
                                             {% endif %}
                                         </div>
                                         <div class="row">
+                                        {% if post.supply.course_id != 31 %}
                                             <img src="/static/img/supply.png" width="20px">&nbsp;
                                             <a style="font-size:14px;" class="btn btn-default">{{post.supply.name}}</a><br><br>
                                             <p style="font-size:15px;">学分: {{post.supply.credit}} &nbsp; 教师: {{post.supply.teacher}}</p>
                                             {% for schedule in post.supply.schedule %}
                                                 <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
                                             {% endfor %}
+                                        {% endif %}
+                                        {% if post.demand.course_id != 32  %}
                                             <img src="/static/img/demand.png" width="20px">&nbsp;
                                             <a style="font-size:14px;" class="btn btn-default">{{post.demand.name}}</a><br><br>
                                             <p style="font-size:15px;">学分: {{post.demand.credit}} &nbsp; 教师: {{post.demand.teacher}}</p>
                                             {% for schedule in post.demand.schedule %}
                                                 <p style="font-size:15px;">{{schedule.day}}: {{schedule.start}} - {{schedule.end}}</p>
                                             {% endfor %}
+                                        {% endif %}
                                         </div>
                                     </div>
                                 </div>

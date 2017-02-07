@@ -226,9 +226,9 @@ def posts(id):
         dict(day=num_to_word(s.day), start=s.start, end=s.end) for s in dcs]
     user = dict(id=u.id, name=u.name, grade=u.grade)
     supply = dict(name=sc.name, teacher=sc.teacher, credit=sc.credit,
-                  schedule=supply_schedule)
+                  schedule=supply_schedule, course_id=supply.course_id)
     demand = dict(name=dc.name, teacher=dc.teacher, credit=dc.credit,
-                  schedule=demand_schedule)
+                  schedule=demand_schedule, course_id=demand.course_id)
     post = dict(id=id, time=timestamp_to_datetime(p.created_time),
                 contact=parse_contact(p.contact, u.phone), status=p.status,
                 message=p.message, user=user, supply=supply, demand=demand)
