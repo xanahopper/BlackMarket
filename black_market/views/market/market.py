@@ -33,6 +33,8 @@ def search(per_page=6):
     all_posts = [p for p in Post.query.order_by(Post.id.desc()).all()]
     target_posts = []
     for post in all_posts:
+        if post.status == 2:
+            continue
         supply_course_id = Supply.query.filter_by(
             post_id=post.id).first().course_id
         if target_ss is not None:
