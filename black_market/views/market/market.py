@@ -6,6 +6,7 @@ from flask import (
     redirect, get_flashed_messages)
 from flask_login import (
     login_user, logout_user, current_user)
+from werkzeug.contrib.cache import SimpleCache
 
 from black_market.ext import db
 from black_market.libs.api import course as course_api
@@ -18,6 +19,7 @@ from black_market.views.utils import (
 
 bp = Blueprint('market', __name__)
 
+cache = SimpleCache()
 
 @bp.route('/', methods=['GET', 'POST'])
 def search(per_page=6):
@@ -74,7 +76,12 @@ def register_page(msg=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['reg']):
         msg = msg + m
-    return render_template('register.html', msg=msg)
+    phone = cache.get('phone') or ''
+    username = cache.get('username') or ''
+    email = cache.get('email') or ''
+    print(phone, username, email)
+    return render_template('register.html', msg=msg, phone=phone,
+                           username=username, email=email)
 
 
 @bp.route('/verify', methods=['POST'])
@@ -94,6 +101,11 @@ def reg():
     confirm_password = request.values.get('confirmPassword').strip()
     grade = request.values.get('grade')
     email = request.values.get('email').strip()
+    cache.set('phone', phone, timeout=5*60)
+    cache.set('username', username, timeout=5*60)
+    cache.set('raw_password', raw_password, timeout=5*60)
+    cache.set('confirm_password', confirm_password, timeout=5*60)
+    cache.set('email', email, timeout=5*60)
 
     if not check_phone(phone):
         return redirect_with_msg(
@@ -111,10 +123,10 @@ def reg():
     if not grade:
         return redirect_with_msg(
             '/register', u'同学你没有填写年级喔！', category='reg')
-    min_password_len = 8
+    min_password_len = 6
     if len(raw_password) < min_password_len:
         return redirect_with_msg(
-            '/register', u'密码不能太短喔！', category='reg')
+            '/register', u'密码不能短于六位喔！', category='reg')
     if raw_password != confirm_password:
         return redirect_with_msg(
             '/register', u'两次密码输入不一致！', category='reg')
@@ -175,7 +187,9 @@ def newpost_page(msg=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['post']):
         msg = msg + m
-    return render_template('newpost.html', phone=current_user.phone, msg=msg)
+    message = cache.get('message') or ''
+    return render_template('newpost.html', phone=current_user.phone,
+                           msg=msg, message=message)
 
 
 @bp.route('/post', methods=['POST'])
@@ -185,6 +199,7 @@ def post():
     demand_course_id = int(request.values.get('demandCourse'))
     contact = request.values.get('contact').strip()
     message = request.values.get('message').strip()
+    cache.set('message', message, timeout=5*60)
     if supply_course_id == 31 and demand_course_id == 32:
         return redirect_with_msg(
             '/newpost', u'同学你使用姿势不对吼！还要再学习一个！', category='post')
