@@ -20,7 +20,7 @@ from black_market.views.utils import (
 bp = Blueprint('market', __name__)
 
 cache = SimpleCache()
-timeout = 60
+timeout = 30
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -81,9 +81,6 @@ def register_page(msg=''):
     phone = cache.get('phone') or ''
     username = cache.get('username') or ''
     email = cache.get('email') or ''
-    cache.set('phone', None)
-    cache.set('username', None)
-    cache.set('email', None)
     return render_template('register.html', msg=msg, phone=phone,
                            username=username, email=email)
 
@@ -190,7 +187,6 @@ def newpost_page(msg=''):
             with_categories=False, category_filter=['post']):
         msg = msg + m
     message = cache.get('message') or ''
-    cache.set('message', None)
     return render_template('newpost.html', phone=current_user.phone,
                            msg=msg, message=message)
 
