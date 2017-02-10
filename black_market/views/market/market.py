@@ -6,7 +6,6 @@ from flask import (
     redirect, get_flashed_messages)
 from flask_login import (
     login_user, logout_user, current_user)
-from werkzeug.contrib.cache import SimpleCache
 
 from black_market.ext import db
 from black_market.libs.api import course as course_api
@@ -15,12 +14,10 @@ from black_market.models.models import (
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
     check_email, check_exist, get_paginate_from_list,
-    num_to_word, parse_contact, get_short_message)
+    num_to_word, parse_contact, get_short_message,
+    flash_form_data)
 
 bp = Blueprint('market', __name__)
-
-cache = SimpleCache()
-timeout = 30
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -74,13 +71,16 @@ def search(per_page=6):
 
 
 @bp.route('/register', methods=['GET', 'POST'])
-def register_page(msg=''):
+def register_page(msg='', phone='', username='', email=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['reg']):
         msg = msg + m
-    phone = cache.get('phone') or ''
-    username = cache.get('username') or ''
-    email = cache.get('email') or ''
+    if get_flashed_messages(with_categories=False, category_filter=['phone']):
+        phone = get_flashed_messages(with_categories=False, category_filter=['phone'])[0]
+    if get_flashed_messages(with_categories=False, category_filter=['username']):
+        username = get_flashed_messages(with_categories=False, category_filter=['username'])[0]
+    if get_flashed_messages(with_categories=False, category_filter=['email']):
+        email = get_flashed_messages(with_categories=False, category_filter=['email'])[0]
     return render_template('register.html', msg=msg, phone=phone,
                            username=username, email=email)
 
@@ -102,10 +102,7 @@ def reg():
     confirm_password = request.values.get('confirmPassword').strip()
     grade = request.values.get('grade')
     email = request.values.get('email').strip()
-    cache.set('phone', phone, timeout=timeout)
-    cache.set('username', username, timeout=timeout)
-    cache.set('email', email, timeout=timeout)
-
+    flash_form_data(phone=phone, username=username, email=email)
     if not check_phone(phone):
         return redirect_with_msg(
             '/register', u'你输入的手机号看上去有些奇怪！', category='reg')
@@ -180,13 +177,14 @@ def logout():
 
 
 @bp.route('/newpost', methods=['GET', 'POST'])
-def newpost_page(msg=''):
+def newpost_page(msg='', message=''):
     if not current_user.is_authenticated:
         return redirect('/loginpage')
     for m in get_flashed_messages(
             with_categories=False, category_filter=['post']):
         msg = msg + m
-    message = cache.get('message') or ''
+    if get_flashed_messages(with_categories=False, category_filter=['message']):
+        message = get_flashed_messages(with_categories=False, category_filter=['message'])[0]
     return render_template('newpost.html', phone=current_user.phone,
                            msg=msg, message=message)
 
@@ -198,7 +196,7 @@ def post():
     demand_course_id = int(request.values.get('demandCourse'))
     contact = request.values.get('contact').strip()
     message = request.values.get('message').strip()
-    cache.set('message', message, timeout=timeout)
+    flash_form_data(message=message)
     if supply_course_id == 31 and demand_course_id == 32:
         return redirect_with_msg(
             '/newpost', u'同学你使用姿势不对吼！还要再学习一个！', category='post')

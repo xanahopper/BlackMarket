@@ -31,6 +31,17 @@ def parse_contact(contact, phone):
     return contact.replace(phone, s)
 
 
+def flash_form_data(phone=None, username=None, email=None, message=None):
+    if phone:
+        flash(phone, category='phone')
+    if username:
+        flash(username, category='username')
+    if email:
+        flash(email, category='email')
+    if message:
+        flash(message, category='message')
+
+
 def redirect_with_msg(target, msg, category):
     if msg:
         flash(msg, category=category)
