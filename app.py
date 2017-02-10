@@ -13,7 +13,7 @@ from black_market.config import HTTP_PORT
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-handler = RotatingFileHandler('app.log', maxBytes=100000, backupCount=3)
+handler = RotatingFileHandler('log/app.log', maxBytes=100000, backupCount=3)
 logger = logging.getLogger('tdm')
 logger.setLevel(logging.ERROR)
 logger.addHandler(handler)
