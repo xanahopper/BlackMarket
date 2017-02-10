@@ -20,6 +20,8 @@ from black_market.views.utils import (
 bp = Blueprint('market', __name__)
 
 cache = SimpleCache()
+timeout = 5 * 60
+
 
 @bp.route('/', methods=['GET', 'POST'])
 def search(per_page=6):
@@ -79,7 +81,6 @@ def register_page(msg=''):
     phone = cache.get('phone') or ''
     username = cache.get('username') or ''
     email = cache.get('email') or ''
-    print(phone, username, email)
     return render_template('register.html', msg=msg, phone=phone,
                            username=username, email=email)
 
@@ -101,11 +102,9 @@ def reg():
     confirm_password = request.values.get('confirmPassword').strip()
     grade = request.values.get('grade')
     email = request.values.get('email').strip()
-    cache.set('phone', phone, timeout=5*60)
-    cache.set('username', username, timeout=5*60)
-    cache.set('raw_password', raw_password, timeout=5*60)
-    cache.set('confirm_password', confirm_password, timeout=5*60)
-    cache.set('email', email, timeout=5*60)
+    cache.set('phone', phone, timeout=timeout)
+    cache.set('username', username, timeout=timeout)
+    cache.set('email', email, timeout=timeout)
 
     if not check_phone(phone):
         return redirect_with_msg(
@@ -199,7 +198,7 @@ def post():
     demand_course_id = int(request.values.get('demandCourse'))
     contact = request.values.get('contact').strip()
     message = request.values.get('message').strip()
-    cache.set('message', message, timeout=5*60)
+    cache.set('message', message, timeout=timeout)
     if supply_course_id == 31 and demand_course_id == 32:
         return redirect_with_msg(
             '/newpost', u'同学你使用姿势不对吼！还要再学习一个！', category='post')
