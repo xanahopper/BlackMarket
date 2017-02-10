@@ -116,7 +116,7 @@ def reg():
         return redirect_with_msg(
             '/register', u'此帐号已经被注册了！',
             category='reg')
-    if check_email(email) == '':
+    if not check_email(email):
         return redirect_with_msg(
             '/register', u'你输入的邮箱地址看上去有些奇怪！', category='reg')
     if username == '':
