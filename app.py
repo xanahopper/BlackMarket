@@ -13,6 +13,11 @@ from black_market.config import HTTP_PORT
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
+handler = RotatingFileHandler('app.log', maxBytes=100000, backupCount=3)
+logger = logging.getLogger('tdm')
+logger.setLevel(logging.ERROR)
+logger.addHandler(handler)
+
 
 @app.after_request
 def after_request(response):
@@ -24,10 +29,5 @@ def after_request(response):
 
 
 if __name__ == '__main__':
-    handler = RotatingFileHandler('app.log', maxBytes=100000, backupCount=3)
-    logger = logging.getLogger('tdm')
-    logger.setLevel(logging.ERROR)
-    logger.addHandler(handler)
-
     app.debug = True
     app.run(host='0.0.0.0', port=HTTP_PORT)
