@@ -21,7 +21,7 @@ logger.addHandler(handler)
 
 @app.after_request
 def after_request(response):
-    timestamp = strftime('[%Y-%b-%d %H:%M]')
+    timestamp = strftime('[%Y-%b-%d %H:%M:%S]')
     user_id = current_user.id if current_user.is_authenticated else ''
     logger.error('%s %s %s %s %s %s %s', timestamp, user_id,
                  request.remote_addr, request.method, request.scheme,
