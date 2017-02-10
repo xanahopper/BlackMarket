@@ -75,12 +75,18 @@ def register_page(msg='', phone='', username='', email=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['reg']):
         msg = msg + m
-    if get_flashed_messages(with_categories=False, category_filter=['phone']):
-        phone = get_flashed_messages(with_categories=False, category_filter=['phone'])[0]
-    if get_flashed_messages(with_categories=False, category_filter=['username']):
-        username = get_flashed_messages(with_categories=False, category_filter=['username'])[0]
-    if get_flashed_messages(with_categories=False, category_filter=['email']):
-        email = get_flashed_messages(with_categories=False, category_filter=['email'])[0]
+    if get_flashed_messages(
+            with_categories=False, category_filter=['phone']):
+        phone = get_flashed_messages(
+            with_categories=False, category_filter=['phone'])[0]
+    if get_flashed_messages(
+            with_categories=False, category_filter=['username']):
+        username = get_flashed_messages(
+            with_categories=False, category_filter=['username'])[0]
+    if get_flashed_messages(
+            with_categories=False, category_filter=['email']):
+        email = get_flashed_messages(
+            with_categories=False, category_filter=['email'])[0]
     return render_template('register.html', msg=msg, phone=phone,
                            username=username, email=email)
 
@@ -183,8 +189,10 @@ def newpost_page(msg='', message=''):
     for m in get_flashed_messages(
             with_categories=False, category_filter=['post']):
         msg = msg + m
-    if get_flashed_messages(with_categories=False, category_filter=['message']):
-        message = get_flashed_messages(with_categories=False, category_filter=['message'])[0]
+    if get_flashed_messages(
+            with_categories=False, category_filter=['message']):
+        message = get_flashed_messages(
+            with_categories=False, category_filter=['message'])[0]
     return render_template('newpost.html', phone=current_user.phone,
                            msg=msg, message=message)
 
