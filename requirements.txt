@@ -4,6 +4,7 @@ gunicorn
 raven
 blinker
 Flask-SQLAlchemy
+Flask-AlchemyDumps
 Flask-Script
 flask-login
 flake8

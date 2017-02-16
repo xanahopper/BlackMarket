@@ -3,6 +3,7 @@ import xlrd
 from collections import namedtuple
 
 from flask_script import Manager
+from flask.ext.alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 
 from black_market.ext import db
 from black_market.app import create_app
@@ -11,6 +12,9 @@ from black_market.models.models import (
 
 app = create_app()
 manager = Manager(app)
+
+alchemydumps = AlchemyDumps(app, db)
+manager.add_command('alchemydumps', AlchemyDumpsCommand)
 
 
 @manager.command
