@@ -7,6 +7,7 @@ from flask import (
 from flask_login import (
     login_user, logout_user, current_user)
 
+from black_market.config import RAW_SALT as raw_salt
 from black_market.ext import db
 from black_market.libs.api import course as course_api
 from black_market.models.models import (
@@ -15,13 +16,20 @@ from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
     check_email, check_exist, get_paginate_from_list,
     num_to_word, parse_contact, get_short_message,
-    flash_form_data)
+    flash_form_data, get_hashed_password_and_salt)
 
 bp = Blueprint('market', __name__)
 
 
+def force_logout():
+    if current_user.is_authenticated:
+        if not current_user.new_password:
+            logout_user()
+
+
 @bp.route('/', methods=['GET', 'POST'])
 def search(per_page=6):
+    force_logout()
     is_login = True if current_user.is_authenticated else False
     page = request.values.get('page') or 1
     page = int(page)
@@ -132,10 +140,11 @@ def reg():
     if raw_password != confirm_password:
         return redirect_with_msg(
             '/register', u'两次密码输入不一致！', category='reg')
-    m = hashlib.md5()
-    m.update(raw_password.encode('utf-8'))
-    password = m.hexdigest()
-    user = User(username, phone, email, password, grade)
+    password, salt = get_hashed_password_and_salt(raw_password, raw_salt)
+    new_password = password
+    created_time = int(time.time())
+    user = User(username, phone, email, password,
+                new_password, salt, grade, created_time)
     db.session.add(user)
     db.session.commit()
     login_user(user)
@@ -156,6 +165,7 @@ def loginpage(msg=''):
 def login():
     phone = request.values.get('phone').strip()
     password = request.values.get('password').strip()
+    old_password = password
     if not check_phone(phone):
         return redirect_with_msg(
             '/loginpage', u'Incorrect format of phone number!',
@@ -167,11 +177,24 @@ def login():
     if not user:
         return redirect_with_msg(
             '/loginpage', u'The user does not exist!', category='login')
-    m = hashlib.md5()
-    m.update(password.encode('utf-8'))
-    if(m.hexdigest() != user.password):
-        return redirect_with_msg(
-            '/loginpage', u'Wrong password', category='login')
+    if not user.new_password:
+        m = hashlib.md5()
+        m.update(password.encode('utf-8'))
+        if(m.hexdigest() != user.password):
+            return redirect_with_msg(
+                '/loginpage', u'Wrong password', category='login')
+
+        new_password, salt = get_hashed_password_and_salt(old_password, raw_salt)
+        user.new_password = new_password
+        user.password = new_password
+        user.salt = salt
+        db.session.commit()
+    else:
+        m = hashlib.md5()
+        m.update((password + user.salt).encode('utf-8'))
+        if(m.hexdigest() != user.new_password):
+            return redirect_with_msg(
+                '/loginpage', u'Wrong password', category='login')
     login_user(user)
     return redirect('/')
 

@@ -3,7 +3,7 @@ import xlrd
 from collections import namedtuple
 
 from flask_script import Manager
-from flask.ext.alchemydumps import AlchemyDumps, AlchemyDumpsCommand
+from flask_alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 
 from black_market.ext import db
 from black_market.app import create_app

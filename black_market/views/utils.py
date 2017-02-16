@@ -1,10 +1,19 @@
 import re
 import datetime
 import random
+import hashlib
 
 from flask import flash, redirect
 
 from black_market.models.models import User
+
+
+def get_hashed_password_and_salt(password, raw_salt):
+    salt = '.'.join(random.sample(raw_salt, 10))
+    m = hashlib.md5()
+    m.update((password + salt).encode('utf-8'))
+    password = m.hexdigest()
+    return password, salt
 
 
 def timestamp_to_datetime(timestamp):

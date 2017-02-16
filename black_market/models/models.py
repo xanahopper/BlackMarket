@@ -44,15 +44,21 @@ class User(db.Model):
     phone = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(128))
     password = db.Column(db.String(128))
+    new_password = db.Column(db.String(128))
+    salt = db.Column(db.String(128))
     grade = db.Column(db.String(56))
+    created_time = db.Column(db.Integer)
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
-    def __init__(self, name, phone, email, password, grade):
+    def __init__(self, name, phone, email, password, new_password, salt, grade, created_time):
         self.name = name
         self.phone = phone
         self.email = email
         self.password = password
+        self.new_password = new_password
+        self.salt = salt
         self.grade = grade
+        self.created_time
 
     def __repr__(self):
         return '<User %s>' % self.name
