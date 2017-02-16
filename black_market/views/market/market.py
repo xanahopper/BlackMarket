@@ -23,8 +23,7 @@ bp = Blueprint('market', __name__)
 @bp.before_request
 def check_domain():
     domain = request.headers['Host']
-    print(domain)
-    if domain not in ['blackmarket.wangzhihao.com.cn', '127.0.0.1:5000']:
+    if domain not in ['0.0.0.0:5000', '127.0.0.1:5000']:
         return 'Incorrect Domain!'
 
 
