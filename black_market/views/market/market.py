@@ -20,13 +20,6 @@ from black_market.views.utils import (
 bp = Blueprint('market', __name__)
 
 
-@bp.before_request
-def check_domain():
-    domain = request.headers['Host']
-    if domain not in ['0.0.0.0:5000', '127.0.0.1:5000']:
-        return 'Incorrect Domain!'
-
-
 @bp.route('/', methods=['GET', 'POST'])
 def search(per_page=6):
     is_login = True if current_user.is_authenticated else False
