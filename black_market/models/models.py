@@ -49,7 +49,7 @@ class User(db.Model):
     salt = db.Column(db.String(128))
     grade = db.Column(db.String(56))
     created_time = db.Column(db.DateTime())
-    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+    last_seen = db.Column(db.DateTime(), default=datetime.now)
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
     def __init__(self, name, phone, email, password, new_password,
@@ -86,7 +86,7 @@ class User(db.Model):
         return User.query.get(user_id)
 
     def ping(self):
-        self.last_seen = datetime.utcnow()
+        self.last_seen = datetime.now()
         db.session.add(self)
         db.session.commit()
 
