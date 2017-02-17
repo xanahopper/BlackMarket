@@ -1,4 +1,5 @@
 from black_market.ext import db, login_manager
+from datetime import datetime
 
 
 class Course(db.Model):
@@ -47,10 +48,12 @@ class User(db.Model):
     new_password = db.Column(db.String(128))
     salt = db.Column(db.String(128))
     grade = db.Column(db.String(56))
-    created_time = db.Column(db.Integer)
+    created_time = db.Column(db.DateTime())
+    last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
     comments = db.relationship('Comment', backref='user', lazy='dynamic')
 
-    def __init__(self, name, phone, email, password, new_password, salt, grade, created_time):
+    def __init__(self, name, phone, email, password, new_password,
+                 salt, grade, created_time):
         self.name = name
         self.phone = phone
         self.email = email
@@ -58,7 +61,7 @@ class User(db.Model):
         self.new_password = new_password
         self.salt = salt
         self.grade = grade
-        self.created_time
+        self.created_time = created_time
 
     def __repr__(self):
         return '<User %s>' % self.name
@@ -81,6 +84,11 @@ class User(db.Model):
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(user_id)
+
+    def ping(self):
+        self.last_seen = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
 
 
 class Post(db.Model):

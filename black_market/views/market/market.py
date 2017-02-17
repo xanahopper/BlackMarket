@@ -1,6 +1,6 @@
 import time
 import hashlib
-
+from datetime import datetime
 from flask import (
     Blueprint, request, render_template,
     redirect, get_flashed_messages)
@@ -25,6 +25,12 @@ def force_logout():
     if current_user.is_authenticated:
         if not current_user.new_password:
             logout_user()
+
+
+@bp.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.ping()
 
 
 @bp.route('/', methods=['GET', 'POST'])
@@ -142,7 +148,7 @@ def reg():
             '/register', u'两次密码输入不一致！', category='reg')
     password, salt = get_hashed_password_and_salt(raw_password, raw_salt)
     new_password = password
-    created_time = int(time.time())
+    created_time = datetime.utcnow()
     user = User(username, phone, email, password,
                 new_password, salt, grade, created_time)
     db.session.add(user)
@@ -184,7 +190,8 @@ def login():
             return redirect_with_msg(
                 '/loginpage', u'Wrong password', category='login')
 
-        new_password, salt = get_hashed_password_and_salt(old_password, raw_salt)
+        new_password, salt = get_hashed_password_and_salt(
+            old_password, raw_salt)
         user.new_password = new_password
         user.password = new_password
         user.salt = salt

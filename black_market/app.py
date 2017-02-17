@@ -3,7 +3,6 @@ from werkzeug.utils import import_string
 from black_market.config import SECRET_KEY, MYSQL_DSN
 
 extensions = [
-    'black_market.ext:sentry',
     'black_market.ext:db',
     'black_market.ext:login_manager'
 ]
