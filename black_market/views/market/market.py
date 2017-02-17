@@ -148,7 +148,7 @@ def reg():
             '/register', u'两次密码输入不一致！', category='reg')
     password, salt = get_hashed_password_and_salt(raw_password, raw_salt)
     new_password = password
-    created_time = datetime.utcnow()
+    created_time = datetime.now()
     user = User(username, phone, email, password,
                 new_password, salt, grade, created_time)
     db.session.add(user)
