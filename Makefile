@@ -18,5 +18,5 @@ stop:
 show_pids:
 	@ps ax |grep gunicorn
 
-life_easy:
+love:
 	@git fetch && git rebase && make stop && make start
