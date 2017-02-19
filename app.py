@@ -9,7 +9,6 @@ from werkzeug.contrib.fixers import ProxyFix
 from black_market.app import create_app
 from black_market.config import HTTP_PORT
 
-
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app)
 

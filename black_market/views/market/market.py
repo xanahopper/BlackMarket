@@ -10,6 +10,7 @@ from flask_login import (
 from black_market.config import RAW_SALT as raw_salt
 from black_market.ext import db
 from black_market.libs.api import course as course_api
+from black_market.libs.api.email import send_email_to
 from black_market.models.models import (
     Post, Supply, Demand, User, CourseSchedule)
 from black_market.views.utils import (
@@ -257,6 +258,14 @@ def post():
     db.session.add(d)
     db.session.add(s)
     db.session.commit()
+    # 15: EnvironmentEconomics; 12: FinanceEconomics
+    if supply_course_id == 15 or demand_course_id == 15:
+        send_email_to('mew0629@qq.com')
+        send_email_to('59991991@qq.com')
+    if supply_course_id == 12 or demand_course_id == 12:
+        send_email_to('mew0629@qq.com')
+    if supply_course_id == 12:
+        send_email_to('354240301@qq.com')
     return redirect('/')
 
 
