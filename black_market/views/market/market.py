@@ -77,7 +77,7 @@ def search(per_page=6):
             course_name=course_api.get_course_by_id(demand_course_id).name)
         p = dict(time=time, supply=supply, demand=demand,
                  message=get_short_message(post.message),
-                 id=post.id)
+                 id=post.id, status=post.status)
         posts.append(p)
     return render_template('index.html', posts=posts, has_next=has_next,
                            page=page, target_supply=target_supply_text,

@@ -95,11 +95,19 @@
                                                             </div>
                                                             <div class="row">
                                                                 {% if post.supply.course_id != 31  %}
-                                                                    <img src="static/img/supply.png" width="18px">
+                                                                    {% if post.status == 1  %}
+                                                                        <a class="fa fa-check"></a>
+                                                                    {% else %}
+                                                                        <img src="static/img/supply.png" width="18px">
+                                                                    {% endif %}
                                                                     <a style="font-size:10px;" class="btn btn-default">{{post.supply.course_name}}</a>
                                                                 {% endif %}
                                                                 {% if post.demand.course_id != 32  %}
-                                                                    <img src="static/img/demand.png" width="18px">
+                                                                    {% if post.status == 1  %}
+                                                                        <a class="fa fa-check"></a>
+                                                                    {% else %}
+                                                                        <img src="static/img/demand.png" width="18px">
+                                                                    {% endif %}
                                                                     <a style="font-size:10px;" class="btn btn-default">{{post.demand.course_name}}</a>
                                                                 {% endif %}
                                                             </div>
