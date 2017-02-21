@@ -12,7 +12,7 @@ from black_market.ext import db
 from black_market.libs.api import course as course_api
 from black_market.libs.api.email import send_email_to
 from black_market.models.models import (
-    Post, Supply, Demand, User, CourseSchedule)
+    Post, Supply, Demand, User, CourseSchedule, BorardMessage)
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
     check_email, check_exist, get_paginate_from_list,
@@ -328,3 +328,31 @@ def search_course():
         for course in courses:
             s = s + str(course.id) + '.\t' + course.name + '<br>'
     return s
+
+
+@bp.route('/messageboard/<int:page>', methods=['GET'])
+def messageboard(page, msg=''):
+    if not current_user.is_authenticated:
+        return redirect('/loginpage')
+    for m in get_flashed_messages(
+            with_categories=False, category_filter=['board']):
+        msg = msg + m
+    paginate = BorardMessage.query.order_by(
+        db.desc(BorardMessage.id)).paginate(page=page, per_page=6)
+    return render_template('messageboard.html', msg=msg,
+                           has_next=paginate.has_next, messages=paginate.items)
+
+
+@bp.route('/messageboard', methods=['POST'])
+def sent_to_messageboard():
+    if not current_user.is_authenticated:
+        return redirect('/loginpage')
+    user_id = current_user.id
+    message = request.values.get('message').strip()
+    if not message:
+        return redirect_with_msg('/messgeboard', u'Your message seems to be empty.', category='board')
+    created_time = datetime.now()
+    board_message = BorardMessage(user_id, created_time, message)
+    db.session.add(board_message)
+    db.session.commit()
+    return redirect('/messageboard')

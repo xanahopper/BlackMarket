@@ -158,3 +158,20 @@ class Comment(db.Model):
 
     def __repr__(self):
         return '<Comment on %s at %s>' % (self.post_id, self.created_time)
+
+
+class BorardMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    status = db.Column(db.Integer)
+    created_time = db.Column(db.DateTime())
+    message = db.Column(db.String(512))
+
+    def __init__(self, user_id, created_time, message, status=0):
+        self.user_id = user_id
+        self.created_time = created_time
+        self.message = message
+        self.status = status
+
+    def __repr__(self):
+        return '<BorardMessage of %s at %s>' % (self.user_id, self.created_time)
