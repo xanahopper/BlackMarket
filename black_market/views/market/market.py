@@ -45,8 +45,8 @@ def search():
     target_ds = course_api.search_course(target_demand_text)
     target_supply_ids = [c.id for c in target_ss] if target_ss else []
     target_demand_ids = [c.id for c in target_ds] if target_ds else []
-    paginate = [p for p in Post.query.filter(Post.status<2).order_by(
-        Post.id.desc()).paginate(page=page, per_page=6)]
+    paginate = Post.query.filter(Post.status<2).order_by(
+        Post.id.desc()).paginate(page=page, per_page=6)
     target_posts = []
     for post in paginate.items:
         supply_course_id = Supply.query.filter_by(
@@ -61,7 +61,7 @@ def search():
                 continue
         target_posts.append(post)
     posts = []
-    for post in paginate:
+    for post in paginate.items:
         time = timestamp_to_datetime(post.created_time)
         user = User.query.get(post.user_id)
         user_grade = '经双%s级' % user.grade
