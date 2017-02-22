@@ -16,7 +16,8 @@ from black_market.models.models import (
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
     check_email, check_exist, num_to_word, parse_contact,
-    get_short_message, flash_form_data, get_hashed_password_and_salt)
+    get_paginate_from_list, get_short_message, flash_form_data,
+    get_hashed_password_and_salt)
 
 bp = Blueprint('market', __name__)
 
@@ -47,21 +48,27 @@ def search():
     target_demand_ids = [c.id for c in target_ds] if target_ds else []
     paginate = Post.query.filter(Post.status<2).order_by(
         Post.id.desc()).paginate(page=page, per_page=6)
-    target_posts = []
-    for post in paginate.items:
-        supply_course_id = Supply.query.filter_by(
-            post_id=post.id).first().course_id
-        if target_ss is not None:
-            if supply_course_id not in target_supply_ids:
-                continue
-        demand_course_id = Demand.query.filter_by(
-            post_id=post.id).first().course_id
-        if target_ds is not None:
-            if demand_course_id not in target_demand_ids:
-                continue
-        target_posts.append(post)
+    has_next = paginate.has_next
+    searched_posts = [p for p in paginate.items]
+    if target_supply_text or target_demand_text:
+        all_posts = [p for p in Post.query.filter(Post.status<2).order_by(Post.id.desc()).all()]
+
+        searched_posts = []
+        for post in all_posts:
+            supply_course_id = Supply.query.filter_by(
+                post_id=post.id).first().course_id
+            if target_ss is not None:
+                if supply_course_id not in target_supply_ids:
+                    continue
+            demand_course_id = Demand.query.filter_by(
+                post_id=post.id).first().course_id
+            if target_ds is not None:
+                if demand_course_id not in target_demand_ids:
+                    continue
+            searched_posts.append(post)
+            searched_posts, has_next = get_paginate_from_list(searched_posts, page, per_page=6)
     posts = []
-    for post in paginate.items:
+    for post in searched_posts:
         time = timestamp_to_datetime(post.created_time)
         user = User.query.get(post.user_id)
         user_grade = '经双%s级' % user.grade
