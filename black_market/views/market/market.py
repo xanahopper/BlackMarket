@@ -15,9 +15,8 @@ from black_market.models.models import (
     Post, Supply, Demand, User, CourseSchedule, BorardMessage)
 from black_market.views.utils import (
     timestamp_to_datetime, redirect_with_msg, check_phone,
-    check_email, check_exist, get_paginate_from_list,
-    num_to_word, parse_contact, get_short_message,
-    flash_form_data, get_hashed_password_and_salt)
+    check_email, check_exist, num_to_word, parse_contact,
+    get_short_message, flash_form_data, get_hashed_password_and_salt)
 
 bp = Blueprint('market', __name__)
 
@@ -35,7 +34,7 @@ def before_request():
 
 
 @bp.route('/', methods=['GET', 'POST'])
-def search(per_page=6):
+def search():
     force_logout()
     is_login = True if current_user.is_authenticated else False
     page = request.values.get('page') or 1
@@ -46,11 +45,10 @@ def search(per_page=6):
     target_ds = course_api.search_course(target_demand_text)
     target_supply_ids = [c.id for c in target_ss] if target_ss else []
     target_demand_ids = [c.id for c in target_ds] if target_ds else []
-    all_posts = [p for p in Post.query.order_by(Post.id.desc()).all()]
+    paginate = [p for p in Post.query.filter(Post.status<2).order_by(
+        Post.id.desc()).paginate(page=page, per_page=6)]
     target_posts = []
-    for post in all_posts:
-        if post.status == 2:
-            continue
+    for post in paginate.items:
         supply_course_id = Supply.query.filter_by(
             post_id=post.id).first().course_id
         if target_ss is not None:
@@ -62,10 +60,13 @@ def search(per_page=6):
             if demand_course_id not in target_demand_ids:
                 continue
         target_posts.append(post)
-    paginate, has_next = get_paginate_from_list(target_posts, page, per_page)
     posts = []
     for post in paginate:
         time = timestamp_to_datetime(post.created_time)
+        user = User.query.get(post.user_id)
+        user_grade = '经双%s级' % user.grade
+        if user_grade == 1:
+            user_grade = '元培PPE'
         supply_course_id = Supply.query.filter_by(
             post_id=post.id).first().course_id
         demand_course_id = Demand.query.filter_by(
@@ -78,9 +79,9 @@ def search(per_page=6):
             course_name=course_api.get_course_by_id(demand_course_id).name)
         p = dict(time=time, supply=supply, demand=demand,
                  message=get_short_message(post.message),
-                 id=post.id, status=post.status)
+                 id=post.id, status=post.status, user_grade=user_grade)
         posts.append(p)
-    return render_template('index.html', posts=posts, has_next=has_next,
+    return render_template('index.html', posts=posts, has_next=paginate.has_next,
                            page=page, target_supply=target_supply_text,
                            target_demand=target_demand_text, is_login=is_login)
 
@@ -259,6 +260,11 @@ def post():
     db.session.add(s)
     db.session.commit()
     # 15: EnvironmentEconomics; 12: FinanceEconomics
+    if supply_course_id == 15 or demand_course_id == 15:
+        send_email_to('mew0629@qq.com')
+        send_email_to('59991991@qq.com')
+    if supply_course_id == 12 or demand_course_id == 12:
+        send_email_to('mew0629@qq.com')
     if supply_course_id == 12:
         send_email_to('354240301@qq.com')
     return redirect('/')
