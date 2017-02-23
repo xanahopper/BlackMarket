@@ -270,7 +270,10 @@ def post():
     # 15: EnvironmentEconomics; 12: FinanceEconomics
     if supply_course_id == 12:
         send_email_to('354240301@qq.com', 'FinanceEconomics!')
-    find_match(p.id, demand_course_id, supply_course_id)
+    try:
+        find_match(p.id, demand_course_id, supply_course_id)
+    except Exception:
+        pass
     return redirect('/')
 
 
@@ -334,9 +337,6 @@ def search_course():
             s = s + str(course.id) + '.\t' + course.name + '<br>'
     return s
 
-@bp.route('/match/<int:supply>/<int:demand>', methods=['GET'])
-def match(supply, demand):
-    return find_match(demand, supply)
 
 # @bp.route('/messageboard/<int:page>', methods=['GET'])
 # def messageboard(page, msg=''):

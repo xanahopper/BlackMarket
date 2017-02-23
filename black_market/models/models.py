@@ -174,4 +174,5 @@ class Comment(db.Model):
 #         self.status = status
 #
 #     def __repr__(self):
-#         return '<BorardMessage of %s at %s>' % (self.user_id, self.created_time)
+#         return '<BorardMessage of %s at %s>' % (
+#               self.user_id, self.created_time)

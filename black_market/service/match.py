@@ -3,7 +3,7 @@ from collections import namedtuple
 from black_market.models.models import User, Post, Demand, Supply
 from black_market.libs.api.email import send_email_to
 
-Match_Post = namedtuple("Match_Post",['id', 'supply','demand'])
+Match_Post = namedtuple("Match_Post", ['id', 'supply', 'demand'])
 
 
 def find_match(id, demand_course_id, supply_course_id):
@@ -39,6 +39,7 @@ def find_match(id, demand_course_id, supply_course_id):
         send_email_to(User.query.get(Post.query.get(post.id).user_id).email, content)
         send_email_to('mew0629@qq.com', content)
 
+
 def tri_match(new_post, posts):
     options = []
     for p in posts:
@@ -50,4 +51,3 @@ def tri_match(new_post, posts):
                 if option[-1].demand == new_post.supply:
                     options.append(option)
     return options
-

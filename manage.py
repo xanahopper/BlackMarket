@@ -9,12 +9,24 @@ from black_market.ext import db
 from black_market.app import create_app
 from black_market.models.models import (
     Course, CourseSchedule, User, Post, Demand, Supply)
+from black_market.service.match import find_match
 
 app = create_app()
 manager = Manager(app)
 
 alchemydumps = AlchemyDumps(app, db)
 manager.add_command('alchemydumps', AlchemyDumpsCommand)
+
+
+@manager.command
+def find_all_tri_match():
+    all_posts = Post.query.filter(Post.status < 1).all()
+    for post in all_posts:
+        try:
+            find_match(post.id, Demand.query.get(Post.id),
+                       Supply.query.get(Post.id))
+        except Exception:
+            pass
 
 
 @manager.command
