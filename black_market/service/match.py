@@ -1,7 +1,7 @@
 from black_market.models.models import User, Post, Demand, Supply
 from black_market.libs.api.email import send_email_to
 
-def find_match(demand_course_id, supply_course_id):
+def find_match(id, demand_course_id, supply_course_id):
     supplies = Supply.query.filter_by(course_id=demand_course_id).all()
     post_ids = []
     for supply in supplies:
@@ -10,6 +10,7 @@ def find_match(demand_course_id, supply_course_id):
             if not Post.query.get(demand.id).status:
                 post_ids.append(demand.id)
     content = 'There are some posts that might match your need:\n\n'
+    content += 'http://blackmarket.wangzhihao.com.cn/posts/{id}\n'.format(id=id)
     user_ids = set()
     for post_id in post_ids:
         content += 'http://blackmarket.wangzhihao.com.cn/posts/{id}\n'.format(id=post_id)
