@@ -25,13 +25,12 @@ def find_match(id, demand_course_id, supply_course_id):
         if email:
             send_email_to(email, content)
             send_email_to('mew0629@qq.com', content)
-
     new_post = Match_Post(id, supply_course_id, demand_course_id)
     all_posts = Post.query.filter(Post.status<1).all()
     posts = [Match_Post(post.id, Supply.query.get(post.id).course_id, Demand.query.get(post.id).course_id) for post in all_posts]
     options = tri_match(new_post, posts)
     if options:
-        content = 'Here are some options:'
+        content = 'Here are some options:\n'
         for index, option in enumerate(options):
             content += 'Opiton %s:\n' % (index + 1)
             for post in option:
