@@ -22,11 +22,8 @@ manager.add_command('alchemydumps', AlchemyDumpsCommand)
 def find_all_tri_match():
     all_posts = Post.query.filter(Post.status < 1).all()
     for post in all_posts:
-        try:
-            find_match(post.id, Demand.query.get(Post.id).course_id,
-                       Supply.query.get(Post.id).course_id)
-        except Exception:
-            pass
+        find_match(post.id, Demand.query.get(post.id).course_id,
+                   Supply.query.get(post.id).course_id)
 
 
 @manager.command
