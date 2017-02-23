@@ -35,8 +35,10 @@ def find_match(id, demand_course_id, supply_course_id):
             content += 'Opiton %s:\n' % (index + 1)
             for post in option:
                 content += 'http://blackmarket.wangzhihao.com.cn/posts/%s\n' % post.id
-        send_email_to(User.query.get(Post.query.get(post.id).user_id).email, content)
-        send_email_to('mew0629@qq.com', content)
+        email = User.query.get(Post.query.get(post.id).user_id).email
+        if email:
+            send_email_to(email, content)
+            send_email_to('mew0629@qq.com', content)
 
 
 def tri_match(new_post, posts):
