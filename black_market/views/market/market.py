@@ -11,6 +11,7 @@ from black_market.config import RAW_SALT as raw_salt
 from black_market.ext import db
 from black_market.libs.api import course as course_api
 from black_market.libs.api.email import send_email_to
+from black_market.service.match import find_match
 from black_market.models.models import (
     Post, Supply, Demand, User, CourseSchedule)
 from black_market.views.utils import (
@@ -268,7 +269,8 @@ def post():
     db.session.commit()
     # 15: EnvironmentEconomics; 12: FinanceEconomics
     if supply_course_id == 12:
-        send_email_to('354240301@qq.com')
+        send_email_to('354240301@qq.com', 'FinanceEconomics!')
+    find_match(demand_course_id, supply_course_id)
     return redirect('/')
 
 
@@ -332,6 +334,9 @@ def search_course():
             s = s + str(course.id) + '.\t' + course.name + '<br>'
     return s
 
+@bp.route('/match/<int:supply>/<int:demand>', methods=['GET'])
+def match(supply, demand):
+    return find_match(demand, supply)
 
 # @bp.route('/messageboard/<int:page>', methods=['GET'])
 # def messageboard(page, msg=''):

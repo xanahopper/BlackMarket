@@ -12,16 +12,14 @@ def _format_addr(s):
     return formataddr((Header(name, 'utf-8').encode(), addr))
 
 
-def send_email_to(to_addr):
+def send_email_to(to_addr, content):
     from_addr = 'mew0629@qq.com'
     password = EMAIL_PASSWORD
     smtp_server = 'smtp.qq.com'
 
-    msg = MIMEText(
-        'There are some updates that you might be concerned about!',
-        'plain', 'utf-8')
+    msg = MIMEText(content, 'plain', 'utf-8')
     msg['From'] = _format_addr('Black-Market')
-    msg['To'] = _format_addr('BM-VIP-Users')
+    msg['To'] = _format_addr('Black-Marlet-Users')
     msg['Subject'] = Header('Black Market Notification', 'utf-8').encode()
     try:
         server = smtplib.SMTP(smtp_server, 587)
