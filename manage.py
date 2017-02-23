@@ -1,5 +1,7 @@
 import json
 import xlrd
+import random
+import time
 from collections import namedtuple
 
 from flask_script import Manager
@@ -24,6 +26,8 @@ def find_all_tri_match():
     for post in all_posts:
         find_match(post.id, Demand.query.get(post.id).course_id,
                    Supply.query.get(post.id).course_id)
+        sleep_time = random.randint(2, 12)
+        time.sleep(sleep_time)
 
 
 @manager.command
