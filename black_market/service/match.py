@@ -31,7 +31,7 @@ def find_match(id, demand_course_id, supply_course_id):
     posts = [Match_Post(post.id, Supply.query.get(post.id).course_id, Demand.query.get(post.id).course_id) for post in all_posts]
     options = tri_match(new_post, posts)
     if options:
-        content = ''
+        content = 'Here are some options:'
         for index, option in enumerate(options):
             content += 'Opiton %s:\n' % (index + 1)
             for post in option:
