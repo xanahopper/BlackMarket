@@ -25,11 +25,6 @@ def get_student(id_):
         abort(404)
     return jsonify(student.dump())
 
-#
-# @bp.route('/@<string:username>', methods=['GET'])
-# def get_user_by_username(username):
-#     return 'Student %s' % username
-
 
 @bp.route('/', methods=['POST'])
 @require_credentials(scopes=[OAuthScope.student])
