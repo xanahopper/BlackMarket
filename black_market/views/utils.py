@@ -3,17 +3,13 @@ import datetime
 import random
 import hashlib
 
-from flask import flash, redirect
-
-from black_market.models.models import User
+from flask import flash, redirect, jsonify
 
 
-def get_hashed_password_and_salt(password, raw_salt):
-    salt = '.'.join(random.sample(raw_salt, 10))
-    m = hashlib.md5()
-    m.update((password + salt).encode('utf-8'))
-    password = m.hexdigest()
-    return password, salt
+def normal_jsonify(data, code=0, message=None):
+    return jsonify(code=code, message=message, data=data), 200
+
+
 
 
 def timestamp_to_datetime(timestamp):
@@ -55,21 +51,6 @@ def redirect_with_msg(target, msg, category):
     if msg:
         flash(msg, category=category)
     return redirect(target)
-
-
-def check_phone(phone):
-    pattern = re.compile(u'0?(13|14|15|17|18)[0-9]{9}')
-    return bool(pattern.match(phone))
-
-
-def check_email(email):
-    pattern = re.compile(
-        '\w[-\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\.)+[A-Za-z]{2,14}')
-    return bool(pattern.match(email))
-
-
-def check_exist(phone):
-    return bool(User.query.filter_by(phone=phone).first())
 
 
 def get_paginate_from_list(target, page, per_page):

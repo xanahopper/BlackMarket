@@ -1,9 +1,14 @@
 import logging
-from flask_login import LoginManager
+
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 from raven.contrib.flask import Sentry
+from flask_oauthlib.provider import OAuth2Provider
+
 from black_market.config import SENTRY_DSN
+
 
 sentry = Sentry(logging=True, level=logging.ERROR, dsn=SENTRY_DSN)
 db = SQLAlchemy()
-login_manager = LoginManager()
+ma = Marshmallow()
+oauth_server = OAuth2Provider()

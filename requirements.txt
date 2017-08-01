@@ -1,6 +1,8 @@
+arrow
 flask
 honcho
 gunicorn
+gevent
 raven
 blinker
 Flask-SQLAlchemy
@@ -12,3 +14,10 @@ python-envcfg
 ipython
 xlrd
 mysqlclient
+flask-marshmallow
+marshmallow-sqlalchemy
+IPython
+pytest
+coverage
+flask-oauthlib
+pymysql

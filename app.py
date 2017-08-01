@@ -1,33 +1,12 @@
-import logging
-from time import strftime
-from logging.handlers import RotatingFileHandler
-
-from flask import request
-from flask_login import current_user
 from werkzeug.contrib.fixers import ProxyFix
 
 from black_market.app import create_app
-from black_market.config import HTTP_PORT
+from black_market.config import DEBUG, HTTP_HOST, HTTP_PORT
 
 app = create_app()
 app.wsgi_app = ProxyFix(app.wsgi_app)
 
-handler = RotatingFileHandler('log/app.log', maxBytes=100000, backupCount=3)
-logger = logging.getLogger('tdm')
-logger.setLevel(logging.ERROR)
-logger.addHandler(handler)
-
-
-@app.after_request
-def after_request(response):
-    timestamp = strftime('[%Y-%b-%d %H:%M:%S]')
-    user_id = current_user.id if current_user.is_authenticated else ''
-    logger.error('%s %s %s %s %s %s %s', timestamp, user_id,
-                 request.remote_addr, request.method, request.scheme,
-                 request.full_path, response.status)
-    return response
-
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='0.0.0.0', port=HTTP_PORT)
+    app.debug = DEBUG
+    app.run(host=HTTP_HOST, port=HTTP_PORT)
