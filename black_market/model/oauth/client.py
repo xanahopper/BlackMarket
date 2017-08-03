@@ -12,7 +12,7 @@ class OAuthClient(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(80))
-    status = db.Column(db.SmallInteger)
+    status_ = db.Column(db.SmallInteger)
     client_id = db.Column(db.String(80))
     client_secret = db.Column(db.String(80))
     account_type_ = db.Column(db.SmallInteger)
@@ -22,7 +22,7 @@ class OAuthClient(db.Model):
     def __init__(self, name, status, client_id, client_secret,
                  account_type, allowed_scopes, redirect_uri):
         self.name = name
-        self.status = status.value
+        self.status_ = status.value
         self.client_id = client_id
         self.client_secret = client_secret
         self.account_type_ = account_type
@@ -32,6 +32,10 @@ class OAuthClient(db.Model):
     @property
     def client_type(self):
         return 'non-confidential'
+
+    @property
+    def status(self):
+        return ClientStatus(self.status_)
 
     @property
     def account_type(self):

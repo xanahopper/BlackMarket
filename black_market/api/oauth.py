@@ -3,8 +3,8 @@ from flask import g, request
 from black_market.model.oauth.token import OAuthToken
 from black_market.model.oauth.client import OAuthClient
 from black_market.model.oauth.grant import OAuthGrant
-from black_market.model.user.consts import AccountType
-from black_market.model.utils import validator
+from black_market.model.user.consts import AccountType, AliasType
+from black_market.model.user.student import Student
 from black_market.ext import oauth_server
 
 from ._bp import create_blueprint
@@ -47,7 +47,7 @@ def save_grant(client_id, code_response, request, *args, **kwargs):
 def load_token(access_token=None, refresh_token=None):
     if access_token:
         return OAuthToken.get_by_access_token(access_token)
-    if refresh_token:
+    elif refresh_token:
         return OAuthToken.get_by_refresh_token(refresh_token)
 
 
@@ -65,12 +65,12 @@ def save_token(token, request, *args, **kwargs):
 
 
 @oauth_server.usergetter
-def get_user(username, password, client):
-
-    if client.account_type is AccountType.student:
-        validator.validate_email(username)
-        validator.validate_password(password)
-        return client.user_class.validate(username, password)
+def get_user(username, password, *args, **kwargs):
+    # if request.client.account_type is AccountType.student:
+    student = Student.get_by_alias_and_type(username, AliasType.mobile)
+    if not student.verify_password(password):
+        return None
+    return student
 
 
 @bp.route('/token', methods=['POST'])

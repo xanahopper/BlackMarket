@@ -11,3 +11,4 @@ class CreateStudentSchema(BaseSchema, FillHelperMixin):
     gender = ma.Integer(required=True)
     type = ma.Integer(required=True)
     grade = ma.String(required=True)
+    verify_code = ma.String(required=True)

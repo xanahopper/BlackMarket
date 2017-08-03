@@ -21,3 +21,4 @@ pytest
 coverage
 flask-oauthlib
 pymysql
+yunpian-python-sdk

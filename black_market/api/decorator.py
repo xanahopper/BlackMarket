@@ -27,7 +27,6 @@ def require_credentials(scopes=None):
             # TODO client.allowed_scopes should be [Enum, Enum, ...]
             # if scopes and not any(s for s in client.c if s in scopes):
             #     return jsonify(error='invalid_scope'), 403
-
             request.oauth_client = client
             return wrapped(*args, **kwargs)
         return update_wrapper(wrapper, wrapped)

@@ -9,6 +9,8 @@ from black_market.model.oauth.token import OAuthToken
 from black_market.model.exceptions import (
     InvalidValueError, InvalidSMSVerifyCodeError, RequestFailedError)
 from black_market.model.utils import validator
+from black_market.model.code.verify import SMSVerify
+from black_market.model.code.consts import SMSVerifyType
 
 from black_market.api.schema import student as student_schema
 from ._bp import create_blueprint

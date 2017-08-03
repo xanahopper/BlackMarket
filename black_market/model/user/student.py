@@ -81,6 +81,10 @@ class Student(AliasBase, db.Model):
     def get(cls, id_):
         return cls.query.get(id_)
 
+    @property
+    def alias(self):
+        return self._alias_cls.query.filter_by(id=self.id, type=AliasType.mobile.value)
+
     def change_mobile(self, mobile):
         validator.validate_phone(mobile)
         if StudentAccountAlias.existed(mobile, AliasType.mobile):

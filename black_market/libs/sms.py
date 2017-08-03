@@ -1,5 +1,8 @@
 import requests
 
+from yunpian_python_sdk.model import constant as YC
+from yunpian_python_sdk.ypclient import YunpianClient
+
 from black_market.config import SMS_YUNPIAN_HTTP, SMS_YUNPIAN_APIKEY, DEBUG
 
 
@@ -18,11 +21,12 @@ class SMS(object):
 
     @classmethod
     def _yunpian_sender(cls, number, message, tag):
-        api = SMS_YUNPIAN_HTTP
-        mobile = number
-        data = dict(apikey=SMS_YUNPIAN_APIKEY, mobile=mobile, text=message)
-        r = requests.post(api, data)
-        if r.status_code == 200:
+        client = YunpianClient(SMS_YUNPIAN_APIKEY)
+        param = {YC.MOBILE: number, YC.TEXT: message}
+        r = client.sms().single_send(param)
+
+        # TODO
+        if r.code() == 200:
             r = r.json()
             code = r.get('code')
             msg = r.get('msg')
