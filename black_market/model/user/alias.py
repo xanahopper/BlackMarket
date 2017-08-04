@@ -10,8 +10,8 @@ class AliasBase():
 
     @classmethod
     def get_by_alias_and_type(cls, alias, type_):
-        id_ = cls._alias_cls.query.filter_by(alias=alias, type=type_.value).first().id
-        return cls.query.get(id_)
+        r = cls._alias_cls.query.filter_by(alias=alias, type=type_.value).first()
+        return cls.query.get(r.id_) if r else None
 
     @classmethod
     def get_by_id_and_type(cls, id_, type_):

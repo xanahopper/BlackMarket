@@ -1,6 +1,6 @@
 import random
 import string
-# from black_market.libs.cache.redis import rd, ONE_DAY
+from black_market.libs.cache.redis import rd, ONE_DAY
 from black_market.model.exceptions import AtemptTooManyTimesError
 from black_market.model.exceptions import SendSMSTooManyTimesError
 

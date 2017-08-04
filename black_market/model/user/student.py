@@ -53,7 +53,7 @@ class Student(AliasBase, db.Model):
     @classmethod
     def add(cls, name, gender, grade, type_, raw_password, mobile, status, alias_type=AliasType.mobile):
 
-        if StudentAccountAlias.existed(mobile, alias_type):
+        if Student.existed(mobile, alias_type):
             if alias_type is AliasType.mobile:
                 raise MobileAlreadyExistedError
             if alias_type is AliasType.email:

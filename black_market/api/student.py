@@ -1,6 +1,7 @@
 from flask import request, abort, jsonify
 from oauthlib.common import generate_token
 
+from black_market.config import DEBUG
 from black_market.api.decorator import require_oauth, require_credentials
 from black_market.model.user.student import Student
 from black_market.model.user.consts import AccountStatus, StudentType, Gender
@@ -11,6 +12,8 @@ from black_market.model.exceptions import (
 from black_market.model.utils import validator
 from black_market.model.code.verify import SMSVerify
 from black_market.model.code.consts import SMSVerifyType
+from black_market.libs.sms.sms import SMS
+from black_market.libs.sms.templates import VERIFY_CODE_TEMPLATE
 
 from black_market.api.schema import student as student_schema
 from ._bp import create_blueprint
@@ -47,9 +50,9 @@ def create_user():
     # TODO
     verify_code = data.get('verify_code')
 
-    # r = SMSVerify.verify(mobile, verify_code, SMSVerifyType.register)
-    # if not r:
-    #     raise InvalidSMSVerifyCodeError
+    r = SMSVerify.verify(mobile, verify_code, SMSVerifyType.register)
+    if not r:
+        raise InvalidSMSVerifyCodeError
 
     name = data['name']
     gender = Gender(data['gender'])
@@ -71,6 +74,20 @@ def create_user():
     id_ = OAuthToken.add(client.id, id_, scopes, access_token, refresh_token)
     token = OAuthToken.get(id_)
     return jsonify(student=student.dump(), token=token.dump())
+
+
+@bp.route('/register', methods=['POST'])
+def send_register_code():
+    body = request.get_json()
+    mobile = body.get('mobile')
+    validator.validate_phone(mobile)
+    code = SMSVerify.add(mobile, SMSVerifyType.register)
+    msg = VERIFY_CODE_TEMPLATE.format(code=code)
+    SMS.send(mobile, msg, tag='register')
+    if DEBUG:
+        return jsonify(code=code)
+    return jsonify({'mobile': mobile})
+
 
 # @bp.route('/', methods=['PUT'])
 # def edit_user(message=''):

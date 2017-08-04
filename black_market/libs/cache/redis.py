@@ -1,11 +1,7 @@
+import redis
 
-
-from black_market.config import APP
-
-# from black_market.config import REDIS_CACHE_DSN, REDIS_DSN
-
-# TODO redis config
-
+mc = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
+rd = redis.StrictRedis(host='localhost', port=6379, db=1, decode_responses=True)
 
 ONE_MINUTE = 60
 HALF_HOUR = 1800
@@ -15,6 +11,3 @@ ONE_DAY = ONE_HOUR * 24
 ONE_WEEK = ONE_DAY * 7
 ONE_MONTH = ONE_DAY * 30
 ONE_YEAR = ONE_DAY * 365
-
-
-# globals().update(create_decorators(mc))
