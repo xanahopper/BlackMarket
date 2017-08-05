@@ -1,11 +1,10 @@
-from .base import BaseTestCase
+from oauthlib.common import generate_token
 
+from .base import BaseTestCase
 from black_market.model.oauth.token import OAuthToken
 from black_market.model.oauth.client import OAuthClient
 from black_market.model.user.consts import AccountType
 
-ACCESS_TOKEN = 'access token'
-REFRESH_TOKEN = 'refresh token'
 scopes = ['basic', 'student', 'admin']
 CLIENT_NAME = 'device-1'
 REDIRECT_URI = 'http://pkublackmarket.cn'
@@ -21,16 +20,17 @@ class OAuthTokenTest(BaseTestCase):
             allowed_scopes=['basic', 'admin'],
             redirect_uri=REDIRECT_URI)
         client = OAuthClient.get(id_)
-
+        access_token = generate_token()
+        refresh_token = generate_token()
         id_ = OAuthToken.add(client.id, account.id, scopes,
-                             ACCESS_TOKEN, REFRESH_TOKEN)
+                             access_token, refresh_token)
         token = OAuthToken.get(id_)
 
         assert token.id is not None
         assert token.client.id == client.id
         assert token.user.id == account.id
-        assert token.access_token == ACCESS_TOKEN
-        assert token.refresh_token == REFRESH_TOKEN
+        assert token.access_token == access_token
+        assert token.refresh_token == refresh_token
         assert token.scopes == scopes
 
     def test_delete_token(self):
@@ -41,9 +41,10 @@ class OAuthTokenTest(BaseTestCase):
             allowed_scopes=['basic'],
             redirect_uri=REDIRECT_URI)
         client = OAuthClient.get(id_)
-
+        access_token = generate_token()
+        refresh_token = generate_token()
         id_ = OAuthToken.add(client.id, account.id, scopes,
-                             ACCESS_TOKEN, REFRESH_TOKEN)
+                             access_token, refresh_token)
         token = OAuthToken.get(id_)
         id_ = token.id
         token.delete()
@@ -57,12 +58,13 @@ class OAuthTokenTest(BaseTestCase):
             allowed_scopes=['basic'],
             redirect_uri=REDIRECT_URI)
         client = OAuthClient.get(id_)
-
-        id_ = OAuthToken.add(client.id, account.id, 'basic', ACCESS_TOKEN, REFRESH_TOKEN)
+        access_token = generate_token()
+        refresh_token = generate_token()
+        id_ = OAuthToken.add(client.id, account.id, 'basic', access_token, refresh_token)
 
         token = OAuthToken.get(id_)
-        assert OAuthToken.get_by_access_token(ACCESS_TOKEN).id == token.id
-        assert OAuthToken.get_by_refresh_token(REFRESH_TOKEN).id == token.id
+        assert OAuthToken.get_by_access_token(access_token).id == token.id
+        assert OAuthToken.get_by_refresh_token(refresh_token).id == token.id
         assert OAuthToken.gets_by_user_id(account.id)
         token.delete()
         assert not OAuthToken.gets_by_user_id(account.id)

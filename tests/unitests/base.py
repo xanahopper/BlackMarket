@@ -1,6 +1,7 @@
 import unittest
 from black_market.app import create_app
 from black_market.ext import db
+from black_market.libs.cache.redis import rd
 
 
 # class BaseTestCase(unittest.TestCase):
@@ -26,9 +27,11 @@ class BaseTestCase(unittest.TestCase):
         self.app = create_app()
         self.app.app_context().push()
         db.create_all()
+        rd.flushdb()
 
     def tearDown(self):
         db.session.remove()
+        rd.flushdb()
         try:
             db.drop_all()
             db.drop_all()

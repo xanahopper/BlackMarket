@@ -4,7 +4,7 @@ from black_market.ext import db
 from black_market.model.utils import validator
 from black_market.model.user.password import gen_salt, hash_password
 from black_market.model.user.account import Account
-from black_market.model.user.alias import AliasBase, StudentAccountAlias
+from black_market.model.user.alias import StudentAccountAlias
 from black_market.model.user.consts import AliasType, AccountStatus, AccountType, Gender
 from black_market.model.exceptions import (
     MobileAlreadyExistedError, EmailAlreadyExistedError,
@@ -12,9 +12,8 @@ from black_market.model.exceptions import (
 )
 
 
-class Student(AliasBase, db.Model):
+class Student(db.Model):
     __tablename__ = 'student'
-    _alias_cls = StudentAccountAlias
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True)
@@ -53,7 +52,7 @@ class Student(AliasBase, db.Model):
     @classmethod
     def add(cls, name, gender, grade, type_, raw_password, mobile, status, alias_type=AliasType.mobile):
 
-        if Student.existed(mobile, alias_type):
+        if StudentAccountAlias.existed(mobile, alias_type):
             if alias_type is AliasType.mobile:
                 raise MobileAlreadyExistedError
             if alias_type is AliasType.email:
@@ -83,7 +82,7 @@ class Student(AliasBase, db.Model):
 
     @property
     def alias(self):
-        return self._alias_cls.query.filter_by(id=self.id, type=AliasType.mobile.value)
+        return self.query.filter_by(id=self.id, type=AliasType.mobile.value)
 
     def change_mobile(self, mobile):
         validator.validate_phone(mobile)
@@ -97,6 +96,18 @@ class Student(AliasBase, db.Model):
     @property
     def account_status(self):
         return AccountStatus(self.status)
+
+    @property
+    def aliases(self):
+        return StudentAccountAlias.get_aliases_by_id(self.id)
+
+    @property
+    def mobile(self):
+        return self.aliases.get(AliasType.mobile)
+
+    @property
+    def email(self):
+        return self.aliases.get(AliasType.email)
 
     def need_verify(self):
         return self.account_status is AccountStatus.need_verify
@@ -113,7 +124,7 @@ class Student(AliasBase, db.Model):
         return self.password == hash_password(raw_password, self.salt)
 
     def change_password(self, new_password):
-        # from black_market.model.oauth.token import delete_oauth_tokens
+        from black_market.model.oauth.token import delete_oauth_tokens
         salt = gen_salt()
         validator.validate_password(new_password)
         password = hash_password(new_password, salt)
@@ -121,6 +132,4 @@ class Student(AliasBase, db.Model):
         self.password = password
         db.session.add(self)
         db.session.commit()
-
-        # TODO
-        # delete_oauth_tokens(self.id_)
+        delete_oauth_tokens(self.id)

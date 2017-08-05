@@ -5,6 +5,7 @@ from werkzeug.utils import cached_property
 
 from black_market.config import OAUTH_TOKEN_TTL
 from black_market.ext import db
+from black_market.libs.cache.redis import mc
 from .client import OAuthClient
 
 
@@ -20,10 +21,10 @@ class OAuthToken(db.Model):
     expires_in = db.Column(db.Integer)
     create_time = db.Column(db.DateTime(), default=datetime.utcnow)
 
-    # _cache_key_prefix = 'oauth_token:'
-    # _token_cache_key = _cache_key_prefix + 'id:%s'
-    # _id_by_token_type_and_value_cache_key = _cache_key_prefix + 'type:%s:value:%s'
-    # _ids_by_user_id_cache_key = _cache_key_prefix + 'user.id:%s'
+    _cache_key_prefix = 'oauth_token:'
+    _token_cache_key = _cache_key_prefix + 'id:%s'
+    _id_by_token_type_and_value_cache_key = _cache_key_prefix + 'type:%s:value:%s'
+    _ids_by_user_id_cache_key = _cache_key_prefix + 'user.id:%s'
 
     def __init__(self, client_pk, user_id, scopes, access_token,
                  refresh_token, expires_in):
@@ -119,8 +120,15 @@ class OAuthToken(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        # TODO clear_cache
-        # self.clear_cache()
+        self.clear_cache()
+
+    def clear_cache(self):
+        mc.delete(self._token_cache_key % self.id)
+        mc.delete(self._id_by_token_type_and_value_cache_key % (
+            'access_token', self.access_token))
+        mc.delete(self._id_by_token_type_and_value_cache_key % (
+            'refresh_token', self.refresh_token))
+        mc.delete(self._ids_by_user_id_cache_key % self.user_id)
 
 
 def delete_oauth_tokens(user_id):

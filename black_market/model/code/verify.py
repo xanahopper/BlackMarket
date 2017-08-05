@@ -14,7 +14,7 @@ class SMSVerify(object):
     @classmethod
     def add(cls, mobile, type_, max_send_total=5):
         total_send_key = cls._total_send_key.format(mobile=mobile, type_=type_.value)
-        total_send = rd.get(total_send_key)
+        total_send = int(rd.get(total_send_key)) if rd.get(total_send_key) else 0
         if total_send and total_send >= max_send_total:
             raise SendSMSTooManyTimesError(
                 '已超出当日最大获取验证码次数，请24小时后尝试')
@@ -36,7 +36,7 @@ class SMSVerify(object):
     def verify(cls, mobile, code, type_, max_retry=5):
         key = cls._redis_key.format(mobile=mobile, type_=type_.value)
         total_retry_key = cls._total_retry_key.format(mobile=mobile, type_=type_.value)
-        retry_total = rd.get(total_retry_key) or 0
+        retry_total = int(rd.get(total_retry_key)) if rd.get(total_retry_key) else 0
         if retry_total >= max_retry:
             rd.delete(key)
             rd.delete(total_retry_key)
