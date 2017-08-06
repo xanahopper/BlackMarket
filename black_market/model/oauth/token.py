@@ -88,7 +88,8 @@ class OAuthToken(db.Model):
     def add(cls, client_pk, user_id, scopes, access_token, refresh_token,
             expires_in=OAUTH_TOKEN_TTL):
         scopes = ','.join(scope.strip() for scope in scopes)
-        oauth_token = OAuthToken(client_pk, user_id, scopes, access_token, refresh_token, expires_in)
+        oauth_token = OAuthToken(
+            client_pk, user_id, scopes, access_token, refresh_token, expires_in)
         db.session.add(oauth_token)
         db.session.commit()
         return oauth_token.id

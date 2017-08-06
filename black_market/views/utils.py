@@ -1,15 +1,11 @@
-import re
 import datetime
 import random
-import hashlib
 
 from flask import flash, redirect, jsonify
 
 
 def normal_jsonify(data, code=0, message=None):
     return jsonify(code=code, message=message, data=data), 200
-
-
 
 
 def timestamp_to_datetime(timestamp):

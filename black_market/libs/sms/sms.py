@@ -1,9 +1,7 @@
-import requests
-
 from yunpian_python_sdk.model import constant as YC
 from yunpian_python_sdk.ypclient import YunpianClient
 
-from black_market.config import SMS_YUNPIAN_HTTP, SMS_YUNPIAN_APIKEY, DEBUG
+from black_market.config import SMS_YUNPIAN_APIKEY, DEBUG
 
 
 class SMS(object):
@@ -29,8 +27,8 @@ class SMS(object):
         if r.code() == 200:
             r = r.json()
             code = r.get('code')
-            msg = r.get('msg')
-            sid = r.get('sid') or ''
+            # msg = r.get('msg')
+            # sid = r.get('sid') or ''
             try:
                 if int(code) == 0:
                     return True

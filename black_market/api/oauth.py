@@ -3,7 +3,7 @@ from flask import g, request
 from black_market.model.oauth.token import OAuthToken
 from black_market.model.oauth.client import OAuthClient
 from black_market.model.oauth.grant import OAuthGrant
-from black_market.model.user.consts import AccountType, AliasType
+from black_market.model.user.consts import AliasType
 from black_market.model.user.student import Student
 from black_market.ext import oauth_server
 

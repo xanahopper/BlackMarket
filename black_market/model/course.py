@@ -18,6 +18,9 @@ class Course(db.Model):
     def __repr__(self):
         return '<%s-%s-%s>' % (self.id, self.name, self.teacher)
 
+    def dump(self):
+        return dict(id=self.id, name=self.name, teacher=self.teacher, credit=self.credit)
+
     @property
     def type_(self):
         return CourseType(self.course_type)
@@ -33,27 +36,3 @@ class Course(db.Model):
     @classmethod
     def get_by_name(cls, name):
         return Course.query.filter(Course.name.ilike('%' + name + '%'))
-
-    @property
-    def dict_(self):
-        return dict(
-            id=self.id, name=self.name, teacher=self.teacher, credit=self.credit)
-
-    # TODO update self
-    # def update_self(self, **kwargs):
-    #     if not kwargs:
-    #         return True
-    #     if 'type_' in kwargs.keys():
-    #         kwargs['type'] = kwargs.pop('type_')
-    #     for key, value in kwargs.items():
-    #         if type(type(value)) == EnumMeta:
-    #             kwargs[key] = value.value
-    #     setter = ', '.join(['{key}=:{key}'.format(key=key)
-    #                         for key in kwargs.keys()])
-    #
-    #     sql = ('UPDATE {table} SET {setter} WHERE id=:id_'
-    #            ).format(table=self._table, setter=setter)
-    #     params = dict(id_=self.id_, **kwargs)
-    #     db.execute(sql, params=params)
-    #     db.commit()
-    #     return True

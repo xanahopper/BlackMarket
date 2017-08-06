@@ -1,54 +1,54 @@
-import time
-import hashlib
-
-import json
-
-from datetime import datetime
-
-
-from flask import (
-    Blueprint, request, render_template,
-    redirect, get_flashed_messages)
-from flask_login import (
-    login_user, logout_user, current_user)
-
-# from black_market.config import RAW_SALT as raw_salt
-# from black_market.ext import db
-# from black_market.libs.api import course as course_api
-# from black_market.libs.api.email import send_email_to
-# # from black_market.service.match import find_match
-
-from black_market.model.course import Course
-from black_market.model.post import Post
-from black_market.model.user import User
-from black_market.model.exceptions import UserException
-
-from black_market.views.utils import normal_jsonify
-
-# from black_market.views.utils import (
-#     timestamp_to_datetime, redirect_with_msg, check_phone,
-#     check_email, check_exist, num_to_word, parse_contact,
-#     get_paginate_from_list, get_short_message, flash_form_data,
-#     get_hashed_password_and_salt)
-
-bp = Blueprint('market', __name__)
-
-
-def force_logout():
-    if current_user.is_authenticated:
-        if not current_user.new_password:
-            logout_user()
-
-@bp.before_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.ping()
-
-
-@bp.route('/', methods=['GET'])
-def index():
-    return normal_jsonify('')
-
+# import time
+# import hashlib
+#
+# import json
+#
+# from datetime import datetime
+#
+#
+# from flask import (
+#     Blueprint, request, render_template,
+#     redirect, get_flashed_messages)
+# from flask_login import (
+#     login_user, logout_user, current_user)
+#
+# # from black_market.config import RAW_SALT as raw_salt
+# # from black_market.ext import db
+# # from black_market.libs.api import course as course_api
+# # from black_market.libs.api.email import send_email_to
+# # # from black_market.service.match import find_match
+#
+# from black_market.model.course import Course
+# from black_market.model.post import Post
+# from black_market.model.user import User
+# from black_market.model.exceptions import UserException
+#
+# from black_market.views.utils import normal_jsonify
+#
+# # from black_market.views.utils import (
+# #     timestamp_to_datetime, redirect_with_msg, check_phone,
+# #     check_email, check_exist, num_to_word, parse_contact,
+# #     get_paginate_from_list, get_short_message, flash_form_data,
+# #     get_hashed_password_and_salt)
+#
+# bp = Blueprint('market', __name__)
+#
+#
+# def force_logout():
+#     if current_user.is_authenticated:
+#         if not current_user.new_password:
+#             logout_user()
+#
+# @bp.before_request
+# def before_request():
+#     if current_user.is_authenticated:
+#         current_user.ping()
+#
+#
+# @bp.route('/', methods=['GET'])
+# def index():
+#     return normal_jsonify('')
+#
 # @bp.route('/', methods=['GET', 'POST'])
 # def search():
 #     force_logout()
@@ -372,7 +372,8 @@ def index():
 #     user_id = current_user.id
 #     message = request.values.get('message').strip()
 #     if not message:
-#         return redirect_with_msg('/messgeboard', u'Your message seems to be empty.', category='board')
+#         return redirect_with_msg(
+#                 '/messgeboard', u'Your message seems to be empty.', category='board')
 #     created_time = datetime.now()
 #     board_message = BorardMessage(user_id, created_time, message)
 #     db.session.add(board_message)
