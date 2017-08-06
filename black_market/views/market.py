@@ -10,5 +10,5 @@ index_page_view_count_cache_key = 'black:market:index:view:count'
 @bp.route('/', methods=['GET'])
 def index():
     mc.incr(index_page_view_count_cache_key)
-    view_count = int(mc.get(index_page_view_count_cache_key))
-    return render_template('index.html', view_count=view_count)
+    page_view = int(mc.get(index_page_view_count_cache_key))
+    return render_template('index.html', page_view=page_view)
