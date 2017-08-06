@@ -8,6 +8,7 @@ extensions = [
 ]
 
 blueprints = [
+    'black_market.views.market:bp',
     'black_market.api.oauth:bp',
     'black_market.api.student:bp',
 ]
