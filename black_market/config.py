@@ -8,6 +8,8 @@ from envcfg.json.black_market import RAW_SALT
 from envcfg.json.black_market import OAUTH2_PROVIDER_TOKEN_EXPIRES_IN
 from envcfg.json.black_market import SMS_YUNPIAN_HTTP
 from envcfg.json.black_market import SMS_YUNPIAN_APIKEY
+from envcfg.json.black_market import WEIXIN_APP_ID
+from envcfg.json.black_market import WEIXIN_APP_SECRET
 
 
 APP = 'black_market'
@@ -27,4 +29,6 @@ __all__ = [
     'OAUTH_TOKEN_TTL',
     'SMS_YUNPIAN_HTTP',
     'SMS_YUNPIAN_APIKEY',
+    'WEIXIN_APP_ID',
+    'WEIXIN_APP_SECRET',
 ]
