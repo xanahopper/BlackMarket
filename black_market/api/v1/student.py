@@ -1,23 +1,21 @@
 from flask import request, abort, jsonify
 from oauthlib.common import generate_token
 
-from black_market.config import DEBUG
+from black_market.api._bp import create_blueprint
 from black_market.api.decorator import require_oauth, require_credentials
-from black_market.model.user.student import Student
-from black_market.model.user.consts import AccountStatus, StudentType, Gender
-from black_market.model.oauth.scopes import OAuthScope
-from black_market.model.oauth.token import OAuthToken
-from black_market.model.exceptions import (
-    InvalidValueError, InvalidSMSVerifyCodeError, RequestFailedError)
-from black_market.model.utils import validator
-from black_market.model.code.verify import SMSVerify
-from black_market.model.code.consts import SMSVerifyType
+from black_market.api.schema import student as student_schema
+from black_market.config import DEBUG
 from black_market.libs.sms.sms import SMS
 from black_market.libs.sms.templates import VERIFY_CODE_TEMPLATE
-
-from black_market.api.schema import student as student_schema
-from ._bp import create_blueprint
-
+from black_market.model.code.consts import SMSVerifyType
+from black_market.model.code.verify import SMSVerify
+from black_market.model.exceptions import (
+    InvalidValueError, InvalidSMSVerifyCodeError, RequestFailedError)
+from black_market.model.oauth.scopes import OAuthScope
+from black_market.model.oauth.token import OAuthToken
+from black_market.model.user.consts import AccountStatus, StudentType, Gender
+from black_market.model.user.student import Student
+from black_market.model.utils import validator
 
 bp = create_blueprint('student', __name__, url_prefix='/student')
 

@@ -7,7 +7,7 @@ from black_market.model.user.consts import AliasType
 from black_market.model.user.student import Student
 from black_market.ext import oauth_server
 
-from ._bp import create_blueprint
+from black_market.api._bp import create_blueprint
 
 
 bp = create_blueprint('oauth', __name__, url_prefix='/oauth')
