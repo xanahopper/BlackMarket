@@ -26,6 +26,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.app = create_app()
         self.app.app_context().push()
+        db.reflect()
         db.create_all()
         rd.flushdb()
 
@@ -34,7 +35,8 @@ class BaseTestCase(unittest.TestCase):
         rd.flushdb()
         try:
             db.drop_all()
-            db.drop_all()
+            db.reflect()
+            db.create_all()
         except Exception:
             pass
 

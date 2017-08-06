@@ -11,7 +11,9 @@ from flask_alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 
 from black_market.ext import db
 from black_market.app import create_app
-from black_market.model.post import Post
+from black_market.model.post.course import CoursePost
+from black_market.model.post.course_demand import CourseDemand
+from black_market.model.post.course_supply import CourseSupply
 
 from black_market.model.user.account import Account
 from black_market.model.user.student import Student

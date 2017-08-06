@@ -1,9 +1,10 @@
 from black_market.ext import db
 from black_market.model.course import Course
-from black_market.model.post.course import CoursePost
 
 
 class CourseSupply(db.Model):
+    __tablename__ = 'course_supply'
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     post_id = db.Column(db.Integer, db.ForeignKey('course_post.id'))
     course_id = db.Column(db.Integer)
@@ -32,6 +33,7 @@ class CourseSupply(db.Model):
 
     @property
     def post(self):
+        from black_market.model.post.course import CoursePost
         return CoursePost.get(self.post_id)
 
     @property

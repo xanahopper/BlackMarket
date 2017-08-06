@@ -2,7 +2,6 @@ from datetime import datetime
 
 from black_market.ext import db
 from black_market.model.utils import validator
-from black_market.model.post.course import CoursePost
 from black_market.model.user.password import gen_salt, hash_password
 from black_market.model.user.account import Account
 from black_market.model.user.alias import StudentAccountAlias
@@ -84,6 +83,7 @@ class Student(db.Model):
 
     @property
     def posts(self, offset=0, limit=10):
+        from black_market.model.post.course import CoursePost
         return CoursePost.gets_by_student(self.id, offset, limit)
 
     @property
