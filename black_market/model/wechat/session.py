@@ -2,22 +2,22 @@ import uuid
 from datetime import datetime, timedelta
 
 from black_market.ext import db
-from black_market.libs.cache.redis import mc
+# from black_market.libs.cache.redis import mc
 
 
 class WechatSession(db.Model):
     __tablename__ = 'wechat_session'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    open_id = db.Column(db.String(80))
-    session_key = db.Column(db.String(80))
-    third_session_key = db.Column(db.String(80), unique=True)
+    open_id = db.Column(db.String(80), index=True, nullable=False)
+    session_key = db.Column(db.String(80), nullable=False)
+    third_session_key = db.Column(db.String(80), unique=True, index=True, nullable=False)
     create_time = db.Column(db.DateTime(), default=datetime.utcnow)
     expire_time = db.Column(db.DateTime())
 
-    _cache_key_prefix = 'wechat_session:'
-    _token_cache_key = _cache_key_prefix + 'id:%s'
-    _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
+    # _cache_key_prefix = 'wechat_session:'
+    # _token_cache_key = _cache_key_prefix + 'id:%s'
+    # _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
 
     def __init__(self, open_id, session_key, third_session_key, expire_time):
         self.open_id = open_id
@@ -31,7 +31,7 @@ class WechatSession(db.Model):
         instance = cls.get_by_open_id(open_id)
         if instance:
             instance.update(session_key, third_session_key, expires_in)
-            return instance.id_
+            return third_session_key
 
         expire_time = datetime.now() + timedelta(seconds=expires_in)
         wechat_session = WechatSession(
@@ -59,7 +59,7 @@ class WechatSession(db.Model):
         self.expire_time = datetime.now() + timedelta(seconds=expires_in)
         db.session.add(self)
         db.session.commit()
-        self.clear_cache()
+        # self.clear_cache()
 
     def invalidate_third_session_key(self):
         self.third_session_key = uuid.uuid4().hex
@@ -70,8 +70,8 @@ class WechatSession(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        self.clear_cache()
+        # self.clear_cache()
 
-    def clear_cache(self):
-        mc.delete(self._token_cache_key % self.id_)
-        mc.delete(self._id_by_open_id_cache_key % self.open_id)
+    # def clear_cache(self):
+    #     mc.delete(self._token_cache_key % self.id_)
+    #     mc.delete(self._id_by_open_id_cache_key % self.open_id)

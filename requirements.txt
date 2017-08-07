@@ -26,3 +26,4 @@ redis
 yunpian-python-sdk
 wechatpy
 PyCrypto
+gevent

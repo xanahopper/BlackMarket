@@ -17,14 +17,19 @@ def jscode2session():
 
     r = wechat.jscode2session(code)
     res = r.json()
-    if r.status_code == requests.codes.ok:
-        open_id = res['openid']
-        session_key = res['session_key']
+    if res.get('openid') and res.get('session_key'):
+        open_id = res.get('openid')
+        session_key = res.get('session_key')
         third_session_key = WechatSession.add(open_id, session_key)
         return jsonify(session_key=third_session_key)
+    
     errcode = res.get('errcode') or ''
     errmsg = res.get('errmsg') or ''
     return jsonify(errcode=errcode, errmsg=errmsg), 401
+
+@bp.route('/user', methods=['POST', 'PUT'])
+def create_wechat_user():
+    pass
 
 
 @bp.route('/check_session', methods=['GET'])

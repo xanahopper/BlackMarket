@@ -2,34 +2,26 @@ import sys
 import runpy
 import json
 import xlrd
+import flask_script
 from collections import namedtuple
 
-
-from oauthlib.common import generate_token
 from flask_script import Manager
 from flask_alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 
 from black_market.ext import db
 from black_market.app import create_app
-from black_market.model.post.course import CoursePost
-from black_market.model.post.course_demand import CourseDemand
-from black_market.model.post.course_supply import CourseSupply
+from black_market.config import DEBUG, HTTP_HOST, HTTP_PORT
 
-from black_market.model.user.account import Account
-from black_market.model.user.student import Student
-from black_market.model.user.alias import StudentAccountAlias
-from black_market.model.user.consts import AccountType, StudentType, AccountStatus, Gender
-from black_market.model.oauth.token import OAuthToken
-from black_market.model.oauth.client import OAuthClient
-from black_market.model.oauth.grant import OAuthGrant
+from black_market.model.wechat.user import WechatUser
 from black_market.model.wechat.session import WechatSession
+from black_market.model.user.student import Student
+from black_market.model.user.consts import StudentType, AccountStatus, Gender
 
 from black_market.model.course import Course
 from black_market.model.course_schedule import CourseSchedule
-
-import flask_script
-
-from black_market.config import DEBUG, HTTP_HOST, HTTP_PORT
+from black_market.model.post.course import CoursePost
+from black_market.model.post.course_demand import CourseDemand
+from black_market.model.post.course_supply import CourseSupply
 
 app = create_app()
 manager = Manager(app)
@@ -46,69 +38,28 @@ def init_database():
         db.drop_all()
         db.create_all()
 
-        print('Adding Client `Web`')
-        id_ = OAuthClient.add('web', AccountType.student, allowed_scopes=['student'])
-        client = OAuthClient.get(id_)
-        print('Client ID: %s' % client.client_id)
+        # print('Adding Client `Web`')
+        # id_ = OAuthClient.add('web', AccountType.student, allowed_scopes=['student'])
+        # client = OAuthClient.get(id_)
+        # print('Client ID: %s' % client.client_id)
 
-        print('\nAdding Student @mew_wzh')
-        id_ = Student.add(
-            'mew_wzh', Gender.male, '2014',StudentType.double_major,
-            '19950629', '15600000000', AccountStatus.need_verify)
-        student = Student.get(id_)
-        print(student.dump())
+        # print('\nAdding Student @mew_wzh')
+        # id_ = Student.add(
+        #     'mew_wzh', Gender.male, '2014',StudentType.double_major,
+        #     '19950629', '15600000000', AccountStatus.need_verify)
+        # student = Student.get(id_)
+        # print(student.dump())
 
-        print('\nAdding token for user @mew_wzh')
-        id_ = OAuthToken.add(client.id, id_, ['student'], generate_token(), generate_token())
-        token = OAuthToken.get(id_)
-        print(token.dump())
+        # print('\nAdding token for user @mew_wzh')
+        # id_ = OAuthToken.add(client.id, id_, ['student'], generate_token(), generate_token())
+        # token = OAuthToken.get(id_)
+        # print(token.dump())
 
         courses, course_schedules = _init_courses()
         for course in courses:
             db.session.add(course)
         for schedule in course_schedules:
             db.session.add(schedule)
-        db.session.commit()
-
-
-@manager.command
-def test():
-    with app.app_context():
-        # c1 = Class.query.first()
-        # print(c1.students)
-        # print(c1.students.all())
-
-        # s1 = Student.query.first()
-        #
-        # print(11111, s1._class)
-        #
-        # rs = s1._class.all()
-        #
-        # for r in rs:
-        #     print(2222, r._class, r.student)
-        pass
-
-
-@manager.command
-def init_test_database():
-    init_database()
-    with app.app_context():
-        user1 = User(
-            'test_user1', '15612345671', 'user1@qq.com', 'password1', 2013)
-        user2 = User(
-            'test_user2', '15612345672', 'user2@qq.com', 'password2', 2014)
-        db.session.add(user1)
-        db.session.add(user2)
-        db.session.commit()
-        for i in range(0, 15):
-            post = Post(
-                i % 2 + 1, 1486200246 + 1800 * i, '1561234567%d' % (i % 2 + 1),
-                '我是xxx，跪求xxx课，请联系我！')
-            # demand = Demand(i + 1, i + 10)
-            # supply = Supply(i + 1, i + 14)
-            db.session.add(post)
-            # db.session.add(demand)
-            # db.session.add(supply)
         db.session.commit()
 
 
@@ -237,12 +188,12 @@ def runserver(host=None, port=None, debug=None):
 
 
 @manager.command
-def gunicorn(workers=4, timeout=60):
+def gunicorn(host=None, port=5000, workers=4, timeout=60):
     """Serve with gunicorn"""
     from gunicorn.app.base import Application
 
-    host = HTTP_HOST or '0.0.0.0'
-    port = HTTP_PORT or '9000'
+    host = host or HTTP_HOST or '127.0.0.1'
+    port = port or HTTP_PORT or '5000'
     bind = '{0}:{1}'.format(host, port)
 
     class MyApp(Application):
