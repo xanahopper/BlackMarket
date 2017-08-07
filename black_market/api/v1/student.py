@@ -27,8 +27,8 @@ def get_student(id_):
 
 @bp.route('/register', methods=['POST'])
 def send_register_code():
-    body = request.get_json()
-    mobile = body.get('mobile')
+    data = student_schema.RegisterStudentSchema().fill()
+    mobile = data.get('mobile')
     validator.validate_phone(mobile)
     code = SMSVerify.add(mobile, SMSVerifyType.register)
     msg = VERIFY_CODE_TEMPLATE.format(code=code)
