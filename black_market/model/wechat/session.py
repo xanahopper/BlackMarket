@@ -26,7 +26,7 @@ class WechatSession(db.Model):
         self.expire_time = expire_time
 
     @classmethod
-    def add(cls, open_id, session_key, expires_in):
+    def add(cls, open_id, session_key, expires_in=1800):
         third_session_key = uuid.uuid4().hex
         instance = cls.get_by_open_id(open_id)
         if instance:
