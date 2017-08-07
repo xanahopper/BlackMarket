@@ -15,7 +15,7 @@ def jscode2session():
     data = request.args.to_dict()
     code = data.get('code')
 
-    r = wechat.jscode2session(js_code=code)
+    r = wechat.jscode2session(code)
     res = r.json()
     if r.status_code == requests.codes.ok:
         open_id = res['openid']
