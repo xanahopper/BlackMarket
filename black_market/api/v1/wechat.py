@@ -22,7 +22,7 @@ def jscode2session():
         session_key = res.get('session_key')
         third_session_key = WechatSession.add(open_id, session_key)
         return jsonify(session_key=third_session_key)
-    
+
     errcode = res.get('errcode') or ''
     errmsg = res.get('errmsg') or ''
     return jsonify(errcode=errcode, errmsg=errmsg), 401
