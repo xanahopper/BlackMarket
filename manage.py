@@ -22,7 +22,7 @@ from black_market.model.user.consts import AccountType, StudentType, AccountStat
 from black_market.model.oauth.token import OAuthToken
 from black_market.model.oauth.client import OAuthClient
 from black_market.model.oauth.grant import OAuthGrant
-from black_market.model.wechat.token import WechatOAuthToken
+from black_market.model.wechat.session import WechatSession
 
 from black_market.model.course import Course
 from black_market.model.course_schedule import CourseSchedule

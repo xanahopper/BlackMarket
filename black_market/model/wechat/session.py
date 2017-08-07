@@ -5,63 +5,64 @@ from black_market.ext import db
 from black_market.libs.cache.redis import mc
 
 
-class WechatOAuthToken(db.Model):
-    __tablename__ = 'wechat_oauth_token'
+class WechatSession(db.Model):
+    __tablename__ = 'wechat_session'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nonce = db.Column(db.String(80), unique=True)
     open_id = db.Column(db.String(80))
     session_key = db.Column(db.String(80))
+    third_session_key = db.Column(db.String(80), unique=True)
     create_time = db.Column(db.DateTime(), default=datetime.utcnow)
     expire_time = db.Column(db.DateTime())
 
-    _cache_key_prefix = 'wechat_oauth_token:'
+    _cache_key_prefix = 'wechat_session:'
     _token_cache_key = _cache_key_prefix + 'id:%s'
     _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
 
-    def __init__(self, nonce, open_id, session_key, expire_time):
-        self.nonce = nonce
+    def __init__(self, open_id, session_key, third_session_key, expire_time):
         self.open_id = open_id
         self.session_key = session_key
+        self.third_session_key = third_session_key
         self.expire_time = expire_time
 
     @classmethod
     def add(cls, open_id, session_key, expires_in):
-        nonce = uuid.uuid4().hex
+        third_session_key = uuid.uuid4().hex
         instance = cls.get_by_open_id(open_id)
         if instance:
-            instance.update(nonce, session_key, expires_in)
+            instance.update(session_key, third_session_key, expires_in)
             return instance.id_
 
         expire_time = datetime.now() + timedelta(seconds=expires_in)
-        wechat_oauth_token = WechatOAuthToken(
-            nonce, open_id, session_key, expire_time)
+        wechat_session = WechatSession(
+            open_id, session_key, third_session_key, expire_time)
 
-        db.session.add(wechat_oauth_token)
+        db.session.add(wechat_session)
         db.session.commit()
+        return third_session_key
 
     @classmethod
     def get(cls, id_):
         return cls.query.get(id_)
 
     @classmethod
-    def get_by_nonce(cls, nonce):
-        return cls.query.filter_by(nonce=nonce).first()
+    def get_by_third_session_key(cls, third_session_key):
+        return cls.query.filter_by(third_session_key=third_session_key).first()
 
     @classmethod
     def get_by_open_id(cls, open_id):
         return cls.query.filter_by(open_id=open_id).first()
 
-    def update(self, nonce, session_key, expires_in):
-        self.nonce = nonce
+    def update(self, session_key, third_session_key, expires_in):
         self.session_key = session_key
+        self.third_session_key = third_session_key
         self.expire_time = datetime.now() + timedelta(seconds=expires_in)
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
 
-    def invalidate_nonce(self):
-        self.nonce = uuid.uuid4().hex
+    def invalidate_third_session_key(self):
+        self.third_session_key = uuid.uuid4().hex
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
