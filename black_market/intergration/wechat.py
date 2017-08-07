@@ -16,9 +16,9 @@ class Wechat(object):
         self.app_id = app_id
         self.app_secret = app_secret
 
-    def jscode2session(self, jscode, grant_type='authorization_code'):
+    def jscode2session(self, code, grant_type='authorization_code'):
         params = dict(appid=self.app_id, secret=self.app_secret,
-                      js_code=jscode, grant_type=grant_type)
+                      js_code=code, grant_type=grant_type)
         r = requests.get(JSCODE2SESSION_URL, params=params)
         return r.json()
 
