@@ -1,4 +1,3 @@
-import uuid
 from datetime import datetime, timedelta
 
 from black_market.ext import db
@@ -38,7 +37,7 @@ class WechatUser(db.Model):
 
     @classmethod
     def add(cls, open_id, nickname, avatar_url, city,
-                 country, gender, language, province, expires_in=1800):
+            country, gender, language, province, expires_in=1800):
         instance = cls.get_by_open_id(open_id)
         if instance:
             instance.update(nickname, avatar_url, city, country,

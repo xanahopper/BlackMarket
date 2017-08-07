@@ -11,10 +11,10 @@ from black_market.model.exceptions import WechatUserNotExistedError
 class Student(db.Model):
     __tablename__ = 'student'
 
-    id = db.Column(db.Integer, db.ForeignKey('wechat_user_info.id'))
+    id = db.Column(db.Integer, db.ForeignKey('wechat_user.id'))
     name = db.Column(db.String(80))
     mobile = db.Column(db.String(80), primary_key=True, index=True)
-    open_id = db.Column(db.String(80), db.ForeignKey('wechat_user_info.open_id'))
+    open_id = db.Column(db.String(80), db.ForeignKey('wechat_user.open_id'))
     type = db.Column(db.SmallInteger)
     grade = db.Column(db.String(10))
     status = db.Column(db.SmallInteger, default=AccountStatus.need_verify.value)
@@ -24,8 +24,8 @@ class Student(db.Model):
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
 
-    def __init__(self, name, mobile, open_id, type_, grade, status):
-        self.name = name
+    def __init__(self, id_, mobile, open_id, type_, grade, status):
+        self.id = id_
         self.mobile = mobile
         self.open_id = open_id
         self.type = type_
@@ -36,18 +36,20 @@ class Student(db.Model):
         return '<User @%s>' % self.name
 
     def dump(self):
-        return dict(id=self.id, name=self.name, gender=self.gender,
-                    grade=self.grade, type=self.type, status=self.status)
+        return dict(
+            id=self.id, name=self.name, mobile=self.mobile, gender=self.gender,
+            grade=self.grade, type=self.type, status=self.status, create_time=self.create_time,
+            update_time=self.update_time)
 
     @classmethod
-    def add(cls, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
+    def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
         if wechat_user is None:
             raise WechatUserNotExistedError
         if Student.existed(mobile):
             raise MobileAlreadyExistedError
-
-        student = Student(mobile, open_id, type_, grade, status)
+        student = Student(id_, mobile, open_id, type_, grade, status)
+        return student.id
 
     @classmethod
     def get(cls, id_):
@@ -64,9 +66,11 @@ class Student(db.Model):
 
     def change_mobile(self, mobile):
         validator.validate_phone(mobile)
-        if StudentAccountAlias.existed(mobile, AliasType.mobile):
+        if Student.existed(mobile):
             raise MobileAlreadyExistedError
-        self.update_alias(mobile, AliasType.mobile)
+        self.mobile = mobile
+        db.session.add(self)
+        db.session.commit()
 
     @property
     def account_status(self):

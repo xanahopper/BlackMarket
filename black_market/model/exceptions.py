@@ -184,4 +184,4 @@ class WeChatServiceError(BlackMarketError):
 
 
 class WechatUserNotExistedError(BlackMarketError):
-    _error = Error(4000, '微信服务异常', 403)
+    _error = Error(4001, '微信服务异常', 403)

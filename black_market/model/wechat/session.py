@@ -47,11 +47,16 @@ class WechatSession(db.Model):
 
     @classmethod
     def get_by_third_session_key(cls, third_session_key):
-        return cls.query.filter_by(third_session_key=third_session_key).first()
+        wechat_session = cls.query.filter_by(third_session_key=third_session_key).first()
+        return None if wechat_session.expired else wechat_session
 
     @classmethod
     def get_by_open_id(cls, open_id):
         return cls.query.filter_by(open_id=open_id).first()
+
+    @property
+    def expired(self):
+        return bool(datetime.utcnow < self.expire_time)
 
     def update(self, session_key, third_session_key, expires_in):
         self.session_key = session_key

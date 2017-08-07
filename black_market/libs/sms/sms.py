@@ -23,7 +23,6 @@ class SMS(object):
         param = {YC.MOBILE: number, YC.TEXT: message}
         r = client.sms().single_send(param)
 
-        # TODO
         if r.code() == 200:
             r = r.json()
             code = r.get('code')

@@ -9,7 +9,7 @@ class SMSVerify(object):
     _redis_key = 'sms:verify:{type_}:{mobile}'
     _total_retry_key = 'sms:verify:{type_}:{mobile}:retry.total'
     _total_send_key = 'sms:verify:{type_}:{mobile}:send.total'
-    _expire_time = 60 * 30  # 30 mins
+    _expire_time = 60 * 10  # 10 mins
 
     @classmethod
     def add(cls, mobile, type_, max_send_total=5):
