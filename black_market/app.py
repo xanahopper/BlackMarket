@@ -13,6 +13,7 @@ blueprints = [
     'black_market.api.v1.oauth:bp',
     'black_market.api.v1.student:bp',
     'black_market.api.v1.course:bp',
+    'black_market.api.v1.wechat:bp',
 ]
 
 
