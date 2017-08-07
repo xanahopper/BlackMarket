@@ -10,7 +10,7 @@ from black_market.ext import oauth_server
 from black_market.api._bp import create_blueprint
 
 
-bp = create_blueprint('oauth', __name__, url_prefix='/oauth')
+bp = create_blueprint('oauth', 'v1', __name__, url_prefix='/oauth')
 
 
 @bp.before_request

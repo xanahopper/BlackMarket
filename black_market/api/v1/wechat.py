@@ -1,21 +1,21 @@
-from flask import request, abort, jsonify
-from urllib.parse import urlparse, unquote_plus
+from flask import request, jsonify
 
 from black_market.api._bp import create_blueprint
 from black_market.intergration.wechat import wechat
 
-bp = create_blueprint('wechat', __name__, url_prefix='/wechat')
+bp = create_blueprint('wechat', 'v1', __name__, url_prefix='/wechat')
 
 
-@bp.route('/jsconfig', methods=['GET'])
-def get_jsapi_config():
+@bp.route('/jscode2session', methods=['GET'])
+def jscode2session():
     """获取服务号JSAPI的配置参数"""
 
     data = request.args.to_dict()
-    url = data.get('url')
-    parsed = urlparse(unquote_plus(url))
-    if not parsed.hostname:
-        abort(403)
+    code = data.get('code')
 
-    config = wechat.get_jsapi_config(url=parsed.geturl())
-    return jsonify(config)
+    r = wechat.jscode2session(js_code=code)
+    res = r.json()
+    return jsonify(res)
+    # open_id = res['openid']
+    # session_key = res['session_key']
+    # unionid = res['unionid']

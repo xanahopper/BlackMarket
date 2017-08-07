@@ -1,9 +1,10 @@
-# from ._bp import create_blueprint
-#
-#
-# bp = create_blueprint('course', __name__, url_prefix='/course')
-#
-#
+# from flask import jsonify
+from .._bp import create_blueprint
+
+
+bp = create_blueprint('course', 'v1', __name__, url_prefix='/course')
+
+
 # @bp.route('/course/<int:limit>/<int:offset>', methods=['GET'])
 # def get_courses(limit, offset):
 #     # courses = Course.gets(limit=limit, offset=offset)
@@ -21,3 +22,8 @@
 # def get_user(user_id):
 #     # return normal_jsonify(User.get(user_id).dict_)
 #     return
+
+
+# @bp.route('/', methods=['GET'])
+# def get():
+#     return jsonify(openid='1111', session_key='2222', unionid='3333')

@@ -1,14 +1,13 @@
-import time
-import random
+import requests
 
-import base36
-from werkzeug.utils import cached_property
-from wechatpy.oauth import WeChatOAuth
-from wechatpy.client import WeChatClient
-from wechatpy.session.redisstorage import RedisStorage
+# import base36
+# from werkzeug.utils import cached_property
 
-from black_market.libs.cache.redis import mc
+# from black_market.libs.cache.redis import mc
 from black_market.config import WEIXIN_APP_ID, WEIXIN_APP_SECRET
+
+
+JSCODE2SESSION_URL = 'https://api.weixin.qq.com/sns/jscode2session'
 
 
 class Wechat(object):
@@ -17,36 +16,14 @@ class Wechat(object):
         self.app_id = app_id
         self.app_secret = app_secret
 
-    @cached_property
-    def oauth(self):
-        return WeChatOAuth(self.app_id, self.app_secret, '')
+    def jscode2session(self, code, grant_type='authorization_code'):
+        params = dict(appid=self.app_id, secret=self.app_secret,
+                      js_code=code, grant_type=grant_type)
+        r = requests.get(JSCODE2SESSION_URL, params=params)
+        # if r.status_code == requests.codes.ok:
+        #     return r.json()
+        # else:
+        return r.json()
 
-    @cached_property
-    def client(self):
-        return WeChatClient(self.app_id, self.app_secret, session=RedisStorage(redis=mc))
-
-    @property
-    def jsapi_ticket(self):
-        return self.client.jsapi.get_jsapi_ticket()
-
-    def get_jsapi_config(self, url, **kwargs):
-        noncestr = base36.dumps(random.randint(1e50, 9e50))
-        timestamp = int(time.time())
-
-        signature = self.client.jsapi.get_jsapi_signature(
-            noncestr=noncestr,
-            ticket=self.jsapi_ticket,
-            timestamp=timestamp,
-            url=url
-        )
-
-        config = {
-            'appId': self.app_id,
-            'timestamp': timestamp,
-            'nonceStr': noncestr,
-            'signature': signature,
-            'jsApiList': []}
-        config.update(**kwargs)
-        return config
 
 wechat = Wechat(WEIXIN_APP_ID, WEIXIN_APP_SECRET)

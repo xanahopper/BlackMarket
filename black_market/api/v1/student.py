@@ -17,7 +17,7 @@ from black_market.model.user.consts import AccountStatus, StudentType, Gender
 from black_market.model.user.student import Student
 from black_market.model.utils import validator
 
-bp = create_blueprint('student', __name__, url_prefix='/student')
+bp = create_blueprint('student', 'v1', __name__, url_prefix='/student')
 
 
 @bp.route('/<int:id_>', methods=['GET'])
