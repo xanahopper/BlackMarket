@@ -56,7 +56,7 @@ class WechatSession(db.Model):
 
     @property
     def expired(self):
-        return bool(datetime.utcnow() < self.expire_time)
+        return bool(datetime.utcnow() > self.expire_time)
 
     @property
     def wechat_user(self):
