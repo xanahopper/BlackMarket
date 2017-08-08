@@ -59,7 +59,7 @@ class Student(db.Model):
 
     @classmethod
     def get(cls, id_):
-        return cls.query.get(id_)
+        return cls.query.filter_by(id=id_).first()
 
     @classmethod
     def existed(cls, mobile):
