@@ -19,5 +19,4 @@ def clear():
     from black_market.api.utils import normal_jsonify
     from manage import init_database
     init_database()
-    mc.flushdb()
     return normal_jsonify({'status': 'ok'})
