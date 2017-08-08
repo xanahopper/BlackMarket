@@ -16,7 +16,7 @@ class WechatUser(db.Model):
     gender = db.Column(db.SmallInteger)
     language = db.Column(db.String(80))
     province = db.Column(db.String(80))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
     expire_time = db.Column(db.DateTime())
 
     # _cache_key_prefix = 'wechat_user_info:'

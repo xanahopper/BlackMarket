@@ -15,8 +15,8 @@ class CoursePost(db.Model):
     status_ = db.Column(db.SmallInteger)
     contact = db.Column(db.String(80))
     message = db.Column(db.String(256))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
+    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     def __init__(self, student_id, contact, message, status=PostStatus.normal):
         self.student_id = student_id
@@ -72,7 +72,7 @@ class CoursePost(db.Model):
             self.contact = contact
         if message:
             self.message = message
-        self.update_time = datetime.utcnow
+        self.update_time = datetime.utcnow()
         db.session.add(self)
         db.session.commit()
         return True
@@ -94,7 +94,7 @@ class CoursePost(db.Model):
         demand = self.demand
         self.validate_supply_and_demand(supply_course_id, demand.course_id)
         supply.course_id = supply_course_id
-        self.update_time = datetime.utcnow
+        self.update_time = datetime.utcnow()
         db.session.add(supply)
         db.session.add(self)
         db.session.commit()
@@ -104,7 +104,7 @@ class CoursePost(db.Model):
         demand = self.demand
         self.validate_supply_and_demand(supply.course_id, demand_course_id)
         demand.course_id = demand_course_id
-        self.update_time = datetime.utcnow
+        self.update_time = datetime.utcnow()
         db.session.add(demand)
         db.session.add(self)
         db.session.commit()

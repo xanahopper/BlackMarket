@@ -18,8 +18,8 @@ class Student(db.Model):
     type = db.Column(db.SmallInteger)
     grade = db.Column(db.String(10))
     status = db.Column(db.SmallInteger, default=AccountStatus.need_verify.value)
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
+    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
