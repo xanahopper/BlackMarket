@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, g
 
 from black_market.api._bp import create_blueprint
 from black_market.api.utils import normal_jsonify
@@ -39,7 +39,7 @@ def check_session():
 @bp.route('/user', methods=['POST', 'PUT'])
 @require_session_key(require_wechat_user=False)
 def update_wechat_user():
-    wechat_session = request.wechat_session
+    wechat_session = g.wechat_session
     open_id = wechat_session.open_id
     data = request.get_json()
     user_info = data['userInfo']

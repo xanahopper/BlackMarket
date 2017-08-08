@@ -16,15 +16,15 @@ class WechatUser(db.Model):
     gender = db.Column(db.SmallInteger)
     language = db.Column(db.String(80))
     province = db.Column(db.String(80))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
-    expire_time = db.Column(db.DateTime())
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
+    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     # _cache_key_prefix = 'wechat_user_info:'
     # _token_cache_key = _cache_key_prefix + 'id:%s'
     # _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
 
     def __init__(self, open_id, nickname, avatar_url, city,
-                 country, gender, language, province, expire_time):
+                 country, gender, language, province, update_time):
         self.open_id = open_id
         self.nickname = nickname
         self.avatar_url = avatar_url
@@ -33,21 +33,21 @@ class WechatUser(db.Model):
         self.gender = gender
         self.language = language
         self.province = province
-        self.expire_time = expire_time
+        self.update_time = update_time
 
     @classmethod
     def add(cls, open_id, nickname, avatar_url, city,
-            country, gender, language, province, expires_in=1800):
+            country, gender, language, province):
         instance = cls.get_by_open_id(open_id)
         if instance:
             instance.update(nickname, avatar_url, city, country,
-                            gender, language, province, expires_in)
+                            gender, language, province)
             return instance.id
 
-        expire_time = datetime.now() + timedelta(seconds=expires_in)
+        update_time = datetime.now()
         wechat_session = WechatUser(
             open_id, nickname, avatar_url, city,
-            country, gender, language, province, expire_time)
+            country, gender, language, province, update_time)
 
         db.session.add(wechat_session)
         db.session.commit()
@@ -62,7 +62,7 @@ class WechatUser(db.Model):
         return cls.query.filter_by(open_id=open_id).first()
 
     def update(self, nickname, avatar_url, city, country,
-               gender, language, province, expires_in):
+               gender, language, province):
         self.nickname = nickname
         self.avatar_url = avatar_url
         self.city = city
@@ -70,10 +70,10 @@ class WechatUser(db.Model):
         self.gender = gender
         self.language = language
         self.province = province
-        self.expire_time = datetime.now() + timedelta(seconds=expires_in)
+        self.update_time = datetime.now()
         db.session.add(self)
         db.session.commit()
-        self.clear_cache()
+        # self.clear_cache()
 
     # def clear_cache(self):
     #     mc.delete(self._token_cache_key % self.id_)

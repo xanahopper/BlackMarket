@@ -18,8 +18,8 @@ class Student(db.Model):
     type = db.Column(db.SmallInteger)
     grade = db.Column(db.String(10))
     status = db.Column(db.SmallInteger, default=AccountStatus.need_verify.value)
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow)
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow, onupdate=datetime.utcnow)
+    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
+    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
 
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
@@ -37,9 +37,8 @@ class Student(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, name=self.name, mobile=self.mobile, gender=self.gender,
-            grade=self.grade, type=self.type, status=self.status, create_time=self.create_time,
-            update_time=self.update_time)
+            id=self.id, mobile=self.mobile, grade=self.grade, type=self.type, status=self.status,
+            create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
@@ -50,7 +49,7 @@ class Student(db.Model):
             raise MobileAlreadyExistedError
         student = Student(id_, mobile, open_id, type_, grade, status)
         db.session.add(student)
-        db.commit()
+        db.session.commit()
         if student.id != id_:
             db.session.rollback()
             db.session.remove()
@@ -59,7 +58,7 @@ class Student(db.Model):
 
     @classmethod
     def get(cls, id_):
-        return cls.query.get(id_)
+        return cls.query.filter_by(id=id_).first()
 
     @classmethod
     def existed(cls, mobile):
