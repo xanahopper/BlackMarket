@@ -18,7 +18,7 @@ bp = create_blueprint('student', 'v1', __name__, url_prefix='/student')
 
 
 @bp.route('/', methods=['GET'])
-@require_session_key
+@require_session_key()
 def get_student():
     wechat_user = request.wechat_user
     id_ = wechat_user.id
@@ -29,7 +29,7 @@ def get_student():
 
 
 @bp.route('/', methods=['POST'])
-@require_session_key
+@require_session_key()
 def create_user():
     wechat_user = request.wechat_user
     open_id = wechat_user.open_id
@@ -51,7 +51,7 @@ def create_user():
 
 
 @bp.route('/', methods=['PUT'])
-@require_session_key
+@require_session_key()
 def update_user():
     data = student_schema.UpdateStudentSchema().fill()
     type_ = StudentType(data['type'])
