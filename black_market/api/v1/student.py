@@ -24,7 +24,7 @@ def get_student():
     id_ = wechat_user.id
     student = Student.get(id_)
     if not student:
-        normal_jsonify({}, 'Student Not Found', 404)
+        return normal_jsonify({}, 'Student Not Found', 404)
     return jsonify(student.dump())
 
 
