@@ -37,9 +37,8 @@ class Student(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, name=self.name, mobile=self.mobile, gender=self.gender,
-            grade=self.grade, type=self.type, status=self.status, create_time=self.create_time,
-            update_time=self.update_time)
+            id=self.id, mobile=self.mobile, grade=self.grade, type=self.type, status=self.status,
+            create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
