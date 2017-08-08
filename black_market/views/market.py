@@ -12,3 +12,12 @@ def index():
     mc.incr(index_page_view_count_cache_key)
     page_view = int(mc.get(index_page_view_count_cache_key))
     return render_template('index.html', page_view=page_view)
+
+
+@bp.route('/clear', methods=['GET'])
+def clear():
+    from black_market.api.utils import normal_jsonify
+    from manage import init_database
+    init_database()
+    mc.flushdb()
+    return normal_jsonify({'status': 'ok'})

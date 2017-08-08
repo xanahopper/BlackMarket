@@ -45,13 +45,13 @@ class WechatUser(db.Model):
             return instance.id
 
         update_time = datetime.now()
-        wechat_session = WechatUser(
+        wechat_user = WechatUser(
             open_id, nickname, avatar_url, city,
             country, gender, language, province, update_time)
 
-        db.session.add(wechat_session)
+        db.session.add(wechat_user)
         db.session.commit()
-        return wechat_session.id
+        return wechat_user.id
 
     @classmethod
     def get(cls, id_):
