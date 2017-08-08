@@ -50,7 +50,7 @@ class Student(db.Model):
             raise MobileAlreadyExistedError
         student = Student(id_, mobile, open_id, type_, grade, status)
         db.session.add(student)
-        db.commit()
+        db.session.commit()
         if student.id != id_:
             db.session.rollback()
             db.session.remove()
