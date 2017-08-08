@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, g
 
 from black_market.api._bp import create_blueprint
 from black_market.api.decorator import require_session_key
@@ -20,7 +20,7 @@ bp = create_blueprint('student', 'v1', __name__, url_prefix='/student')
 @bp.route('/', methods=['GET'])
 @require_session_key()
 def get_student():
-    wechat_user = request.wechat_user
+    wechat_user = g.wechat_user
     id_ = wechat_user.id
     student = Student.get(id_)
     if not student:
@@ -31,7 +31,7 @@ def get_student():
 @bp.route('/', methods=['POST'])
 @require_session_key()
 def create_user():
-    wechat_user = request.wechat_user
+    wechat_user = g.wechat_user
     open_id = wechat_user.open_id
 
     data = student_schema.CreateStudentSchema().fill()
@@ -56,7 +56,7 @@ def update_user():
     data = student_schema.UpdateStudentSchema().fill()
     type_ = StudentType(data['type'])
     grade = data['grade']
-    wechat_user = request.wechat_user
+    wechat_user = g.wechat_user
     id_ = wechat_user.id
     student = Student.get(id_)
     student = student.update(type_, grade)
