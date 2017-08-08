@@ -13,3 +13,8 @@ class CreateStudentSchema(BaseSchema, FillHelperMixin):
 
 class RegisterStudentSchema(BaseSchema, FillHelperMixin):
     mobile = ma.String(required=True)
+
+
+class UpdateStudentSchema(BaseSchema, FillHelperMixin):
+    type = ma.Integer(required=True)
+    grade = ma.String(required=True)

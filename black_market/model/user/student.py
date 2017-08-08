@@ -28,7 +28,7 @@ class Student(db.Model):
         self.id = id_
         self.mobile = mobile
         self.open_id = open_id
-        self.type = type_
+        self.type = type_.value
         self.grade = grade
         self.status = status.value
 
@@ -49,6 +49,12 @@ class Student(db.Model):
         if Student.existed(mobile):
             raise MobileAlreadyExistedError
         student = Student(id_, mobile, open_id, type_, grade, status)
+        db.session.add(student)
+        db.commit()
+        if student.id != id_:
+            db.session.rollback()
+            db.session.remove()
+            raise
         return student.id
 
     @classmethod
@@ -63,6 +69,13 @@ class Student(db.Model):
     def posts(self, offset=0, limit=10):
         from black_market.model.post.course import CoursePost
         return CoursePost.gets_by_student(self.id, offset, limit)
+
+    def update(self, type_, grade):
+        self.type = type_
+        self.grade = grade
+        db.session.add(self)
+        db.session.commit()
+        return Student.get(self.id)
 
     def change_mobile(self, mobile):
         validator.validate_phone(mobile)

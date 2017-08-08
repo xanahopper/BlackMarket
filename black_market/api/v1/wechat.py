@@ -1,6 +1,8 @@
-from flask import request, jsonify, abort
+from flask import request, jsonify
 
 from black_market.api._bp import create_blueprint
+from black_market.api.utils import normal_jsonify
+from black_market.api.decorator import require_session_key
 from black_market.intergration.wechat import wechat
 from black_market.model.wechat.session import WechatSession
 from black_market.model.wechat.user import WechatUser
@@ -28,24 +30,18 @@ def jscode2session():
 
 
 @bp.route('/check_session', methods=['GET'])
+@require_session_key(require_wechat_user=False)
 def check_session():
     """Check Session"""
-    data = request.args.to_dict()
-    third_session_key = data.get('session_key')
-    wechat_session = WechatSession.get_by_third_session_key(third_session_key)
-    if wechat_session:
-        return jsonify({})
-    abort(404)
+    return normal_jsonify({})
 
 
 @bp.route('/user', methods=['POST', 'PUT'])
+@require_session_key(require_wechat_user=False)
 def update_wechat_user():
-    data = request.get_json()
-    session_key = data.get('sessionKey')
-    wechat_session = WechatSession.get_by_third_session_key(session_key)
-    if not wechat_session:
-        abort(404)
+    wechat_session = request.wechat_session
     open_id = wechat_session.open_id
+    data = request.get_json()
     user_info = data['userInfo']
     nickname = user_info.get('nickName')
     gender = user_info.get('gender')
@@ -57,4 +53,4 @@ def update_wechat_user():
 
     WechatUser.add(open_id, nickname, avatar_url, city,
                    country, gender, language, province)
-    return jsonify({})
+    return normal_jsonify({})

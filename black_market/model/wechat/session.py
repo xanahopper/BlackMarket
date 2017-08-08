@@ -58,6 +58,11 @@ class WechatSession(db.Model):
     def expired(self):
         return bool(datetime.utcnow < self.expire_time)
 
+    @property
+    def wechat_user(self):
+        from black_market.model.wechat.user import WechatUser
+        return WechatUser.get_by_open_id(self.open_id)
+
     def update(self, session_key, third_session_key, expires_in):
         self.session_key = session_key
         self.third_session_key = third_session_key
