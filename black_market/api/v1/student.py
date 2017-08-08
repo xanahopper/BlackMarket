@@ -40,7 +40,12 @@ def create_user():
     validator.validate_phone(mobile)
 
     verify_code = data['verify_code']
-    r = SMSVerify.verify(mobile, verify_code, SMSVerifyType.register)
+
+    try:
+        r = SMSVerify.verify(mobile, verify_code, SMSVerifyType.register)
+    except AtemptTooManyTimesError as e:
+        return normal_jsonify({}, e.message, e.http_status_code)
+
     if not r:
         raise InvalidSMSVerifyCodeError
 
