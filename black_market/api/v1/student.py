@@ -9,7 +9,8 @@ from black_market.libs.sms.sms import SMS
 from black_market.libs.sms.templates import VERIFY_CODE_TEMPLATE
 from black_market.model.code.consts import SMSVerifyType
 from black_market.model.code.verify import SMSVerify
-from black_market.model.exceptions import InvalidSMSVerifyCodeError
+from black_market.model.exceptions import (
+    InvalidSMSVerifyCodeError, SendSMSTooManyTimesError, AtemptTooManyTimesError)
 from black_market.model.user.consts import AccountStatus, StudentType
 from black_market.model.user.student import Student
 from black_market.model.utils import validator
@@ -69,9 +70,14 @@ def send_register_code():
     data = student_schema.RegisterStudentSchema().fill()
     mobile = data.get('mobile')
     validator.validate_phone(mobile)
-    code = SMSVerify.add(mobile, SMSVerifyType.register)
+
+    try:
+        code = SMSVerify.add(mobile, SMSVerifyType.register)
+    except SendSMSTooManyTimesError as e:
+        return normal_jsonify({}, e.message, e.http_status_code)
+
     msg = VERIFY_CODE_TEMPLATE.format(code=code)
     SMS.send(mobile, msg, tag='register')
     if DEBUG:
-        return jsonify(code=code, msg=msg)
-    return jsonify({})
+        return normal_jsonify(dict(code=code, msg=msg))
+    return normal_jsonify({})
