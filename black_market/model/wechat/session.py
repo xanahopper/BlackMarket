@@ -77,7 +77,7 @@ class WechatSession(db.Model):
         self.third_session_key = uuid.uuid4().hex
         db.session.add(self)
         db.session.commit()
-        self.clear_cache()
+        # self.clear_cache()
 
     def delete(self):
         db.session.delete(self)

@@ -73,7 +73,7 @@ class WechatUser(db.Model):
         self.expire_time = datetime.now() + timedelta(seconds=expires_in)
         db.session.add(self)
         db.session.commit()
-        self.clear_cache()
+        # self.clear_cache()
 
     # def clear_cache(self):
     #     mc.delete(self._token_cache_key % self.id_)
