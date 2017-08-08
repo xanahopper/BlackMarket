@@ -73,3 +73,5 @@ show_pids:
 auto-deploy:
 	@git fetch && git rebase && make stop && make start
 
+kill:
+    @ps aux | grep python | awk '{print $2;}' | xargs kill -9 2>/dev/null

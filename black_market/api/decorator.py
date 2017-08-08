@@ -22,7 +22,7 @@ def require_session_key(require_wechat_user=True):
 
             if require_wechat_user:
                 if not wechat_user:
-                    return jsonify(error='wechat user does not exist'), 401
+                    return jsonify(error='wechat user does not exist'), 404
 
             g.wechat_session = wechat_session
             g.wechat_user = wechat_user
