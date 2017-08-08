@@ -15,9 +15,9 @@ class SMSVerify(object):
     def add(cls, mobile, type_, max_send_total=5):
         total_send_key = cls._total_send_key.format(mobile=mobile, type_=type_.value)
         total_send = int(rd.get(total_send_key)) if rd.get(total_send_key) else 0
-        if total_send and total_send >= max_send_total:
-            raise SendSMSTooManyTimesError(
-                '已超出当日最大获取验证码次数，请24小时后尝试')
+        # if total_send and total_send >= max_send_total:
+        #     raise SendSMSTooManyTimesError(
+        #         '已超出当日最大获取验证码次数，请24小时后尝试')
 
         code = cls._gen_verify_code()
         key = cls._redis_key.format(mobile=mobile, type_=type_.value)
@@ -37,10 +37,10 @@ class SMSVerify(object):
         key = cls._redis_key.format(mobile=mobile, type_=type_.value)
         total_retry_key = cls._total_retry_key.format(mobile=mobile, type_=type_.value)
         retry_total = int(rd.get(total_retry_key)) if rd.get(total_retry_key) else 0
-        if retry_total >= max_retry:
-            rd.delete(key)
-            rd.delete(total_retry_key)
-            raise AtemptTooManyTimesError('验证码错误输入次数过多，请重新获取')
+        # if retry_total >= max_retry:
+        #     rd.delete(key)
+        #     rd.delete(total_retry_key)
+        #     raise AtemptTooManyTimesError('验证码错误输入次数过多，请重新获取')
         cached_code = rd.get(key)
         if cached_code == str(code):
             rd.delete(key)
