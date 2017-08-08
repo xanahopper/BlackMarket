@@ -8,7 +8,6 @@ class CreateStudentSchema(BaseSchema, FillHelperMixin):
     type = ma.Integer(required=True)
     grade = ma.String(required=True)
     verify_code = ma.String(required=True)
-    session_key = ma.String(required=True)
 
 
 class RegisterStudentSchema(BaseSchema, FillHelperMixin):
