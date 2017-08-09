@@ -1,3 +1,3 @@
 #!/bin/bash
 
-kill -9 `ps aux |grep gunicorn |grep app | awk '{ print $2 }'`
+ps aux | grep python | awk '{print $2;}' | xargs kill -9 2>/dev/null
