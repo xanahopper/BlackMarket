@@ -70,7 +70,7 @@ class Student(db.Model):
         return CoursePost.gets_by_student(self.id, offset, limit)
 
     def update(self, type_, grade):
-        self.type = type_
+        self.type = type_.value
         self.grade = grade
         db.session.add(self)
         db.session.commit()
