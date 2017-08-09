@@ -38,7 +38,8 @@ class WechatSession(db.Model):
 
         db.session.add(wechat_session)
         db.session.commit()
-        mc.setex(cls._id_by_open_id_cache_key % open_id, wechat_session.id, 1200)
+        mc.set(cls._id_by_open_id_cache_key % open_id, wechat_session.id)
+        mc.expire(cls._id_by_open_id_cache_key % open_id, 1200)
         return third_session_key
 
     @classmethod
