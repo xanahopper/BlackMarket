@@ -103,4 +103,3 @@ class WechatSession(db.Model):
     def clear_cache(self):
         mc.delete(self._id_by_open_id_cache_key % self.open_id)
         mc.delete(self._wechat_session_by_id_cache_key % self.id)
-

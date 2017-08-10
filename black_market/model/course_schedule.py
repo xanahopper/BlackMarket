@@ -16,3 +16,21 @@ class CourseSchedule(db.Model):
 
     def __repr__(self):
         return '<CourseSchedule of Course%s>' % self.course_id
+
+    def dump(self):
+        return dict(id=self.id, course_id=self.course_id,
+                    day=self.day, start=self.start, end=self.end)
+
+    @classmethod
+    def add(cls, course_id, day, start, end):
+        schedule = CourseSchedule(course_id, day, start, end)
+        db.session.add(schedule)
+        db.session.commit()
+
+    @classmethod
+    def get(cls, id_):
+        return cls.query.get(id_)
+
+    @classmethod
+    def get_by_course(cls, course_id):
+        return cls.query.filter_by(course_id=course_id).all()

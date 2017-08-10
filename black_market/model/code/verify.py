@@ -1,8 +1,8 @@
 import random
 import string
 from black_market.libs.cache.redis import rd, ONE_DAY
-from black_market.model.exceptions import AtemptTooManyTimesError
-from black_market.model.exceptions import SendSMSTooManyTimesError
+# from black_market.model.exceptions import AtemptTooManyTimesError
+# from black_market.model.exceptions import SendSMSTooManyTimesError
 
 
 class SMSVerify(object):
@@ -36,7 +36,7 @@ class SMSVerify(object):
     def verify(cls, mobile, code, type_, max_retry=5):
         key = cls._redis_key.format(mobile=mobile, type_=type_.value)
         total_retry_key = cls._total_retry_key.format(mobile=mobile, type_=type_.value)
-        retry_total = int(rd.get(total_retry_key)) if rd.get(total_retry_key) else 0
+        # retry_total = int(rd.get(total_retry_key)) if rd.get(total_retry_key) else 0
         # if retry_total >= max_retry:
         #     rd.delete(key)
         #     rd.delete(total_retry_key)
