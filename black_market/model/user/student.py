@@ -52,10 +52,6 @@ class Student(db.Model):
         student = Student(id_, name, mobile, open_id, type_, grade, status)
         db.session.add(student)
         db.session.commit()
-        if student.id != id_:
-            db.session.rollback()
-            db.session.remove()
-            raise
         return student.id
 
     @classmethod
