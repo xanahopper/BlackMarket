@@ -110,7 +110,7 @@ def _init_courses():
         classroom = course_data.get('classroom')
         pre = course_data.get('prerequisites')
         courses.append(
-            Course(name, teacher, credit))
+            Course(name, teacher, credit, course_type))
         for s in schedule:
             course_schedules.append(CourseSchedule(
                 id, s.get('day'), s.get('start'), s.get('end')))

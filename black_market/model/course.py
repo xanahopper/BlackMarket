@@ -20,7 +20,7 @@ class Course(db.Model):
 
     def dump(self):
         return dict(id=self.id, name=self.name, teacher=self.teacher, credit=self.credit,
-                    schedule=[s.dump() for s in self.schedule])
+                    schedules=[s.dump() for s in self.schedules])
 
     @classmethod
     def add(cls, name, teacher, credit, type_, schedules):
@@ -40,6 +40,10 @@ class Course(db.Model):
     @classmethod
     def gets(cls, limit=5, offset=0):
         return Course.query.limit(limit).offset(offset).all()
+
+    @classmethod
+    def get_all(cls):
+        return Course.query.all()
 
     @classmethod
     def get_by_name(cls, name):
