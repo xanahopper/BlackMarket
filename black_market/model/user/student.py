@@ -5,7 +5,7 @@ from black_market.model.wechat.user import WechatUser
 from black_market.model.utils import validator
 from black_market.model.user.consts import AccountStatus
 from black_market.model.exceptions import MobileAlreadyExistedError
-from black_market.model.exceptions import WechatUserNotExistedError
+from black_market.model.exceptions import WechatUserNotFoundError
 
 
 class Student(db.Model):
@@ -46,7 +46,7 @@ class Student(db.Model):
     def add(cls, id_, name, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
         if wechat_user is None:
-            raise WechatUserNotFoundError
+            raise WechatUserNotFoundError()
         if Student.existed(mobile):
             raise MobileAlreadyExistedError
         student = Student(id_, name, mobile, open_id, type_, grade, status)
