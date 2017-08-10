@@ -75,8 +75,9 @@ class Student(db.Model):
         from black_market.model.post.course import CoursePost
         return CoursePost.gets_by_student(self.id, limit, offset)
 
-    def update(self, name, type_, grade):
-        self.name = name.strip()
+    def update(self, type_, grade, name):
+        if name:
+            self.name = name.strip()
         self.type = type_.value
         self.grade = grade
         db.session.add(self)
