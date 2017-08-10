@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from black_market.libs.cache.redis import mc
+from black_market.libs.cache.redis import mc, rd
 from black_market.api.utils import normal_jsonify
 
 bp = Blueprint('market', __name__)
@@ -10,8 +10,8 @@ index_page_view_count_cache_key = 'black:market:index:view:count'
 
 @bp.route('/', methods=['GET'])
 def index():
-    mc.incr(index_page_view_count_cache_key)
-    page_view = int(mc.get(index_page_view_count_cache_key))
+    rd.incr(index_page_view_count_cache_key)
+    page_view = int(rd.get(index_page_view_count_cache_key))
     return render_template('index.html', page_view=page_view)
 
 
@@ -19,6 +19,7 @@ def index():
 def clear():
     from manage import init_database
     init_database()
+    mc.flushdb()
     return normal_jsonify({'status': 'ok'})
 
 
