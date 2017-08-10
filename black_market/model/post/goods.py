@@ -13,8 +13,8 @@ class GoodsPost(db.Model):
     status_ = db.Column(db.SmallInteger)
     contact = db.Column(db.String(80))
     message = db.Column(db.String(256))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow())
+    create_time = db.Column(db.DateTime(), default=datetime.now())
+    update_time = db.Column(db.DateTime(), default=datetime.now())
 
     def __init__(self, student_id, contact, message, status=PostStatus.normal):
         self.student_id = student_id
@@ -68,7 +68,7 @@ class GoodsPost(db.Model):
             self.contact = contact
         if message:
             self.message = message
-        self.update_time = datetime.utcnow()
+        self.update_time = datetime.now()
         db.session.add(self)
         db.session.commit()
         return True
