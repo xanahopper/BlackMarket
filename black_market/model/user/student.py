@@ -24,9 +24,9 @@ class Student(db.Model):
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
 
-    def __init__(self, id_, name, mobile, open_id, type_, grade, status):
+    def __init__(self, id_, mobile, open_id, type_, grade, status):
         self.id = id_
-        self.name = name if name else ''
+        self.name = ''
         self.mobile = mobile
         self.open_id = open_id
         self.type = type_.value
@@ -43,13 +43,13 @@ class Student(db.Model):
             create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
-    def add(cls, id_, name, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
+    def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
         if wechat_user is None:
             raise WechatUserNotFoundError()
         if Student.existed(mobile):
-            raise MobileAlreadyExistedError
-        student = Student(id_, name, mobile, open_id, type_, grade, status)
+            raise MobileAlreadyExistedError()
+        student = Student(id_, mobile, open_id, type_, grade, status)
         db.session.add(student)
         db.session.commit()
         return student.id

@@ -75,14 +75,10 @@ def send_register_code():
     data = student_schema.RegisterStudentSchema().fill()
     mobile = data.get('mobile')
     validator.validate_phone(mobile)
-
-    try:
-        code = SMSVerify.add(mobile, SMSVerifyType.register)
-    except SendSMSTooManyTimesError as e:
-        return normal_jsonify({}, e.message, e.http_status_code)
-
+    code = SMSVerify.add(mobile, SMSVerifyType.register)
     msg = VERIFY_CODE_TEMPLATE.format(code=code)
     SMS.send(mobile, msg, tag='register')
     if DEBUG:
+        print(msg)
         return normal_jsonify(dict(code=code, msg=msg))
     return normal_jsonify({})

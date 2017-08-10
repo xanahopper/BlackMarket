@@ -15,9 +15,9 @@ class WechatSession(db.Model):
     create_time = db.Column(db.DateTime(), default=datetime.now())
     expire_time = db.Column(db.DateTime())
 
-    # _cache_key_prefix = 'wechat_session:'
-    # _wechat_session_by_id_cache_key = _cache_key_prefix + 'id:%s'
-    # _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
+    _cache_key_prefix = 'wechat_session:'
+    _wechat_session_by_id_cache_key = _cache_key_prefix + 'id:%s'
+    _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
 
     def __init__(self, open_id, session_key, third_session_key, expire_time):
         self.open_id = open_id
@@ -39,10 +39,10 @@ class WechatSession(db.Model):
 
         db.session.add(wechat_session)
         db.session.commit()
-        # mc.set(cls._id_by_open_id_cache_key % open_id, wechat_session.id)
-        # mc.expire(cls._id_by_open_id_cache_key % open_id, 1200)
-        # mc.set(cls._wechat_session_by_id_cache_key % wechat_session.id, wechat_session)
-        # mc.expire(cls._wechat_session_by_id_cache_key % wechat_session.id, 1200)
+        mc.set(cls._id_by_open_id_cache_key % open_id, wechat_session.id)
+        mc.expire(cls._id_by_open_id_cache_key % open_id, 1200)
+        mc.set(cls._wechat_session_by_id_cache_key % wechat_session.id, wechat_session)
+        mc.expire(cls._wechat_session_by_id_cache_key % wechat_session.id, 1200)
         return third_session_key
 
     @classmethod
@@ -58,16 +58,16 @@ class WechatSession(db.Model):
 
     @classmethod
     def get_by_third_session_key(cls, third_session_key):
-        # id_ = mc.get(cls._id_by_open_id_cache_key % third_session_key)
+        id_ = mc.get(cls._id_by_open_id_cache_key % third_session_key)
         wechat_session = cls.query.filter_by(
             third_session_key=third_session_key).first()
 
-        # wechat_session = cls.get(id_) if id_ else cls.query.filter_by(
-        #     third_session_key=third_session_key).first()
+        wechat_session = cls.get(id_) if id_ else cls.query.filter_by(
+            third_session_key=third_session_key).first()
 
         if wechat_session and not wechat_session.expired:
-            # mc.set(cls._id_by_open_id_cache_key % wechat_session.open_id, wechat_session.id)
-            # mc.expire(cls._id_by_open_id_cache_key % wechat_session.open_id, 1200)
+            mc.set(cls._id_by_open_id_cache_key % wechat_session.open_id, wechat_session.id)
+            mc.expire(cls._id_by_open_id_cache_key % wechat_session.open_id, 1200)
             return wechat_session
         return None
 
@@ -90,18 +90,18 @@ class WechatSession(db.Model):
         self.expire_time = datetime.now() + timedelta(seconds=expires_in)
         db.session.add(self)
         db.session.commit()
-        # self.clear_cache()
+        self.clear_cache()
 
     def invalidate_third_session_key(self):
         self.third_session_key = uuid.uuid4().hex
         db.session.add(self)
         db.session.commit()
-        # self.clear_cache()
+        self.clear_cache()
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
-        # self.clear_cache()
+        self.clear_cache()
 
     def clear_cache(self):
         mc.delete(self._id_by_open_id_cache_key % self.open_id)

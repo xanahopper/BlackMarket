@@ -76,5 +76,5 @@ class WechatUser(db.Model):
         # self.clear_cache()
 
     # def clear_cache(self):
-    #     mc.delete(self._token_cache_key % self.id_)
-    #     mc.delete(self._id_by_open_id_cache_key % self.open_id)
+        # mc.delete(self._token_cache_key % self.id_)
+        # mc.delete(self._id_by_open_id_cache_key % self.open_id)
