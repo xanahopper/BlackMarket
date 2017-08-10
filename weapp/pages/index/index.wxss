@@ -1,0 +1,146 @@
+/**index.wxss**/
+/*.userinfo {
+  height: 128rpx;
+}
+
+.userinfo-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  margin: 16rpx;
+  border-radius: 50%;
+  float: left;
+}
+
+.userinfo-nickname {
+  float: left;
+  font-size: 12pt;
+  color: #353535;
+  margin-top: 24rpx;
+  margin-left: 16rpx;
+}
+
+.usermotto {
+  margin-top: 200px;
+}*/
+
+.page__hd {
+  padding: 0;
+}
+
+.page__bd {
+  padding-bottom: 0;
+}
+
+.searchbar-result {
+  margin-top: 0;
+  font-size: 14px;
+}
+.searchbar-result:before {
+  display: none;
+}
+
+.search-hint {
+  font-size: 14pt;
+  color: #888888;
+  margin-top: 30rpx;
+  text-align: center;
+}
+
+.timeline{
+  padding-top: 56px;
+}
+
+.weui-form-preview{
+    margin-bottom: 25px;
+}
+
+.weui-loadmore__tips_in-line {
+  background-color: #F8F8F8;
+}
+
+.supply-style {
+  color: #388e3c;
+}
+
+.demand-style {
+  color: #E64A19;
+}
+
+.bm-top-fixed-container {
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+}
+
+.bm-top-bar {
+  height: 40px;
+  background-color: #efefef;
+  border-bottom: 1px solid #d6d6d6;
+  padding-left: 16px;
+  padding-right: 8px;
+  display: flex;
+  flex-wrap: nowrap;
+  box-sizing: border-box;
+}
+
+.bm-top-button {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  margin-right: 48rpx;
+}
+
+.bm-top-button__text {
+  font-size: 10pt;
+}
+
+.bm-top-button__icon {
+  height: 16px;
+  width: 16px;
+}
+
+.bm-top-button__expand {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 0;
+}
+
+.bm-top-container {
+  background-color: #efefef;
+  border-bottom: 1px solid #d6d6d6;
+  padding: 0 16px;
+}
+
+.bm-top-sort-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.bm-top-sort-item {
+  display: flex;
+  height: 36px;
+  align-items: center;
+}
+
+.bm-top-sort-item__text {
+  font-size: 10pt;
+  flex-grow: 1;
+}
+
+.bm-top-sort-item__icon {
+  width: 16px;
+  height: 16px;
+}
+
+.bm-top-mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 80;
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+text.active {
+  color: #576b95;
+}
