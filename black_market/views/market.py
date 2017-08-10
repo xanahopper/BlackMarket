@@ -34,6 +34,6 @@ def init_post(student_id):
         contact = student.mobile
         message = 'This is the message of student %s!' % student_id
         CoursePost.add(student_id, supply, demand, contact, message)
-        normal_jsonify({'status': 'ok'})
+        return normal_jsonify({'status': 'ok'})
 
-    normal_jsonify({}, 'No student %s! Please create student before init post' % student_id)
+    return normal_jsonify({}, 'No student %s! Please create student before init post' % student_id)
