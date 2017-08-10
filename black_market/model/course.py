@@ -1,4 +1,5 @@
 from black_market.ext import db
+from black_market.model.course_schedule import CourseSchedule
 from black_market.model.const import CourseType
 
 
@@ -7,23 +8,30 @@ class Course(db.Model):
     name = db.Column(db.String(80), unique=True)
     teacher = db.Column(db.String(80))
     credit = db.Column(db.Integer)
-    schedules = db.relationship('CourseSchedule', backref='course',
-                                lazy='dynamic')
 
-    def __init__(self, name, teacher, credit):
+    def __init__(self, name, teacher, credit, type_):
         self.name = name
         self.teacher = teacher
         self.credit = credit
+        self.type_ = type_
 
     def __repr__(self):
         return '<%s-%s-%s>' % (self.id, self.name, self.teacher)
 
     def dump(self):
-        return dict(id=self.id, name=self.name, teacher=self.teacher, credit=self.credit)
+        return dict(id=self.id, name=self.name, teacher=self.teacher, credit=self.credit,
+                    schedules=[s.dump() for s in self.schedules])
 
-    @property
-    def type_(self):
-        return CourseType(self.course_type)
+    @classmethod
+    def add(cls, name, teacher, credit, type_, schedules):
+        course = Course(name, teacher, credit, type_.value)
+        db.session.add(course)
+        db.session.commit()
+        for s in schedules:
+            schedule = CourseSchedule(
+                course.id, s['day'], s['start'], s['end'])
+            db.session.add(schedule)
+        db.session.commit()
 
     @classmethod
     def get(cls, id_):
@@ -34,5 +42,17 @@ class Course(db.Model):
         return Course.query.limit(limit).offset(offset).all()
 
     @classmethod
+    def get_all(cls):
+        return Course.query.all()
+
+    @classmethod
     def get_by_name(cls, name):
         return Course.query.filter(Course.name.ilike('%' + name + '%'))
+
+    @property
+    def type(self):
+        return CourseType(self.type_)
+
+    @property
+    def schedules(self):
+        return CourseSchedule.get_by_course(self.id)

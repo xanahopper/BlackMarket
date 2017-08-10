@@ -5,6 +5,7 @@ from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.consts import PostStatus
+from black_market.model.exceptions import SupplySameAsDemandError, InvalidPostError
 
 
 class CoursePost(db.Model):
@@ -15,8 +16,9 @@ class CoursePost(db.Model):
     status_ = db.Column(db.SmallInteger)
     contact = db.Column(db.String(80))
     message = db.Column(db.String(256))
+    pv_ = db.Column(db.Integer, default=0)
     create_time = db.Column(db.DateTime(), default=datetime.utcnow())
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
+    update_time = db.Column(db.DateTime(), default=datetime.utcnow())
 
     def __init__(self, student_id, contact, message, status=PostStatus.normal):
         self.student_id = student_id
@@ -29,8 +31,9 @@ class CoursePost(db.Model):
 
     def dump(self):
         return dict(id=self.id, student_id=self.student_id, student_name=self.student.name,
-                    contact=self.contact, message=self.message, create_time=self.create_time,
-                    update_time=self.update_time)
+                    contact=self.contact, supply=self.supply.dump(),
+                    demand=self.demand.dump(), message=self.message, pv=self.pv,
+                    create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
@@ -41,8 +44,28 @@ class CoursePost(db.Model):
         return CoursePost.query.limit(limit).offset(offset).all()
 
     @classmethod
-    def gets_by_student(cls, student_id, offset=0, limit=10):
+    def gets_by_student(cls, student_id, limit=10, offset=0):
         return CoursePost.query.filter_by(student_id=student_id).limit(limit).offset(offset).all()
+
+    @classmethod
+    def add(cls, student_id, supply_course_id, demand_course_id, contact, message):
+        cls.validate_supply_and_demand(supply_course_id, demand_course_id)
+        post = CoursePost(student_id, contact, message)
+        db.session.add(post)
+        supply = CourseSupply(post.id, supply_course_id)
+        demand = CourseDemand(post.id, demand_course_id)
+        db.session.add(supply)
+        db.session.add(demand)
+        db.session.commit()
+        return post
+
+    @staticmethod
+    def validate_supply_and_demand(supply_course_id, demand_course_id):
+        if supply_course_id == demand_course_id:
+            raise SupplySameAsDemandError()
+
+        if supply_course_id == 30 and demand_course_id == 31:
+            raise InvalidPostError()
 
     @property
     def student(self):
@@ -59,6 +82,14 @@ class CoursePost(db.Model):
     @property
     def status(self):
         return PostStatus(self.status_)
+
+    def _get_pv(self):
+        return self.pv_
+
+    def _set_pv(self, pv_):
+        self.pv_ = pv_
+
+    pv = property(_get_pv, _set_pv)
 
     def update_self(self, data):
         if not data:
@@ -108,21 +139,3 @@ class CoursePost(db.Model):
         db.session.add(demand)
         db.session.add(self)
         db.session.commit()
-
-    @classmethod
-    def create_post(cls, student_id, supply_course_id, demand_course_id, contact, message):
-        cls.validate_supply_and_demand(supply_course_id, demand_course_id)
-        post = CoursePost(student_id, contact, message)
-        db.session.add(post)
-        supply = CourseSupply(post.id, supply_course_id)
-        demand = CourseDemand(post.id, demand_course_id)
-        db.session.add(supply)
-        db.session.add(demand)
-        db.session.commit()
-
-    @staticmethod
-    def validate_supply_and_demand(supply_course_id, demand_course_id):
-        if supply_course_id == demand_course_id:
-            raise
-        if supply_course_id == 30 and demand_course_id == 31:
-            raise

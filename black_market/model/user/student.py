@@ -24,8 +24,9 @@ class Student(db.Model):
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
 
-    def __init__(self, id_, mobile, open_id, type_, grade, status):
+    def __init__(self, id_, name, mobile, open_id, type_, grade, status):
         self.id = id_
+        self.name = name if name else ''
         self.mobile = mobile
         self.open_id = open_id
         self.type = type_.value
@@ -37,17 +38,18 @@ class Student(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, mobile=self.mobile, grade=self.grade, type=self.type, status=self.status,
+            id=self.id, username=self.username, mobile=self.mobile,
+            grade=self.grade, type=self.type, status=self.status,
             create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
-    def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
+    def add(cls, id_, name, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
         if wechat_user is None:
             raise WechatUserNotExistedError
         if Student.existed(mobile):
             raise MobileAlreadyExistedError
-        student = Student(id_, mobile, open_id, type_, grade, status)
+        student = Student(id_, name, mobile, open_id, type_, grade, status)
         db.session.add(student)
         db.session.commit()
         if student.id != id_:
@@ -65,12 +67,21 @@ class Student(db.Model):
         return bool(cls.query.filter_by(mobile=mobile).first())
 
     @property
-    def posts(self, offset=0, limit=10):
-        from black_market.model.post.course import CoursePost
-        return CoursePost.gets_by_student(self.id, offset, limit)
+    def wechat_user(self):
+        return WechatUser.get_by_open_id(self.open_id)
 
-    def update(self, type_, grade):
-        self.type = type_
+    @property
+    def username(self):
+        return self.name if self.name else self.wechat_user.nickname
+
+    @property
+    def posts(self, limit=10, offset=0):
+        from black_market.model.post.course import CoursePost
+        return CoursePost.gets_by_student(self.id, limit, offset)
+
+    def update(self, name, type_, grade):
+        self.name = name.strip()
+        self.type = type_.value
         self.grade = grade
         db.session.add(self)
         db.session.commit()

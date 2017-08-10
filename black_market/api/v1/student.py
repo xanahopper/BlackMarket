@@ -1,4 +1,4 @@
-from flask import request, jsonify, g
+from flask import jsonify, g
 
 from black_market.api._bp import create_blueprint
 from black_market.api.decorator import require_session_key
