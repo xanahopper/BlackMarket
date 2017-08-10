@@ -47,7 +47,7 @@ def create_user():
         return normal_jsonify({}, e.message, e.http_status_code)
 
     if not r:
-        raise InvalidSMSVerifyCodeError
+        raise InvalidSMSVerifyCodeError()
 
     type_ = StudentType(data['type'])
     grade = data['grade']
