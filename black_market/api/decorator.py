@@ -1,8 +1,10 @@
 from functools import update_wrapper
 
-from flask import request, jsonify, g
+from flask import request, g
 
 from black_market.model.wechat.session import WechatSession
+from black_market.model.exceptions import (
+    MissingSessionKeyError, InvalidSessionKeyError, WechatUserNotFoundError)
 
 
 def require_session_key(require_wechat_user=True):
@@ -11,18 +13,18 @@ def require_session_key(require_wechat_user=True):
             session_key = request.headers.get('X-User-Session-Key', '')
 
             if not session_key:
-                return jsonify(error='missing session key'), 401
+                raise MissingSessionKeyError()
 
             wechat_session = WechatSession.get_by_third_session_key(session_key)
 
             if not wechat_session:
-                return jsonify(error='invalid session key'), 401
+                raise InvalidSessionKeyError()
 
             wechat_user = wechat_session.wechat_user
 
             if require_wechat_user:
                 if not wechat_user:
-                    return jsonify(error='wechat user does not exist'), 404
+                    raise WechatUserNotFoundError()
 
             g.wechat_session = wechat_session
             g.wechat_user = wechat_user

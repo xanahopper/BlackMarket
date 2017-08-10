@@ -46,7 +46,7 @@ class Student(db.Model):
     def add(cls, id_, name, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
         if wechat_user is None:
-            raise WechatUserNotExistedError
+            raise WechatUserNotFoundError
         if Student.existed(mobile):
             raise MobileAlreadyExistedError
         student = Student(id_, name, mobile, open_id, type_, grade, status)

@@ -150,5 +150,13 @@ class WeChatServiceError(BlackMarketError):
     _error = Error(4000, '微信服务异常', 403)
 
 
-class WechatUserNotExistedError(BlackMarketError):
-    _error = Error(4001, '微信服务异常', 403)
+class WechatUserNotFoundError(BlackMarketError):
+    _error = Error(4001, 'Wechat User Not Found', 404)
+
+
+class MissingSessionKeyError(BlackMarketError):
+    _error = Error(4002, 'Missing SessionKey', 401)
+
+
+class InvalidSessionKeyError(BlackMarketError):
+    _error = Error(4003, 'Invalid SessionKey', 401)
