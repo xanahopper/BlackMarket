@@ -1,30 +1,49 @@
-# from ._bp import create_blueprint
-#
-# bp = create_blueprint('post', __name__, url_prefix='/post')
-#
-#
-# @bp.route('/post/<int:limit>/<int:offset>', methods=['GET'])
-# def get_posts(limit, offset):
-#     # posts = Post.gets(limit=limit, offset=offset)
-#     # return normal_jsonify([post.dict_ for post in posts])
-#     return
-#
-#
-# @bp.route('/post/<int:post_id>', methods=['GET'])
-# def get_post(post_id):
-#     # return normal_jsonify(Post.get(post_id).dict_)
-#     return
-#
-#
-# @bp.route('/post', methods=['POST'])
-# def create_post():
-#     return 'create_post!'
-#
-#
-# @bp.route('/post/<int:post_id>', methods=['PUT'])
-# def edit_post(post_id):
-#     # form_data = request.form
-#     # post = Post.get(post_id)
-#     # post.update_self(form_data)
-#     # return normal_jsonify('')
-#     return
+from .._bp import create_blueprint
+from black_market.model.post.course import CoursePost
+
+from black_market.api.utils import normal_jsonify
+from black_market.api.decorator import require_session_key
+from black_market.api.schema.post import (
+    CreateCoursePostSchema, UpdateCoursePostSchema, GetCoursePostSchema)
+
+bp = create_blueprint('course.post', 'v1', __name__, url_prefix='/course/post')
+
+
+@bp.route('/', methods=['GET'])
+@require_session_key()
+def get_posts():
+    data = GetCoursePostSchema().fill()
+    start = data.get('start', 0)
+    limit = data.get('limit', 10)
+    posts = CoursePost.gets(limit=limit, offset=start)
+    return normal_jsonify([post.dump() for post in posts])
+
+
+@bp.route('/', methods=['POST'])
+@require_session_key()
+def create_post():
+    data = CreateCoursePostSchema().fill()
+    student_id = data['student_id']
+    supply = data['supply']
+    demand = data['demand']
+    contact = data['contact']
+    message = data['message']
+    post = CoursePost.add(student_id, supply, demand, contact, message)
+    return normal_jsonify(post.dump())
+
+
+@bp.route('/<int:post_id>', methods=['GET'])
+@require_session_key()
+def get_post(post_id):
+    post = CoursePost.get(post_id)
+    post.pv += 1
+    return normal_jsonify(post.dump())
+
+
+@bp.route('/post/<int:post_id>', methods=['PUT'])
+@require_session_key()
+def edit_post(post_id):
+    data = UpdateCoursePostSchema().fill()
+    post = CoursePost.get(post_id)
+    post.update_self(data)
+    return normal_jsonify({'status': 'ok'})

@@ -17,7 +17,7 @@ class CourseDemand(db.Model):
         return '<CourseSupply of %s at %s>' % (self.student_id, self.created_time)
 
     def dump(self):
-        return dict(id=self.id, course=self.course.dump(), post_id=self.post_id)
+        return dict(id=self.id, post_id=self.post_id, course_id=self.course.id)
 
     @classmethod
     def get(cls, id_):

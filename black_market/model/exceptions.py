@@ -95,56 +95,23 @@ class IncorrectPasswordError(BlackMarketError):
     _error = Error(404, '密码错误', 400)
 
 
-class TeacherHasClassChangeSchoolError(BlackMarketError):
-    _error = Error(405, '老师要换学校，这个老师必须没有班级！', 403)
-
-
-class TeacherAlreadyBoundWeixinError(BlackMarketError):
-    _error = Error(406, '教师手机号账号已绑定过微信', 403)
-
-
-class TeacherAccountUncreatedError(BlackMarketError):
-    _error = Error(407, '您的手机号没有被市场人员录入开通，请致电：15321563358', 403)
-
-
 class EmailAlreadyExistedError(BlackMarketError):
-    _error = Error(408, '邮箱已存在', 403)
+    _error = Error(405, '邮箱已存在', 403)
 
 
 class WeixinAlreadyExistedError(BlackMarketError):
-    _error = Error(409, '微信已存在', 403)
+    _error = Error(406, '微信已存在', 403)
 
 
-# 学校班级类错误(500~599)
-class ClassTooManyStudentError(BlackMarketError):
-    _error = Error(500, '一个班的学生已经达到上限了！', 403)
+class SupplySameAsDemandError(BlackMarketError):
+    _error = Error(407, '供给与需求不可以相同', 403)
 
 
-# 代理商代表类错误(600~699)
-class AgentHasSchoolChangeLocationError(BlackMarketError):
-    _error = Error(600, '代理代表要换地区，这个地区的学校必须找到新的代理代表！', 403)
-
-
-# 广告类错误(700~749)
-class AdShelvingConflictError(BlackMarketError):
-    _error = Error(700, '已有广告正在使用中，请关闭后发布新广告', 403)
-
-
-class AdShelvingChangeError(BlackMarketError):
-    _error = Error(701, '广告上下架失败，请重新操作', 403)
-
-
-# 有声书类错误(750~849)
-class AudiobookRecordOverLimitError(BlackMarketError):
-    _error = Error(750, '此绘本录制保存的空间已满，请先删除一些再录制', 403)
-
-
-class AudiobookNotFoundError(BlackMarketError):
-    _error = Error(751, '有声绘本可能已被删除，请重新进入绘本录制查看。', 404)
+class InvalidPostError(BlackMarketError):
+    _error = Error(408, '无效的Post，请重新检查填写的信息', 403)
 
 
 # 反馈类错误(850~599)
-
 class FeedbackTooLongError(BlackMarketError):
     _error = Error(850, '描述超过1000字，请重新编辑', 400)
 
