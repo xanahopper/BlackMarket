@@ -93,7 +93,7 @@ class CoursePost(db.Model):
         return PostStatus(self.status_)
 
     def _get_pv(self):
-        key = self._post_pv_cache_key % self.id_
+        key = self._post_pv_cache_key % self.id
         cached = rd.get(key)
         if cached is not None:
             return cached
@@ -101,7 +101,7 @@ class CoursePost(db.Model):
         return self.pv_
 
     def _set_pv(self, pv_):
-        rd.set(self._post_pv_cache_key % self.id_, pv_)
+        rd.set(self._post_pv_cache_key % self.id, pv_)
         if pv_ % 7 == 0:
             self.pv_ = pv_
             db.session.add(self)
