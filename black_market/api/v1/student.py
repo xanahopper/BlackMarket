@@ -10,7 +10,7 @@ from black_market.libs.sms.templates import VERIFY_CODE_TEMPLATE
 from black_market.model.code.consts import SMSVerifyType
 from black_market.model.code.verify import SMSVerify
 from black_market.model.exceptions import (
-    InvalidSMSVerifyCodeError, SendSMSTooManyTimesError, AtemptTooManyTimesError)
+    InvalidSMSVerifyCodeError, AtemptTooManyTimesError)
 from black_market.model.user.consts import AccountStatus, StudentType
 from black_market.model.user.student import Student
 from black_market.model.utils import validator

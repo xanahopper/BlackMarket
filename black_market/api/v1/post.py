@@ -1,5 +1,6 @@
 from .._bp import create_blueprint
 from black_market.model.post.course import CoursePost
+from black_market.model.post.consts import PostMobileSwitch
 
 from black_market.api.utils import normal_jsonify
 from black_market.api.decorator import require_session_key
@@ -26,9 +27,11 @@ def create_post():
     student_id = data['student_id']
     supply = data['supply']
     demand = data['demand']
-    contact = data['contact']
+    switch = PostMobileSwitch(data['switch'])
+    mobile = data['mobile']
+    wechat = data['wechat']
     message = data['message']
-    post = CoursePost.add(student_id, supply, demand, contact, message)
+    post = CoursePost.add(student_id, supply, demand, switch, mobile, wechat, message)
     return normal_jsonify(post.dump())
 
 

@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint
+from flask import Blueprint
 
 from black_market.model.exceptions import BlackMarketError
 
