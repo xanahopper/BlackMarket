@@ -38,10 +38,12 @@ class CoursePost(db.Model):
         return '<CoursePost of %s at %s>' % (self.student_id, self.created_time)
 
     def dump(self):
-        return dict(id=self.id, student_id=self.student_id, student_name=self.student.name,
-                    supply=self.supply.dump(), demand=self.demand.dump(), switch=self.switch,
-                    mobile=self.mobile, wechat=self.wechat, message=self.message, pv=self.pv,
-                    status=self.status_, create_time=self.create_time, update_time=self.update_time)
+        return dict(
+            id=self.id, student_id=self.student_id, student_name=self.student.name,
+            avatar_url=self.avatar_url, supply=self.supply.dump(), demand=self.demand.dump(),
+            switch=self.switch, mobile=self.mobile, wechat=self.wechat, message=self.message,
+            pv=self.pv, status=self.status_, create_time=self.create_time,
+            update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):

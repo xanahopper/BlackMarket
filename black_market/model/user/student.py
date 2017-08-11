@@ -67,6 +67,10 @@ class Student(db.Model):
         return WechatUser.get_by_open_id(self.open_id)
 
     @property
+    def avatar_url(self):
+        return self.wechat_user.avatar_url
+
+    @property
     def username(self):
         return self.name if self.name else self.wechat_user.nickname
 
