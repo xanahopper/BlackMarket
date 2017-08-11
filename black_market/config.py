@@ -10,6 +10,7 @@ from envcfg.json.black_market import SMS_YUNPIAN_HTTP
 from envcfg.json.black_market import SMS_YUNPIAN_APIKEY
 from envcfg.json.black_market import WEIXIN_APP_ID
 from envcfg.json.black_market import WEIXIN_APP_SECRET
+from envcfg.json.black_market import DISABLE_SESSION_CHECK
 
 
 APP = 'black_market'
@@ -31,4 +32,5 @@ __all__ = [
     'SMS_YUNPIAN_APIKEY',
     'WEIXIN_APP_ID',
     'WEIXIN_APP_SECRET',
+    'DISABLE_SESSION_CHECK',
 ]

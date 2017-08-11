@@ -5,11 +5,17 @@ from flask import request, g
 from black_market.model.wechat.session import WechatSession
 from black_market.model.exceptions import (
     MissingSessionKeyError, InvalidSessionKeyError, WechatUserNotFoundError)
+from black_market.config import DISABLE_SESSION_CHECK
 
 
 def require_session_key(require_wechat_user=True):
     def decorator(wrapped):
         def wrapper(*args, **kwargs):
+
+            # TODO remove this later
+            if DISABLE_SESSION_CHECK:
+                return wrapped(*args, **kwargs)
+
             session_key = request.headers.get('X-User-Session-Key', '')
 
             if not session_key:

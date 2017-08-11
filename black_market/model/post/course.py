@@ -41,7 +41,7 @@ class CoursePost(db.Model):
         return dict(id=self.id, student_id=self.student_id, student_name=self.student.name,
                     supply=self.supply.dump(), demand=self.demand.dump(), switch=self.switch,
                     mobile=self.mobile, wechat=self.wechat, message=self.message, pv=self.pv,
-                    create_time=self.create_time, update_time=self.update_time)
+                    status=self.status_, create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
@@ -94,7 +94,7 @@ class CoursePost(db.Model):
 
     def _get_pv(self):
         key = self._post_pv_cache_key % self.id
-        cached = int(rd.get(key))
+        cached = int(rd.get(key)) if rd.get(key) else None
         if cached is not None:
             return cached
         rd.set(key, self.pv_)
