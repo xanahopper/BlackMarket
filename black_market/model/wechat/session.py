@@ -12,7 +12,7 @@ class WechatSession(db.Model):
     open_id = db.Column(db.String(80), index=True, nullable=False)
     session_key = db.Column(db.String(80), nullable=False)
     third_session_key = db.Column(db.String(80), unique=True, index=True, nullable=False)
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
+    create_time = db.Column(db.DateTime(), default=datetime.now())
     expire_time = db.Column(db.DateTime())
 
     _cache_key_prefix = 'wechat_session:'
@@ -59,6 +59,9 @@ class WechatSession(db.Model):
     @classmethod
     def get_by_third_session_key(cls, third_session_key):
         id_ = mc.get(cls._id_by_open_id_cache_key % third_session_key)
+        wechat_session = cls.query.filter_by(
+            third_session_key=third_session_key).first()
+
         wechat_session = cls.get(id_) if id_ else cls.query.filter_by(
             third_session_key=third_session_key).first()
 
@@ -74,7 +77,7 @@ class WechatSession(db.Model):
 
     @property
     def expired(self):
-        return bool(datetime.utcnow() > self.expire_time)
+        return bool(datetime.now() > self.expire_time)
 
     @property
     def wechat_user(self):

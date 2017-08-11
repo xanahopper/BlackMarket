@@ -5,7 +5,7 @@ from black_market.model.wechat.user import WechatUser
 from black_market.model.utils import validator
 from black_market.model.user.consts import AccountStatus
 from black_market.model.exceptions import MobileAlreadyExistedError
-from black_market.model.exceptions import WechatUserNotExistedError
+from black_market.model.exceptions import WechatUserNotFoundError
 
 
 class Student(db.Model):
@@ -18,15 +18,15 @@ class Student(db.Model):
     type = db.Column(db.SmallInteger)
     grade = db.Column(db.String(10))
     status = db.Column(db.SmallInteger, default=AccountStatus.need_verify.value)
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = db.Column(db.DateTime(), default=datetime.now())
+    update_time = db.Column(db.DateTime(), default=datetime.now(), onupdate=datetime.now())
 
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
 
-    def __init__(self, id_, name, mobile, open_id, type_, grade, status):
+    def __init__(self, id_, mobile, open_id, type_, grade, status):
         self.id = id_
-        self.name = name if name else ''
+        self.name = ''
         self.mobile = mobile
         self.open_id = open_id
         self.type = type_.value
@@ -43,19 +43,15 @@ class Student(db.Model):
             create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
-    def add(cls, id_, name, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
+    def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
         if wechat_user is None:
-            raise WechatUserNotExistedError
+            raise WechatUserNotFoundError()
         if Student.existed(mobile):
-            raise MobileAlreadyExistedError
-        student = Student(id_, name, mobile, open_id, type_, grade, status)
+            raise MobileAlreadyExistedError()
+        student = Student(id_, mobile, open_id, type_, grade, status)
         db.session.add(student)
         db.session.commit()
-        if student.id != id_:
-            db.session.rollback()
-            db.session.remove()
-            raise
         return student.id
 
     @classmethod
@@ -79,8 +75,9 @@ class Student(db.Model):
         from black_market.model.post.course import CoursePost
         return CoursePost.gets_by_student(self.id, limit, offset)
 
-    def update(self, name, type_, grade):
-        self.name = name.strip()
+    def update(self, type_, grade, name=None):
+        if name:
+            self.name = name.strip()
         self.type = type_.value
         self.grade = grade
         db.session.add(self)

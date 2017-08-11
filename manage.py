@@ -22,6 +22,7 @@ from black_market.model.course_schedule import CourseSchedule
 from black_market.model.post.course import CoursePost
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.course_supply import CourseSupply
+from black_market.model.post.goods import GoodsPost
 
 app = create_app()
 manager = Manager(app)

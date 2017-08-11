@@ -16,8 +16,8 @@ class WechatUser(db.Model):
     gender = db.Column(db.SmallInteger)
     language = db.Column(db.String(80))
     province = db.Column(db.String(80))
-    create_time = db.Column(db.DateTime(), default=datetime.utcnow())
-    update_time = db.Column(db.DateTime(), default=datetime.utcnow(), onupdate=datetime.utcnow())
+    create_time = db.Column(db.DateTime(), default=datetime.now())
+    update_time = db.Column(db.DateTime(), default=datetime.now(), onupdate=datetime.now())
 
     # _cache_key_prefix = 'wechat_user_info:'
     # _token_cache_key = _cache_key_prefix + 'id:%s'
@@ -76,5 +76,5 @@ class WechatUser(db.Model):
         # self.clear_cache()
 
     # def clear_cache(self):
-    #     mc.delete(self._token_cache_key % self.id_)
-    #     mc.delete(self._id_by_open_id_cache_key % self.open_id)
+        # mc.delete(self._token_cache_key % self.id_)
+        # mc.delete(self._id_by_open_id_cache_key % self.open_id)
