@@ -94,7 +94,7 @@ class CoursePost(db.Model):
 
     def _get_pv(self):
         key = self._post_pv_cache_key % self.id
-        cached = rd.get(key)
+        cached = int(rd.get(key))
         if cached is not None:
             return cached
         rd.set(key, self.pv_)
