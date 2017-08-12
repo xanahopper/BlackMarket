@@ -35,7 +35,7 @@ class CoursePost(db.Model):
         self.status_ = status.value
 
     def __repr__(self):
-        return '<CoursePost of %s at %s>' % (self.student_id, self.created_time)
+        return '<CoursePost of %s at %s>' % (self.student_id, self.create_time)
 
     def dump(self):
         return dict(
