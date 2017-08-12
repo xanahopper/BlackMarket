@@ -9,8 +9,8 @@ class CreateCoursePostSchema(BaseSchema, FillHelperMixin):
     mobile = ma.String(required=True)
     message = ma.String(required=True)
     wechat = ma.String()
-    supply = ma.String()
-    demand = ma.String()
+    supply = ma.Integer()
+    demand = ma.Integer()
 
 
 class UpdateCoursePostSchema(BaseSchema, FillHelperMixin):
