@@ -1,6 +1,7 @@
 from .._bp import create_blueprint
 from black_market.model.post.course import CoursePost
 from black_market.model.post.consts import PostMobileSwitch
+from black_market.model.post.consts import OrderType
 
 from black_market.api.utils import normal_jsonify
 from black_market.api.decorator import require_session_key
@@ -16,7 +17,8 @@ def get_posts():
     data = GetCoursePostSchema().fill()
     start = data.get('start', 0)
     limit = data.get('limit', 10)
-    posts = CoursePost.gets(limit=limit, offset=start)
+    order = OrderType(data.get('order', 0))
+    posts = CoursePost.gets(limit=limit, offset=start, order=order)
     return normal_jsonify([post.dump() for post in posts])
 
 

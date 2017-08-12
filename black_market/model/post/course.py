@@ -5,7 +5,7 @@ from black_market.libs.cache.redis import rd
 from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
-from black_market.model.post.consts import PostStatus
+from black_market.model.post.consts import PostStatus, OrderType
 from black_market.model.exceptions import SupplySameAsDemandError, InvalidPostError
 
 
@@ -50,7 +50,9 @@ class CoursePost(db.Model):
         return CoursePost.query.get(id_)
 
     @classmethod
-    def gets(cls, limit=5, offset=0):
+    def gets(cls, limit=5, offset=0, order=OrderType.descending):
+        if order is OrderType.ascending:
+            return CoursePost.query.limit(limit).offset(offset).all()
         return CoursePost.query.order_by(db.desc(cls.id)).limit(limit).offset(offset).all()
 
     @classmethod

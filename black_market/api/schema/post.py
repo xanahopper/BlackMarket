@@ -21,3 +21,4 @@ class UpdateCoursePostSchema(BaseSchema, FillHelperMixin):
 class GetCoursePostSchema(BaseSchema, FillHelperMixin):
     start = ma.Integer()
     limit = ma.Integer()
+    order = ma.Integer()
