@@ -27,3 +27,4 @@ yunpian-python-sdk
 wechatpy
 PyCrypto
 gevent
+qiniu

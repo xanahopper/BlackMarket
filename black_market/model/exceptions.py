@@ -5,7 +5,6 @@ Error = namedtuple('Error', ['code', 'message', 'http_status_code'])
 
 
 class BlackMarketError(Exception):
-    """BlackMarket Base Exception"""
     _error = Error(0, '未知错误，请重试', 403)
     sentry_warning = False
 
@@ -23,11 +22,6 @@ class InvalidValueError(BlackMarketError):
 
 class InvalidSMSVerifyCodeError(BlackMarketError):
     _error = Error(11, '请输入正确的短信验证码', 403)
-
-
-class OAuthClientError(BlackMarketError):
-    _error = Error(12, 'OAuth客户端错误', 403)
-    sentry_warning = True
 
 
 class InvalidCaptchaError(BlackMarketError):
@@ -50,10 +44,6 @@ class PasswordFormatError(BlackMarketError):
     _error = Error(18, '请输入6-20位密码，不能包含空格', 400)
 
 
-class UrlFormatError(BlackMarketError):
-    _error = Error(19, 'URL格式错误', 400)
-
-
 class NumberRangeError(BlackMarketError):
     _error = Error(20, '数字/长度不符合区间要求', 400)
 
@@ -64,14 +54,6 @@ class InvalidDatetimeError(BlackMarketError):
 
 class NameAlreadyExistedError(BlackMarketError):
     _error = Error(22, '名称重复', 400)
-
-
-class URLFormatError(BlackMarketError):
-    _error = Error(23, 'URL格式错误(确保http(s)://开头且20-255字符)', 400)
-
-
-class URLUnreachableError(BlackMarketError):
-    _error = Error(24, 'URL无法访问，请确认是否填写正确', 400)
 
 
 #: 账号类(400~499)
@@ -147,11 +129,11 @@ class RetryError(BlackMarketError):
 
 # 第三方服务异常
 class WeChatServiceError(BlackMarketError):
-    _error = Error(4000, '微信服务异常', 403)
+    _error = Error(4000, 'WeChat Service Error', 403)
 
 
 class WechatUserNotFoundError(BlackMarketError):
-    _error = Error(4001, 'Wechat User Not Found', 404)
+    _error = Error(4001, 'WeChat User Not Found', 404)
 
 
 class MissingSessionKeyError(BlackMarketError):

@@ -10,3 +10,8 @@ class PostStatus(Enum):
 class PostMobileSwitch(Enum):
     off = 0     # not display mobile
     on = 1      # display mobile
+
+
+class OrderType(Enum):
+    descending = 0
+    ascending = 1

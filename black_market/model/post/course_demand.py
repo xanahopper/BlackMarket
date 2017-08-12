@@ -14,10 +14,10 @@ class CourseDemand(db.Model):
         self.course_id = course_id
 
     def __repr__(self):
-        return '<CourseSupply of %s at %s>' % (self.student_id, self.created_time)
+        return '<CourseDemand of Post %s>' % (self.post_id)
 
     def dump(self):
-        return dict(id=self.id, post_id=self.post_id, course_id=self.course.id)
+        return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
 
     @classmethod
     def get(cls, id_):
@@ -38,6 +38,7 @@ class CourseDemand(db.Model):
 
     @property
     def course(self):
+        # TODO if id == 0
         return Course.get(self.course_id)
 
     @property

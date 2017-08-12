@@ -5,7 +5,7 @@ from black_market.libs.cache.redis import rd
 from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
-from black_market.model.post.consts import PostStatus
+from black_market.model.post.consts import PostStatus, OrderType
 from black_market.model.exceptions import SupplySameAsDemandError, InvalidPostError
 
 
@@ -35,21 +35,25 @@ class CoursePost(db.Model):
         self.status_ = status.value
 
     def __repr__(self):
-        return '<CoursePost of %s at %s>' % (self.student_id, self.created_time)
+        return '<CoursePost of %s at %s>' % (self.student_id, self.create_time)
 
     def dump(self):
-        return dict(id=self.id, student_id=self.student_id, student_name=self.student.name,
-                    supply=self.supply.dump(), demand=self.demand.dump(), switch=self.switch,
-                    mobile=self.mobile, wechat=self.wechat, message=self.message, pv=self.pv,
-                    create_time=self.create_time, update_time=self.update_time)
+        return dict(
+            id=self.id, student_id=self.student_id, student_name=self.student.username,
+            avatar_url=self.student.avatar_url, supply=self.supply.dump(),
+            demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
+            wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
+            create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
         return CoursePost.query.get(id_)
 
     @classmethod
-    def gets(cls, limit=5, offset=0):
-        return CoursePost.query.limit(limit).offset(offset).all()
+    def gets(cls, limit=5, offset=0, order=OrderType.descending):
+        if order is OrderType.ascending:
+            return CoursePost.query.limit(limit).offset(offset).all()
+        return CoursePost.query.order_by(db.desc(cls.id)).limit(limit).offset(offset).all()
 
     @classmethod
     def gets_by_student(cls, student_id, limit=10, offset=0):
@@ -73,7 +77,7 @@ class CoursePost(db.Model):
         if supply_course_id == demand_course_id:
             raise SupplySameAsDemandError()
 
-        if supply_course_id == 30 and demand_course_id == 31:
+        if not supply_course_id and not demand_course_id:
             raise InvalidPostError()
 
     @property
@@ -94,7 +98,7 @@ class CoursePost(db.Model):
 
     def _get_pv(self):
         key = self._post_pv_cache_key % self.id
-        cached = int(rd.get(key))
+        cached = int(rd.get(key)) if rd.get(key) else None
         if cached is not None:
             return cached
         rd.set(key, self.pv_)

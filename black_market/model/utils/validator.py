@@ -1,9 +1,7 @@
 import re
-import string
 import decimal
-from urllib.parse import urlparse
 from black_market.model.exceptions import (
-    EmailFormatError, URLFormatError,
+    EmailFormatError,
     MobileFormatError, PasswordFormatError,
     NumberRangeError, InvalidValueError, NameFormatError
 )
@@ -31,21 +29,6 @@ _CHIVOX_TEXT_RE = re.compile(r'^((([A-Za-z.\'\"]+[,.:!?\"]{0,2})|([0-9]{1})) ){0
                              r'(([A-Za-z.\'\"]+[,.:!?\"]{0,2})|([0-9]{1}))$')
 
 _POINTS_RE = re.compile(r'^\d{1,4}$|^\d{1,4}\.\d$')
-
-
-def validate_url(url):
-    url = url.strip()
-    parts = urlparse(url)
-
-    if any([
-        parts.netloc == '',
-        set(parts.netloc).difference(set(string.ascii_letters + string.digits + '-.')),
-        parts.scheme not in ('http', 'https'),
-        not 20 <= len(url) <= 255
-    ]):
-        raise URLFormatError()
-
-    return url
 
 
 def validate_email(value):
