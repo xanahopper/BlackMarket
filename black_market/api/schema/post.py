@@ -7,8 +7,10 @@ class CreateCoursePostSchema(BaseSchema, FillHelperMixin):
     student_id = ma.String(required=True)
     switch = ma.Integer(required=True)
     mobile = ma.String(required=True)
-    wechat = ma.String(required=True)
     message = ma.String(required=True)
+    wechat = ma.String()
+    supply = ma.String()
+    demand = ma.String()
 
 
 class UpdateCoursePostSchema(BaseSchema, FillHelperMixin):
@@ -17,5 +19,5 @@ class UpdateCoursePostSchema(BaseSchema, FillHelperMixin):
 
 
 class GetCoursePostSchema(BaseSchema, FillHelperMixin):
-    start = ma.Integer(required=True)
-    limit = ma.Integer(required=True)
+    start = ma.Integer()
+    limit = ma.Integer()

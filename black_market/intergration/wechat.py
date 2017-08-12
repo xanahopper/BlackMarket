@@ -1,9 +1,5 @@
 import requests
 
-# import base36
-# from werkzeug.utils import cached_property
-
-# from black_market.libs.cache.redis import mc
 from black_market.config import WEIXIN_APP_ID, WEIXIN_APP_SECRET
 
 

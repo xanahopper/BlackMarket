@@ -40,10 +40,10 @@ class CoursePost(db.Model):
     def dump(self):
         return dict(
             id=self.id, student_id=self.student_id, student_name=self.student.username,
-            avatar_url=self.student.avatar_url, supply=self.supply.dump(), demand=self.demand.dump(),
-            switch=self.switch, mobile=self.mobile, wechat=self.wechat, message=self.message,
-            pv=self.pv, status=self.status_, create_time=self.create_time,
-            update_time=self.update_time)
+            avatar_url=self.student.avatar_url, supply=self.supply.dump(),
+            demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
+            wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
+            create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
@@ -75,7 +75,7 @@ class CoursePost(db.Model):
         if supply_course_id == demand_course_id:
             raise SupplySameAsDemandError()
 
-        if supply_course_id == 30 and demand_course_id == 31:
+        if not supply_course_id and not demand_course_id:
             raise InvalidPostError()
 
     @property

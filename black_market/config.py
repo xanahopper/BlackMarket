@@ -11,6 +11,9 @@ from envcfg.json.black_market import SMS_YUNPIAN_APIKEY
 from envcfg.json.black_market import WEIXIN_APP_ID
 from envcfg.json.black_market import WEIXIN_APP_SECRET
 from envcfg.json.black_market import DISABLE_SESSION_CHECK
+from envcfg.json.black_market import QINIU_ACCESS_KEY
+from envcfg.json.black_market import QINIU_SECRET_KEY
+from envcfg.json.black_market import QINIU_BUCKET
 
 
 APP = 'black_market'
@@ -33,4 +36,7 @@ __all__ = [
     'WEIXIN_APP_ID',
     'WEIXIN_APP_SECRET',
     'DISABLE_SESSION_CHECK',
+    'QINIU_ACCESS_KEY',
+    'QINIU_SECRET_KEY',
+    'QINIU_BUCKET',
 ]
