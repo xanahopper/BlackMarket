@@ -51,7 +51,7 @@ class CoursePost(db.Model):
 
     @classmethod
     def gets(cls, limit=5, offset=0):
-        return CoursePost.query.limit(limit).offset(offset).all()
+        return CoursePost.query.order_by(db.desc(cls.id)).limit(limit).offset(offset).all()
 
     @classmethod
     def gets_by_student(cls, student_id, limit=10, offset=0):
