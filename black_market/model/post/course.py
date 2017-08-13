@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from black_market.ext import db
-from black_market.libs.cache.redis import rd
+from black_market.libs.cache.redis import mc, rd
 from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
@@ -13,7 +13,8 @@ class CoursePost(db.Model):
     __tablename__ = 'course_post'
 
     _cache_key_prefix = 'course:post:'
-    _post_pv_cache_key = _cache_key_prefix + '%s:pv'
+    _course_post_by_id_cache_key = _cache_key_prefix + 'id:%s'
+    _post_pv_by_id_cache_key = _cache_key_prefix + 'pv:id:%s'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
@@ -47,13 +48,58 @@ class CoursePost(db.Model):
 
     @classmethod
     def get(cls, id_):
-        return CoursePost.query.get(id_)
+        cache_key = cls._course_post_by_id_cache_key % id_
+        return mc.get(cache_key) if mc.get(cache_key) else CoursePost.query.get(id_)
 
     @classmethod
-    def gets(cls, limit=5, offset=0, order=OrderType.descending):
+    def gets(cls, limit=5, offset=0, order=OrderType.descending, supply=None, demand=None):
+        if supply and demand:
+            return cls.gets_by_supply_and_demand(limit, offset, order, supply, demand)
+        elif supply and not demand:
+            return cls.gets_by_supply(limit, offset, order, supply)
+        elif not supply and demand:
+            return cls.gets_by_demand(limit, offset, order, demand)
         if order is OrderType.ascending:
             return CoursePost.query.limit(limit).offset(offset).all()
         return CoursePost.query.order_by(db.desc(cls.id)).limit(limit).offset(offset).all()
+
+    @classmethod
+    def gets_by_supply_and_demand(cls, limit, offset, order, supply, demand):
+        desc = 'desc' if order is OrderType.descending else ''
+        sql = ('select course_supply.post_id as post_id '
+               'from course_supply join course_demand '
+               'where course_supply.post_id=course_demand.post_id '
+               'and course_supply.course_id={supply} '
+               'and course_demand.course_id={demand} '
+               'order by post_id {desc} limit {offset}, {limit}'.format(
+                   supply=supply, demand=demand, desc=desc,
+                   offset=offset, limit=limit))
+        rs = db.engine.execute(sql)
+        return [CoursePost.get(post_id) for (post_id,) in rs]
+
+    @classmethod
+    def gets_by_supply(cls, limit, offset, order, supply):
+        desc = 'desc' if order is OrderType.descending else ''
+        sql = ('select course_supply.post_id as post_id '
+               'from course_supply join course_demand '
+               'where course_supply.post_id=course_demand.post_id '
+               'and course_supply.course_id={supply} '
+               'order by post_id {desc} limit {offset}, {limit}'.format(
+                   supply=supply, desc=desc, offset=offset, limit=limit))
+        rs = db.engine.execute(sql)
+        return [CoursePost.get(post_id) for (post_id,) in rs]
+
+    @classmethod
+    def gets_by_demand(cls, limit, offset, order, demand):
+        desc = 'desc' if order is OrderType.descending else ''
+        sql = ('select course_supply.post_id as post_id '
+               'from course_supply join course_demand '
+               'where course_supply.post_id=course_demand.post_id '
+               'and course_demand.course_id={demand} '
+               'order by post_id {desc} limit {offset}, {limit}'.format(
+                   demand=demand, desc=desc, offset=offset, limit=limit))
+        rs = db.engine.execute(sql)
+        return [CoursePost.get(post_id) for (post_id,) in rs]
 
     @classmethod
     def gets_by_student(cls, student_id, limit=10, offset=0):
@@ -97,7 +143,7 @@ class CoursePost(db.Model):
         return PostStatus(self.status_)
 
     def _get_pv(self):
-        key = self._post_pv_cache_key % self.id
+        key = self._post_pv_by_id_cache_key % self.id
         cached = int(rd.get(key)) if rd.get(key) else None
         if cached is not None:
             return cached
@@ -105,11 +151,12 @@ class CoursePost(db.Model):
         return self.pv_
 
     def _set_pv(self, pv_):
-        rd.set(self._post_pv_cache_key % self.id, pv_)
+        rd.set(self._post_pv_by_id_cache_key % self.id, pv_)
         if pv_ % 7 == 0:
             self.pv_ = pv_
             db.session.add(self)
             db.session.commit()
+            self.clear_cache()
 
     pv = property(_get_pv, _set_pv)
 
@@ -118,13 +165,20 @@ class CoursePost(db.Model):
             return True
         status = data.get('status')
         message = data.get('message')
+        switch = data.get('switch')
+        wechat = data.get('wechat')
         if status:
             self.status_ = status
         if message:
             self.message = message
+        if switch:
+            self.switch = switch
+        if wechat:
+            self.wechat = wechat
         self.update_time = datetime.now()
         db.session.add(self)
         db.session.commit()
+        self.clear_cache()
         return True
 
     def to_normal(self):
@@ -148,6 +202,7 @@ class CoursePost(db.Model):
         db.session.add(supply)
         db.session.add(self)
         db.session.commit()
+        self.clear_cache()
 
     def update_demand(self, demand_course_id):
         supply = self.supply
@@ -158,3 +213,7 @@ class CoursePost(db.Model):
         db.session.add(demand)
         db.session.add(self)
         db.session.commit()
+        self.clear_cache()
+
+    def clear_cache(self):
+        mc.delete(self._course_post_by_id_cache_key % self.id)

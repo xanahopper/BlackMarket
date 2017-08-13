@@ -18,8 +18,13 @@ def get_posts():
     start = data.get('start', 0)
     limit = data.get('limit', 10)
     order = OrderType(data.get('order', 0))
-    posts = CoursePost.gets(limit=limit, offset=start, order=order)
-    return normal_jsonify([post.dump() for post in posts])
+    supply = data.get('supply', None)
+    demand = data.get('demand', None)
+    posts = CoursePost.gets(
+        limit=limit, offset=start, order=order, supply=supply, demand=demand)
+    if posts:
+        return normal_jsonify([post.dump() for post in posts])
+    return normal_jsonify([])
 
 
 @bp.route('/', methods=['POST'])

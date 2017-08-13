@@ -59,8 +59,6 @@ class WechatSession(db.Model):
     @classmethod
     def get_by_third_session_key(cls, third_session_key):
         id_ = mc.get(cls._id_by_open_id_cache_key % third_session_key)
-        wechat_session = cls.query.filter_by(
-            third_session_key=third_session_key).first()
 
         wechat_session = cls.get(id_) if id_ else cls.query.filter_by(
             third_session_key=third_session_key).first()
