@@ -22,8 +22,8 @@ class GoodsPost(db.Model):
     message = db.Column(db.String(256))
     pv_ = db.Column(db.Integer, default=0)
     likes = db.Column(db.Integer, default=0)
-    create_time = db.Column(db.DateTime(), default=datetime.now())
-    update_time = db.Column(db.DateTime(), default=datetime.now())
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, student_id, switch, mobile, wechat, message, status=PostStatus.normal):
         self.student_id = student_id
