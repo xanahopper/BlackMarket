@@ -136,8 +136,10 @@ class CoursePost(db.Model):
         if post_ids:
             sql = ('select id from course_post '
                    'where student_id=:student_id '
+                   'and status=:status '
                    'and id in :post_ids')
-            params = dict(student_id=student_id, post_ids=post_ids)
+            params = dict(
+                student_id=student_id, status=PostStatus.normal.value, post_ids=post_ids)
             rs = db.engine.execute(sql, params=params)
             return bool(rs)
         return False
