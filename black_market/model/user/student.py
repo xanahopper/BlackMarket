@@ -40,6 +40,7 @@ class Student(db.Model):
         return dict(
             id=self.id, username=self.username, mobile=self.mobile,
             grade=self.grade, type=self.type, status=self.status,
+            avatar_url=self.avatar_url,
             create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
