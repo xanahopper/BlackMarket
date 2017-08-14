@@ -114,3 +114,23 @@ def send_register_code():
         print(msg)
         return normal_jsonify(dict(code=code, msg=msg))
     return normal_jsonify({})
+
+
+@bp.route('/viewcount', methods=['GET'])
+@require_session_key()
+def get_remaining_viewcount():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    viewcount = student.remaining_viewcount
+    return jsonify(viewcount=viewcount)
+
+
+@bp.route('/viewcount', methods=['PUT'])
+@require_session_key()
+def decr_remaining_viewcount():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    student.decr_viewcount()
+    return jsonify({})

@@ -50,7 +50,7 @@ def get_post(post_id):
     return normal_jsonify(post.dump())
 
 
-@bp.route('/post/<int:post_id>', methods=['PUT'])
+@bp.route('/<int:post_id>', methods=['PUT'])
 @require_session_key()
 def edit_post(post_id):
     data = UpdateCoursePostSchema().fill()
