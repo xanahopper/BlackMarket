@@ -126,19 +126,21 @@ class CoursePost(db.Model):
     @classmethod
     def existed(cls, student_id, supply, demand):
         sql = ('select course_supply.post_id as post_id '
-               'from course_supply join course_demand'
+               'from course_supply join course_demand '
                'where course_supply.post_id=course_demand.post_id '
                'and course_supply.course_id={supply} '
                'and course_demand.course_id={demand}').format(
                    supply=supply, demand=demand)
         rs = db.engine.execute(sql)
         post_ids = [post_id for (post_id,) in rs]
-        sql = ('select id from course_post '
-               'where student_id=:student_id '
-               'and id in :post_ids')
-        params = dict(post_ids=post_ids)
-        rs = db.engine.execute(sql, params=params)
-        return bool(rs)
+        if post_ids:
+            sql = ('select id from course_post '
+                   'where student_id=:student_id '
+                   'and id in :post_ids')
+            params = dict(student_id=student_id, post_ids=post_ids)
+            rs = db.engine.execute(sql, params=params)
+            return bool(rs)
+        return False
 
     @classmethod
     def validate_new_post(cls, student_id, supply_course_id, demand_course_id):
