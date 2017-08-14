@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timedelta
 
 from black_market.ext import db
-from black_market.libs.cache.redis import mc
+from black_market.libs.cache.redis import mc, ONE_DAY, HALF_DAY
 
 
 class WechatSession(db.Model):
@@ -26,7 +26,7 @@ class WechatSession(db.Model):
         self.expire_time = expire_time
 
     @classmethod
-    def add(cls, open_id, session_key, expires_in=1800):
+    def add(cls, open_id, session_key, expires_in=ONE_DAY):
         third_session_key = uuid.uuid4().hex
         instance = cls.get_by_open_id(open_id)
         if instance:
@@ -40,20 +40,20 @@ class WechatSession(db.Model):
         db.session.add(wechat_session)
         db.session.commit()
         mc.set(cls._id_by_open_id_cache_key % open_id, wechat_session.id)
-        mc.expire(cls._id_by_open_id_cache_key % open_id, 1200)
+        mc.expire(cls._id_by_open_id_cache_key % open_id, )
         mc.set(cls._wechat_session_by_id_cache_key % wechat_session.id, wechat_session)
-        mc.expire(cls._wechat_session_by_id_cache_key % wechat_session.id, 1200)
+        mc.expire(cls._wechat_session_by_id_cache_key % wechat_session.id, HALF_DAY)
         return third_session_key
 
     @classmethod
     def get(cls, id_):
         wechat_session = mc.get(cls._wechat_session_by_id_cache_key % id_)
         if wechat_session:
-            mc.expire(cls._wechat_session_by_id_cache_key % id_, 1200)
+            mc.expire(cls._wechat_session_by_id_cache_key % id_, HALF_DAY)
             return wechat_session
         wechat_session = cls.query.get(id_)
         mc.set(cls._wechat_session_by_id_cache_key % id_, wechat_session)
-        mc.expire(cls._wechat_session_by_id_cache_key % id_, 1200)
+        mc.expire(cls._wechat_session_by_id_cache_key % id_, HALF_DAY)
         return wechat_session
 
     @classmethod
@@ -65,7 +65,7 @@ class WechatSession(db.Model):
 
         if wechat_session and not wechat_session.expired:
             mc.set(cls._id_by_open_id_cache_key % wechat_session.open_id, wechat_session.id)
-            mc.expire(cls._id_by_open_id_cache_key % wechat_session.open_id, 1200)
+            mc.expire(cls._id_by_open_id_cache_key % wechat_session.open_id, HALF_DAY)
             return wechat_session
         return None
 
