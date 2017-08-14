@@ -170,13 +170,13 @@ class CoursePost(db.Model):
         message = data.get('message')
         switch = data.get('switch')
         wechat = data.get('wechat')
-        if status:
+        if status is not None:
             self.status_ = status
         if message:
             self.message = message
-        if switch:
+        if switch is not None:
             self.switch = switch
-        if wechat:
+        if wechat is not None:
             self.wechat = wechat
         self.update_time = datetime.now()
         db.session.add(self)
