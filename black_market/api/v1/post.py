@@ -54,6 +54,7 @@ def get_post(post_id):
         post.pv += 1
     return normal_jsonify(post.dump())
 
+
 @bp.route('/<int:post_id>', methods=['PUT'])
 @require_session_key()
 def edit_post(post_id):

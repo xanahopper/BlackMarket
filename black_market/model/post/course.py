@@ -6,7 +6,8 @@ from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.consts import PostStatus, OrderType
-from black_market.model.exceptions import SupplySameAsDemandError, InvalidPostError
+from black_market.model.exceptions import (
+    SupplySameAsDemandError, InvalidPostError, DuplicatedPostError)
 
 
 class CoursePost(db.Model):
@@ -110,6 +111,7 @@ class CoursePost(db.Model):
 
     @classmethod
     def add(cls, student_id, supply_course_id, demand_course_id, switch, mobile, wechat, message):
+        cls.validate_new_post(student_id, supply_course_id, demand_course_id)
         cls.validate_supply_and_demand(supply_course_id, demand_course_id)
         post = CoursePost(student_id, switch, mobile, wechat, message)
         db.session.add(post)
@@ -120,6 +122,29 @@ class CoursePost(db.Model):
         db.session.add(demand)
         db.session.commit()
         return post
+
+    @classmethod
+    def existed(cls, student_id, supply, demand):
+        sql = ('select course_supply.post_id as post_id '
+               'from course_supply join course_demand'
+               'where course_supply.post_id=course_demand.post_id '
+               'and course_supply.course_id={supply} '
+               'and course_demand.course_id={demand}').format(
+                   supply=supply, demand=demand)
+        rs = db.engine.execute(sql)
+        post_ids = [post_id for (post_id,) in rs]
+        sql = ('select id from course_post '
+               'where student_id=:student_id '
+               'and id in :post_ids')
+        params = dict(post_ids=post_ids)
+        rs = db.engine.execute(sql, params=params)
+        return bool(rs)
+
+    @classmethod
+    def validate_new_post(cls, student_id, supply_course_id, demand_course_id):
+        cls.validate_supply_and_demand(supply_course_id, demand_course_id)
+        if cls.existed(student_id, supply_course_id, demand_course_id):
+            raise DuplicatedPostError()
 
     @staticmethod
     def validate_supply_and_demand(supply_course_id, demand_course_id):
