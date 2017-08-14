@@ -40,8 +40,7 @@ class CoursePost(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, student_id=self.student_id, student_name=self.student.username,
-            avatar_url=self.student.avatar_url, supply=self.supply.dump(),
+            id=self.id, student_id=self.student.dump(), supply=self.supply.dump(),
             demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
             wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
             create_time=self.create_time, update_time=self.update_time)
