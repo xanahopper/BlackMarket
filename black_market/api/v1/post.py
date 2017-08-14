@@ -1,4 +1,7 @@
+from flask import g
+
 from .._bp import create_blueprint
+from black_market.model.user.student import Student
 from black_market.model.post.course import CoursePost
 from black_market.model.post.consts import PostMobileSwitch
 from black_market.model.post.consts import OrderType
@@ -46,9 +49,10 @@ def create_post():
 @require_session_key()
 def get_post(post_id):
     post = CoursePost.get(post_id)
-    post.pv += 1
+    student = Student.get(g.wechat_user.id)
+    if student.id != post.student_id:
+        post.pv += 1
     return normal_jsonify(post.dump())
-
 
 @bp.route('/<int:post_id>', methods=['PUT'])
 @require_session_key()
