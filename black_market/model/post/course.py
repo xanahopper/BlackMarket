@@ -102,8 +102,12 @@ class CoursePost(db.Model):
         return [CoursePost.get(post_id) for (post_id,) in rs]
 
     @classmethod
-    def gets_by_student(cls, student_id, limit=10, offset=0):
-        return CoursePost.query.filter_by(student_id=student_id).limit(limit).offset(offset).all()
+    def gets_by_student(cls, student_id, limit=10, offset=0, order=OrderType.descending):
+        if order is OrderType.descending:
+            return CoursePost.query.order_by(db.desc(cls.id)).filter_by(
+                student_id=student_id).limit(limit).offset(offset).all()
+        return CoursePost.query.filter_by(
+            student_id=student_id).limit(limit).offset(offset).all()
 
     @classmethod
     def add(cls, student_id, supply_course_id, demand_course_id, switch, mobile, wechat, message):
