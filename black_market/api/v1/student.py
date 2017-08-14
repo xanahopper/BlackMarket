@@ -13,6 +13,8 @@ from black_market.model.exceptions import (
     InvalidSMSVerifyCodeError, AtemptTooManyTimesError)
 from black_market.model.user.consts import AccountStatus, StudentType
 from black_market.model.user.student import Student
+from black_market.model.post.course import CoursePost
+from black_market.model.post.consts import OrderType
 from black_market.model.utils import validator
 
 bp = create_blueprint('student', 'v1', __name__, url_prefix='/student')
@@ -27,6 +29,36 @@ def get_student():
     if not student:
         return normal_jsonify({}, 'Student Not Found', 404)
     return jsonify(student.dump())
+
+
+@bp.route('/post', methods=['GET'])
+@require_session_key()
+def get_my_post():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    data = student_schema.GetMyCoursePostSchema().fill()
+    start = data.get('start', 0)
+    limit = data.get('limit', 10)
+    order = OrderType(data.get('order', 0))
+    posts = CoursePost.gets_by_student(
+        student.id, limit=limit, offset=start, order=order)
+    return jsonify([post.dump() for post in posts])
+
+
+@bp.route('/<int:student_id>/post', methods=['GET'])
+@require_session_key()
+def get_posts_by_student(student_id):
+    student = Student.get(student_id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    data = student_schema.GetMyCoursePostSchema().fill()
+    start = data.get('start', 0)
+    limit = data.get('limit', 10)
+    order = OrderType(data.get('order', 0))
+    posts = CoursePost.gets_by_student(
+        student.id, limit=limit, offset=start, order=order)
+    return jsonify([post.dump() for post in posts])
 
 
 @bp.route('/', methods=['POST'])
@@ -82,3 +114,23 @@ def send_register_code():
         print(msg)
         return normal_jsonify(dict(code=code, msg=msg))
     return normal_jsonify({})
+
+
+@bp.route('/viewcount', methods=['GET'])
+@require_session_key()
+def get_remaining_viewcount():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    viewcount = student.remaining_viewcount
+    return jsonify(viewcount=viewcount)
+
+
+@bp.route('/viewcount', methods=['PUT'])
+@require_session_key()
+def decr_remaining_viewcount():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    student.decr_viewcount()
+    return jsonify({})

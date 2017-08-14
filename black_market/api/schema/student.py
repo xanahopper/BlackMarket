@@ -17,3 +17,9 @@ class RegisterStudentSchema(BaseSchema, FillHelperMixin):
 class UpdateStudentSchema(BaseSchema, FillHelperMixin):
     type = ma.Integer(required=True)
     grade = ma.String(required=True)
+
+
+class GetMyCoursePostSchema(BaseSchema, FillHelperMixin):
+    start = ma.Integer()
+    limit = ma.Integer()
+    order = ma.Integer()

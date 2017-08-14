@@ -93,6 +93,10 @@ class InvalidPostError(BlackMarketError):
     _error = Error(408, '无效的Post，请重新检查填写的信息', 403)
 
 
+class DuplicatedPostError(BlackMarketError):
+    _error = Error(408, '重复的Post，请重新检查填写的信息', 403)
+
+
 # 反馈类错误(850~599)
 class FeedbackTooLongError(BlackMarketError):
     _error = Error(850, '描述超过1000字，请重新编辑', 400)

@@ -16,9 +16,13 @@ class CreateCoursePostSchema(BaseSchema, FillHelperMixin):
 class UpdateCoursePostSchema(BaseSchema, FillHelperMixin):
     message = ma.String()
     status = ma.Integer()
+    switch = ma.Integer()
+    wechat = ma.String()
 
 
 class GetCoursePostSchema(BaseSchema, FillHelperMixin):
     start = ma.Integer()
     limit = ma.Integer()
     order = ma.Integer()
+    supply = ma.Integer()
+    demand = ma.Integer()

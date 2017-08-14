@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from black_market.ext import db
+from black_market.libs.cache.redis import mc, ONE_DAY
 from black_market.model.wechat.user import WechatUser
 from black_market.model.utils import validator
 from black_market.model.user.consts import AccountStatus
@@ -18,11 +19,13 @@ class Student(db.Model):
     type = db.Column(db.SmallInteger)
     grade = db.Column(db.String(10))
     status = db.Column(db.SmallInteger, default=AccountStatus.need_verify.value)
-    create_time = db.Column(db.DateTime(), default=datetime.now())
-    update_time = db.Column(db.DateTime(), default=datetime.now(), onupdate=datetime.now())
+    create_time = db.Column(db.DateTime, default=datetime.now)
+    update_time = db.Column(db.DateTime, default=datetime.now)
+    MAX_VIEWCOUNT = 10
 
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
+    _remaining_viewcount_by_student_cache_key = _cache_key_prefix + 'remaining:viewcount:id:%s'
 
     def __init__(self, id_, mobile, open_id, type_, grade, status):
         self.id = id_
@@ -40,6 +43,7 @@ class Student(db.Model):
         return dict(
             id=self.id, username=self.username, mobile=self.mobile,
             grade=self.grade, type=self.type, status=self.status,
+            avatar_url=self.avatar_url,
             create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
@@ -84,8 +88,10 @@ class Student(db.Model):
             self.name = name.strip()
         self.type = type_.value
         self.grade = grade
+        self.update_time = datetime.now()
         db.session.add(self)
         db.session.commit()
+        self.clear_cache()
         return Student.get(self.id)
 
     def change_mobile(self, mobile):
@@ -95,10 +101,29 @@ class Student(db.Model):
         self.mobile = mobile
         db.session.add(self)
         db.session.commit()
+        self.clear_cache()
 
     @property
     def account_status(self):
         return AccountStatus(self.status)
+
+    @property
+    def remaining_viewcount(self):
+        cache_key = self._remaining_viewcount_by_student_cache_key % self.id
+        if mc.get(cache_key):
+            viewcount = int(mc.get(cache_key))
+            return viewcount
+        else:
+            mc.set(cache_key, self.MAX_VIEWCOUNT)
+            mc.expire(cache_key, ONE_DAY)
+            return self.MAX_VIEWCOUNT
+
+    def decr_viewcount(self):
+        cache_key = self._remaining_viewcount_by_student_cache_key % self.id
+        if mc.get(cache_key):
+            viewcount = int(mc.get(cache_key))
+            if viewcount > 0:
+                mc.decr(cache_key)
 
     def need_verify(self):
         return self.account_status is AccountStatus.need_verify
@@ -110,3 +135,8 @@ class Student(db.Model):
         self.status = AccountStatus.normal.value
         db.session.add(self)
         db.session.commit()
+        self.clear_cache()
+
+    def clear_cache(self):
+        mc.delete(self._student_cache_key % self.id)
+        mc.delete(self._remaining_viewcount_by_student_cache_key % self.id)
