@@ -11,8 +11,9 @@ from black_market.model.code.consts import SMSVerifyType
 from black_market.model.code.verify import SMSVerify
 from black_market.model.exceptions import (
     InvalidSMSVerifyCodeError, AtemptTooManyTimesError)
-from black_market.model.user.consts import AccountStatus, StudentType
+from black_market.model.user.consts import AccountStatus, StudentType, UserBehaviorType
 from black_market.model.user.student import Student
+from black_market.model.user.behavior import UserBehavior
 from black_market.model.post.course import CoursePost
 from black_market.model.post.consts import OrderType
 from black_market.model.utils import validator
@@ -22,7 +23,7 @@ bp = create_blueprint('student', 'v1', __name__, url_prefix='/student')
 
 @bp.route('/', methods=['GET'])
 @require_session_key()
-def get_student():
+def get_current_student():
     wechat_user = g.wechat_user
     id_ = wechat_user.id
     student = Student.get(id_)
@@ -58,7 +59,20 @@ def get_posts_by_student(student_id):
     order = OrderType(data.get('order', 0))
     posts = CoursePost.gets_by_student(
         student.id, limit=limit, offset=start, order=order)
+    UserBehavior.add(
+        g.wechat_user.id, UserBehaviorType.view_other_posts, dict(student_id=student_id))
     return jsonify([post.dump() for post in posts])
+
+
+@bp.route('/<int:student_id>', methods=['GET'])
+@require_session_key()
+def get_student(student_id):
+    student = Student.get(student_id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    UserBehavior.add(
+        g.wechat_user.id, UserBehaviorType.view_other_profile, dict(student_id=student_id))
+    return jsonify(student.dump())
 
 
 @bp.route('/', methods=['POST'])
