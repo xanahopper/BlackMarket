@@ -16,7 +16,7 @@ class UserBehavior(db.Model):
 
     def __init__(self, user_id, type_, detail):
         self.user_id = user_id
-        self.type = type_.value
+        self.type_ = type_.value
         self.detail = detail
 
     def __repr__(self):
