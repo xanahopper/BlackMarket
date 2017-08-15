@@ -7,7 +7,8 @@ from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.consts import PostStatus, OrderType
 from black_market.model.exceptions import (
-    SupplySameAsDemandError, InvalidPostError, DuplicatedPostError)
+    SupplySameAsDemandError, InvalidPostError,
+    DuplicatedPostError, CannotEditPostError)
 
 
 class CoursePost(db.Model):
@@ -17,6 +18,8 @@ class CoursePost(db.Model):
     _course_post_by_id_cache_key = _cache_key_prefix + 'id:%s'
     _post_pv_by_id_cache_key = _cache_key_prefix + 'pv:id:%s'
 
+    MAX_EDIT_TIMES = 5
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
     status_ = db.Column(db.SmallInteger)
@@ -25,6 +28,7 @@ class CoursePost(db.Model):
     wechat = db.Column(db.String(80))
     message = db.Column(db.String(256))
     pv_ = db.Column(db.Integer, default=0)
+    editable = db.Column(db.SmallInteger, default=MAX_EDIT_TIMES)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
 
@@ -44,7 +48,7 @@ class CoursePost(db.Model):
             id=self.id, student_id=self.student.dump(), supply=self.supply.dump(),
             demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
             wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
-            create_time=self.create_time, update_time=self.update_time)
+            editable=self.editable, create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
@@ -195,12 +199,11 @@ class CoursePost(db.Model):
     def update_self(self, data):
         if not data:
             return True
-        status = data.get('status')
+        if not self.editable:
+            raise CannotEditPostError()
         message = data.get('message')
         switch = data.get('switch')
         wechat = data.get('wechat')
-        if status is not None:
-            self.status_ = status
         if message:
             self.message = message
         if switch is not None:
@@ -208,22 +211,43 @@ class CoursePost(db.Model):
         if wechat is not None:
             self.wechat = wechat
         self.update_time = datetime.now()
+        self.editable -= 1
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
         return True
 
+    def update_status(self, status):
+        if status is PostStatus.normal:
+            self.to_normal()
+        if status is PostStatus.succeed:
+            self.to_succeed()
+        if status is PostStatus.abandoned:
+            self.to_abandoned()
+
     def to_normal(self):
         if self.status is not PostStatus.normal:
-            self.update_self(dict(status=PostStatus.normal.value))
+            self.status_ = PostStatus.normal.value
+            self.update_time = datetime.now()
+            db.session.add(self)
+            db.session.commit()
+            self.clear_cache()
 
     def to_succeed(self):
         if self.status is not PostStatus.succeed:
-            self.update_self(dict(status=PostStatus.succeed.value))
+            self.status_ = PostStatus.succeed.value
+            self.update_time = datetime.now()
+            db.session.add(self)
+            db.session.commit()
+            self.clear_cache()
 
     def to_abandoned(self):
         if self.status is not PostStatus.abandoned:
-            self.update_self(dict(status=PostStatus.abandoned.value))
+            self.status_ = PostStatus.abandoned.value
+            self.update_time = datetime.now()
+            db.session.add(self)
+            db.session.commit()
+            self.clear_cache()
 
     def update_supply(self, supply_course_id):
         supply = self.supply

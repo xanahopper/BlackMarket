@@ -4,12 +4,13 @@ from .._bp import create_blueprint
 from black_market.model.user.student import Student
 from black_market.model.post.course import CoursePost
 from black_market.model.post.consts import PostMobileSwitch
-from black_market.model.post.consts import OrderType
+from black_market.model.post.consts import OrderType, PostStatus
 
 from black_market.api.utils import normal_jsonify
 from black_market.api.decorator import require_session_key
 from black_market.api.schema.post import (
-    CreateCoursePostSchema, UpdateCoursePostSchema, GetCoursePostSchema)
+    CreateCoursePostSchema, UpdateCoursePostSchema,
+    UpdateCoursePostStatusSchema, GetCoursePostSchema)
 
 bp = create_blueprint('course.post', 'v1', __name__, url_prefix='/course/post')
 
@@ -61,4 +62,14 @@ def edit_post(post_id):
     data = UpdateCoursePostSchema().fill()
     post = CoursePost.get(post_id)
     post.update_self(data)
+    return normal_jsonify({'status': 'ok'})
+
+
+@bp.route('/<int:post_id>/status', methods=['PUT'])
+@require_session_key()
+def edit_post_status(post_id):
+    data = UpdateCoursePostStatusSchema().fill()
+    status = PostStatus(data['status'])
+    post = CoursePost.get(post_id)
+    post.update_status(status)
     return normal_jsonify({'status': 'ok'})
