@@ -19,9 +19,6 @@ class UserBehavior(db.Model):
         self.type_ = type_.value
         self.detail = detail
 
-    def __repr__(self):
-        return '<UserBehavior:user%s:%s>' % (self.user_id, self.behavior_name)
-
     def dump(self):
         return dict(id=self.id, type=self.type_, detail=self.detail)
 

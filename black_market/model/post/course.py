@@ -1,7 +1,8 @@
+import pickle
 from datetime import datetime
 
 from black_market.ext import db
-from black_market.libs.cache.redis import mc, rd
+from black_market.libs.cache.redis import mc, rd, ONE_HOUR, ONE_DAY
 from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
@@ -17,6 +18,8 @@ class CoursePost(db.Model):
     _cache_key_prefix = 'course:post:'
     _course_post_by_id_cache_key = _cache_key_prefix + 'id:%s'
     _post_pv_by_id_cache_key = _cache_key_prefix + 'pv:id:%s'
+    _course_post_supply_by_post_id_cache_key = _cache_key_prefix + 'supply:id:%s'
+    _course_post_demand_by_post_id_cache_key = _cache_key_prefix + 'demand:id:%s'
 
     MAX_EDIT_TIMES = 5
 
@@ -40,9 +43,6 @@ class CoursePost(db.Model):
         self.message = message
         self.status_ = status.value
 
-    def __repr__(self):
-        return '<CoursePost of %s at %s>' % (self.student_id, self.create_time)
-
     def dump(self):
         return dict(
             id=self.id, student_id=self.student.dump(), supply=self.supply.dump(),
@@ -53,7 +53,12 @@ class CoursePost(db.Model):
     @classmethod
     def get(cls, id_):
         cache_key = cls._course_post_by_id_cache_key % id_
-        return mc.get(cache_key) if mc.get(cache_key) else CoursePost.query.get(id_)
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        post = CoursePost.query.get(id_)
+        mc.set(cache_key, pickle.dumps(post).hex())
+        mc.expire(cache_key, ONE_HOUR)
+        return post
 
     @classmethod
     def gets(cls, limit=5, offset=0, order=OrderType.descending, supply=None, demand=None):
@@ -120,11 +125,8 @@ class CoursePost(db.Model):
         post = CoursePost(student_id, switch, mobile, wechat, message)
         db.session.add(post)
         db.session.commit()
-        supply = CourseSupply(post.id, supply_course_id)
-        demand = CourseDemand(post.id, demand_course_id)
-        db.session.add(supply)
-        db.session.add(demand)
-        db.session.commit()
+        CourseSupply.add(post.id, supply_course_id)
+        CourseDemand.add(post.id, demand_course_id)
         return post
 
     @classmethod
@@ -168,11 +170,23 @@ class CoursePost(db.Model):
 
     @property
     def supply(self):
-        return CourseSupply.get_by_post(self.id)
+        cache_key = self._course_post_supply_by_post_id_cache_key % self.id
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        course_supply = CourseSupply.get_by_post(self.id)
+        mc.set(cache_key, pickle.dumps(course_supply).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return course_supply
 
     @property
     def demand(self):
-        return CourseDemand.get_by_post(self.id)
+        cache_key = self._course_post_demand_by_post_id_cache_key % self.id
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        course_demand = CourseDemand.get_by_post(self.id)
+        mc.set(cache_key, pickle.dumps(course_demand).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return course_demand
 
     @property
     def status(self):
@@ -273,3 +287,5 @@ class CoursePost(db.Model):
 
     def clear_cache(self):
         mc.delete(self._course_post_by_id_cache_key % self.id)
+        mc.delete(self._course_post_supply_by_post_id_cache_key % self.id)
+        mc.delete(self._course_post_demand_by_post_id_cache_key % self.id)

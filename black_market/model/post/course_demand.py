@@ -1,4 +1,7 @@
+import pickle
+
 from black_market.ext import db
+from black_market.libs.cache.redis import mc, ONE_DAY
 from black_market.model.course import Course
 
 
@@ -9,19 +12,32 @@ class CourseDemand(db.Model):
     post_id = db.Column(db.Integer, db.ForeignKey('course_post.id'))
     course_id = db.Column(db.Integer)
 
+    _cache_key_prefix = 'course:post:demand:'
+    _course_post_demand_by_id_cache_key = _cache_key_prefix + 'id:%s'
+
     def __init__(self, post_id, course_id):
         self.post_id = post_id
         self.course_id = course_id
-
-    def __repr__(self):
-        return '<CourseDemand of Post %s>' % (self.post_id)
 
     def dump(self):
         return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
 
     @classmethod
+    def add(cls, post_id, course_id):
+        demand = CourseDemand(post_id, course_id)
+        db.session.add(demand)
+        db.session.commit()
+        return demand.id
+
+    @classmethod
     def get(cls, id_):
-        return CourseDemand.query.get(id_)
+        cache_key = cls._course_post_demand_by_id_cache_key % id_
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        course_demand = CourseDemand.query.get(id_)
+        mc.set(cache_key, pickle.dumps(course_demand).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return course_demand
 
     @classmethod
     def get_by_post(cls, id_):
@@ -38,7 +54,6 @@ class CourseDemand(db.Model):
 
     @property
     def course(self):
-        # TODO if id == 0
         return Course.get(self.course_id)
 
     @property

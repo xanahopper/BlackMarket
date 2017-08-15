@@ -14,9 +14,6 @@ class CourseSchedule(db.Model):
         self.start = start
         self.end = end
 
-    def __repr__(self):
-        return '<CourseSchedule of Course%s>' % self.course_id
-
     def dump(self):
         return dict(id=self.id, course_id=self.course_id,
                     day=self.day, start=self.start, end=self.end)

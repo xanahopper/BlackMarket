@@ -1,4 +1,5 @@
 import uuid
+import pickle
 from datetime import datetime, timedelta
 
 from black_market.ext import db
@@ -47,13 +48,14 @@ class WechatSession(db.Model):
 
     @classmethod
     def get(cls, id_):
-        wechat_session = mc.get(cls._wechat_session_by_id_cache_key % id_)
-        if wechat_session:
-            mc.expire(cls._wechat_session_by_id_cache_key % id_, HALF_DAY)
+        cache_key = cls._wechat_session_by_id_cache_key % id_
+        if mc.get(cache_key):
+            wechat_session = pickle.loads(bytes.fromhex(mc.get(cache_key)))
+            mc.expire(cache_key, HALF_DAY)
             return wechat_session
         wechat_session = cls.query.get(id_)
-        mc.set(cls._wechat_session_by_id_cache_key % id_, wechat_session)
-        mc.expire(cls._wechat_session_by_id_cache_key % id_, HALF_DAY)
+        mc.set(cache_key, pickle.dumps(wechat_session).hex())
+        mc.expire(cache_key, HALF_DAY)
         return wechat_session
 
     @classmethod

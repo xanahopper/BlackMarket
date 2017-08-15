@@ -1,4 +1,7 @@
+import pickle
+
 from black_market.ext import db
+from black_market.libs.cache.redis import mc, ONE_DAY
 from black_market.model.course_schedule import CourseSchedule
 from black_market.model.const import CourseType
 
@@ -9,14 +12,15 @@ class Course(db.Model):
     teacher = db.Column(db.String(80))
     credit = db.Column(db.Integer)
 
+    _cache_key_prefix = 'course:'
+    _course_cache_key = _cache_key_prefix + 'id:%s'
+    _all_course_cache_key = _cache_key_prefix + 'all'
+
     def __init__(self, name, teacher, credit, type_):
         self.name = name
         self.teacher = teacher
         self.credit = credit
         self.type_ = type_
-
-    def __repr__(self):
-        return '<%s-%s-%s>' % (self.id, self.name, self.teacher)
 
     def dump(self):
         return dict(id=self.id, name=self.name, teacher=self.teacher, credit=self.credit,
@@ -35,7 +39,14 @@ class Course(db.Model):
 
     @classmethod
     def get(cls, id_):
-        return Course.query.get(id_)
+        cache_key = cls._course_cache_key % id_
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        else:
+            course = Course.query.get(id_)
+            mc.set(cache_key, pickle.dumps(course).hex())
+            mc.expire(cache_key, ONE_DAY)
+            return course
 
     @classmethod
     def gets(cls, limit=5, offset=0):
@@ -43,7 +54,14 @@ class Course(db.Model):
 
     @classmethod
     def get_all(cls):
-        return Course.query.all()
+        cache_key = cls._all_course_cache_key
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        else:
+            courses = Course.query.all()
+            mc.set(cache_key, pickle.dumps(courses).hex())
+            mc.expire(cache_key, ONE_DAY)
+            return courses
 
     @classmethod
     def get_by_name(cls, name):
@@ -56,3 +74,6 @@ class Course(db.Model):
     @property
     def schedules(self):
         return CourseSchedule.get_by_course(self.id)
+
+    def clear_cache(self):
+        mc.delete(self._course_cache_key % self.id)
