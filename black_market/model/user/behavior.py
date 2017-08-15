@@ -9,7 +9,7 @@ class UserBehavior(db.Model):
     __tablename__ = 'user_behavior'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(80), db.ForeignKey('wechat_user.id'))
+    user_id = db.Column(db.String(80))
     type_ = db.Column(db.SmallInteger)
     detail = db.Column(db.Text)
     create_time = db.Column(db.DateTime, default=datetime.now)
