@@ -1,7 +1,8 @@
+import pickle
 from datetime import datetime
 
 from black_market.ext import db
-# from black_market.libs.cache.redis import mc
+from black_market.libs.cache.redis import mc, ONE_DAY
 
 
 class WechatUser(db.Model):
@@ -19,9 +20,8 @@ class WechatUser(db.Model):
     create_time = db.Column(db.DateTime(), default=datetime.now())
     update_time = db.Column(db.DateTime(), default=datetime.now(), onupdate=datetime.now())
 
-    # _cache_key_prefix = 'wechat_user_info:'
-    # _token_cache_key = _cache_key_prefix + 'id:%s'
-    # _id_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
+    _cache_key_prefix = 'wechat_user:'
+    _wechat_user_by_open_id_cache_key = _cache_key_prefix + 'open_id:%s'
 
     def __init__(self, open_id, nickname, avatar_url, city,
                  country, gender, language, province, update_time):
@@ -59,7 +59,13 @@ class WechatUser(db.Model):
 
     @classmethod
     def get_by_open_id(cls, open_id):
-        return cls.query.filter_by(open_id=open_id).first()
+        cache_key = cls._wechat_user_by_open_id_cache_key % open_id
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        wechat_user = cls.query.filter_by(open_id=open_id).first()
+        mc.set(cache_key, pickle.dumps(wechat_user).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return wechat_user
 
     def update(self, nickname, avatar_url, city, country,
                gender, language, province):
@@ -73,8 +79,7 @@ class WechatUser(db.Model):
         self.update_time = datetime.now()
         db.session.add(self)
         db.session.commit()
-        # self.clear_cache()
+        self.clear_cache()
 
-    # def clear_cache(self):
-        # mc.delete(self._token_cache_key % self.id_)
-        # mc.delete(self._id_by_open_id_cache_key % self.open_id)
+    def clear_cache(self):
+        mc.delete(self._wechat_user_by_open_id_cache_key % self.open_id)

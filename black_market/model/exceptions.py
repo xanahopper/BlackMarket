@@ -101,6 +101,10 @@ class CannotEditPostError(BlackMarketError):
     _error = Error(410, '修改Post次数已被用完，无法修改', 403)
 
 
+class CannotViewPostContactError(BlackMarketError):
+    _error = Error(411, '查看联系方式次数已用完，请稍候再试', 403)
+
+
 # 反馈类错误(850~599)
 class FeedbackTooLongError(BlackMarketError):
     _error = Error(850, '描述超过1000字，请重新编辑', 400)

@@ -28,3 +28,4 @@ wechatpy
 PyCrypto
 gevent
 qiniu
+eventlet

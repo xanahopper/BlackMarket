@@ -4,6 +4,7 @@ from datetime import datetime
 from black_market.ext import db
 from black_market.libs.cache.redis import mc, rd, ONE_HOUR, ONE_DAY
 from black_market.model.user.student import Student
+from black_market.model.user.view_record import ViewRecord
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.consts import PostStatus, OrderType
@@ -254,6 +255,7 @@ class CoursePost(db.Model):
             db.session.add(self)
             db.session.commit()
             self.clear_cache()
+            self.clear_related_view_records()
 
     def to_abandoned(self):
         if self.status is not PostStatus.abandoned:
@@ -262,6 +264,7 @@ class CoursePost(db.Model):
             db.session.add(self)
             db.session.commit()
             self.clear_cache()
+            self.clear_related_view_records()
 
     def update_supply(self, supply_course_id):
         supply = self.supply
@@ -284,6 +287,9 @@ class CoursePost(db.Model):
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
+
+    def clear_related_view_records(self):
+        ViewRecord.delete_records_by_post(self.id)
 
     def clear_cache(self):
         mc.delete(self._course_post_by_id_cache_key % self.id)

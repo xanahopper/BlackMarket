@@ -29,3 +29,7 @@ class GetCoursePostSchema(BaseSchema, FillHelperMixin):
     order = ma.Integer()
     supply = ma.Integer()
     demand = ma.Integer()
+
+
+class DecrRemainingViewCountSchema(BaseSchema, FillHelperMixin):
+    post_id = ma.Integer(required=True)
