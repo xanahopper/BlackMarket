@@ -7,7 +7,8 @@ from black_market.model.wechat.user import WechatUser
 from black_market.model.utils import validator
 from black_market.model.user.consts import AccountStatus
 from black_market.model.exceptions import MobileAlreadyExistedError
-from black_market.model.exceptions import WechatUserNotFoundError
+from black_market.model.exceptions import (
+    WechatUserNotFoundError, CannotViewPostContactError)
 
 
 class Student(db.Model):
@@ -127,8 +128,9 @@ class Student(db.Model):
         cache_key = self._remaining_viewcount_by_student_cache_key % self.id
         if mc.get(cache_key):
             viewcount = int(mc.get(cache_key))
-            if viewcount > 0:
-                mc.decr(cache_key)
+            if viewcount <= 0:
+                raise CannotViewPostContactError()
+            mc.decr(cache_key)
 
     def need_verify(self):
         return self.account_status is AccountStatus.need_verify
