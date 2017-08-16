@@ -41,7 +41,7 @@ class WechatSession(db.Model):
         db.session.add(wechat_session)
         db.session.commit()
         mc.set(cls._id_by_open_id_cache_key % open_id, wechat_session.id)
-        mc.expire(cls._id_by_open_id_cache_key % open_id, )
+        mc.expire(cls._id_by_open_id_cache_key % open_id, HALF_DAY)
         mc.set(cls._wechat_session_by_id_cache_key % wechat_session.id, wechat_session)
         mc.expire(cls._wechat_session_by_id_cache_key % wechat_session.id, HALF_DAY)
         return third_session_key
