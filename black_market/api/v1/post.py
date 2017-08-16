@@ -7,13 +7,14 @@ from black_market.model.user.behavior import UserBehavior
 from black_market.model.user.consts import UserBehaviorType
 from black_market.model.post.course import CoursePost
 from black_market.model.post.consts import PostMobileSwitch
-from black_market.model.post.consts import OrderType, PostStatus
+from black_market.model.post.consts import OrderType, PostStatus, PostType
 
 from black_market.api.utils import normal_jsonify
 from black_market.api.decorator import require_session_key
 from black_market.api.schema.post import (
     CreateCoursePostSchema, UpdateCoursePostSchema,
-    UpdateCoursePostStatusSchema, GetCoursePostSchema)
+    UpdateCoursePostStatusSchema, GetCoursePostSchema,
+    DecrRemainingViewCountSchema)
 
 bp = create_blueprint('course.post', 'v1', __name__, url_prefix='/course/post')
 
@@ -82,3 +83,28 @@ def edit_post_status(post_id):
     UserBehavior.add(g.wechat_user.id, UserBehaviorType.markdone_course_post,
                      dict(post_id=post_id, status=status.value))
     return normal_jsonify({'status': 'ok'})
+
+
+@bp.route('/viewcount', methods=['GET'])
+@require_session_key()
+def get_remaining_viewcount():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    viewcount = student.remaining_viewcount
+    return normal_jsonify(dict(viewcount=viewcount))
+
+
+@bp.route('/viewcount', methods=['PUT'])
+@require_session_key()
+def decr_remaining_viewcount():
+    student = Student.get(g.wechat_user.id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    data = DecrRemainingViewCountSchema().fill()
+    post_id = data['post_id']
+    student.decr_viewcount()
+    ViewRecord.add(student.id, post_id, PostType.course_post)
+    UserBehavior.add(
+        g.wechat_user.id, UserBehaviorType.view_course_post_contact, dict(post_id=post_id))
+    return normal_jsonify({})

@@ -1,4 +1,4 @@
-from flask import jsonify, g, request
+from flask import jsonify, g
 
 from black_market.api._bp import create_blueprint
 from black_market.api.decorator import require_session_key
@@ -13,10 +13,9 @@ from black_market.model.exceptions import (
     InvalidSMSVerifyCodeError, AtemptTooManyTimesError)
 from black_market.model.user.consts import AccountStatus, StudentType, UserBehaviorType
 from black_market.model.user.student import Student
-from black_market.model.user.view_record import ViewRecord
 from black_market.model.user.behavior import UserBehavior
 from black_market.model.post.course import CoursePost
-from black_market.model.post.consts import OrderType, PostType
+from black_market.model.post.consts import OrderType
 from black_market.model.utils import validator
 
 bp = create_blueprint('student', 'v1', __name__, url_prefix='/student')
@@ -131,27 +130,3 @@ def send_register_code():
         print(msg)
         return normal_jsonify(dict(code=code, msg=msg))
     return normal_jsonify({})
-
-
-@bp.route('/viewcount', methods=['GET'])
-@require_session_key()
-def get_remaining_viewcount():
-    student = Student.get(g.wechat_user.id)
-    if not student:
-        return normal_jsonify({}, 'Student Not Found', 404)
-    viewcount = student.remaining_viewcount
-    return jsonify(viewcount=viewcount)
-
-
-@bp.route('/viewcount', methods=['PUT'])
-@require_session_key()
-def decr_remaining_viewcount():
-    student = Student.get(g.wechat_user.id)
-    if not student:
-        return normal_jsonify({}, 'Student Not Found', 404)
-    post_id = request.args.get('postid')
-    student.decr_viewcount()
-    ViewRecord.add(student.id, post_id, PostType.course_post)
-    UserBehavior.add(
-        g.wechat_user.id, UserBehaviorType.view_course_post_contact, dict(post_id=post_id))
-    return jsonify({})
