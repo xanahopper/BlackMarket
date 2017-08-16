@@ -16,6 +16,7 @@ from black_market.model.wechat.user import WechatUser
 from black_market.model.wechat.session import WechatSession
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
+from black_market.model.user.view_record import ViewRecord
 from black_market.model.user.consts import StudentType, AccountStatus, Gender
 
 from black_market.model.course import Course

@@ -15,3 +15,8 @@ class PostMobileSwitch(Enum):
 class OrderType(Enum):
     descending = 0
     ascending = 1
+
+
+class PostType(Enum):
+    course_post = 0
+    goods_post = 1

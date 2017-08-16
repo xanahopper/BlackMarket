@@ -2,6 +2,7 @@ from flask import g
 
 from .._bp import create_blueprint
 from black_market.model.user.student import Student
+from black_market.model.user.view_record import ViewRecord
 from black_market.model.user.behavior import UserBehavior
 from black_market.model.user.consts import UserBehaviorType
 from black_market.model.post.course import CoursePost
@@ -56,8 +57,9 @@ def get_post(post_id):
     student = Student.get(g.wechat_user.id)
     if student.id != post.student_id:
         post.pv += 1
+    has_viewed_contact = True if ViewRecord.gets(student.id, post_id) else False
     UserBehavior.add(g.wechat_user.id, UserBehaviorType.view_course_post, dict(post_id=post_id))
-    return normal_jsonify(post.dump())
+    return normal_jsonify(dict(post=post.dump(), has_viewed_contact=has_viewed_contact))
 
 
 @bp.route('/<int:post_id>', methods=['PUT'])
@@ -78,5 +80,5 @@ def edit_post_status(post_id):
     post = CoursePost.get(post_id)
     post.update_status(status)
     UserBehavior.add(g.wechat_user.id, UserBehaviorType.markdone_course_post,
-                     dict(post_id=post_id, status=status))
+                     dict(post_id=post_id, status=status.value))
     return normal_jsonify({'status': 'ok'})
