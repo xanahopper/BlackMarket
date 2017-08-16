@@ -54,8 +54,9 @@ class WechatSession(db.Model):
             mc.expire(cache_key, HALF_DAY)
             return wechat_session
         wechat_session = cls.query.get(id_)
-        mc.set(cache_key, pickle.dumps(wechat_session).hex())
-        mc.expire(cache_key, HALF_DAY)
+        if wechat_session:
+            mc.set(cache_key, pickle.dumps(wechat_session).hex())
+            mc.expire(cache_key, HALF_DAY)
         return wechat_session
 
     @classmethod
