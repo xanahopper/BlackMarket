@@ -94,7 +94,11 @@ class InvalidPostError(BlackMarketError):
 
 
 class DuplicatedPostError(BlackMarketError):
-    _error = Error(408, '重复的Post，请重新检查填写的信息', 403)
+    _error = Error(409, '重复的Post，请重新检查填写的信息', 403)
+
+
+class CannotEditPostError(BlackMarketError):
+    _error = Error(410, '修改Post次数已被用完，无法修改', 403)
 
 
 # 反馈类错误(850~599)

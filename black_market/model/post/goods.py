@@ -33,9 +33,6 @@ class GoodsPost(db.Model):
         self.message = message
         self.status_ = status.value
 
-    def __repr__(self):
-        return '<CoursePost of %s at %s>' % (self.student_id, self.created_time)
-
     def dump(self):
         return dict(id=self.id, student_id=self.student_id, student_name=self.student.name,
                     supply=self.supply.dump(), demand=self.demand.dump(), switch=self.switch,

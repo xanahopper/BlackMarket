@@ -1,4 +1,7 @@
+import pickle
+
 from black_market.ext import db
+from black_market.libs.cache.redis import mc, ONE_DAY
 from black_market.model.course import Course
 
 
@@ -8,6 +11,9 @@ class CourseSupply(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     post_id = db.Column(db.Integer, db.ForeignKey('course_post.id'))
     course_id = db.Column(db.Integer)
+
+    _cache_key_prefix = 'course:post:supply:'
+    _course_post_supply_by_id_cache_key = _cache_key_prefix + 'id:%s'
 
     def __init__(self, post_id, course_id):
         self.post_id = post_id
@@ -20,8 +26,21 @@ class CourseSupply(db.Model):
         return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
 
     @classmethod
+    def add(cls, post_id, course_id):
+        supply = CourseSupply(post_id, course_id)
+        db.session.add(supply)
+        db.session.commit()
+        return supply.id
+
+    @classmethod
     def get(cls, id_):
-        return CourseSupply.query.get(id_)
+        cache_key = cls._course_post_supply_by_id_cache_key % id_
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        course_supply = CourseSupply.query.get(id_)
+        mc.set(cache_key, pickle.dumps(course_supply).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return course_supply
 
     @classmethod
     def get_by_post(cls, id_):
@@ -47,3 +66,7 @@ class CourseSupply(db.Model):
     @property
     def course_teacher(self):
         return self.course.teacher
+
+    def clear_cache(self):
+        mc.delete(self._course_post_supply_by_id_cache_key % self.id)
+        mc.delete(self._course_post_supply_by_post_id_cache_key % self.post_id)

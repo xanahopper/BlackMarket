@@ -1,7 +1,8 @@
+import pickle
 from datetime import datetime
 
 from black_market.ext import db
-from black_market.libs.cache.redis import mc, ONE_DAY
+from black_market.libs.cache.redis import mc, ONE_HOUR, ONE_DAY
 from black_market.model.wechat.user import WechatUser
 from black_market.model.utils import validator
 from black_market.model.user.consts import AccountStatus
@@ -36,9 +37,6 @@ class Student(db.Model):
         self.grade = grade
         self.status = status.value
 
-    def __repr__(self):
-        return '<User @%s>' % self.name
-
     def dump(self):
         return dict(
             id=self.id, username=self.username, mobile=self.mobile,
@@ -60,7 +58,14 @@ class Student(db.Model):
 
     @classmethod
     def get(cls, id_):
-        return cls.query.filter_by(id=id_).first()
+        cache_key = cls._student_cache_key % id_
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        student = cls.query.filter_by(id=id_).first()
+        if student:
+            mc.set(cache_key, pickle.dumps(student).hex())
+            mc.expire(cache_key, ONE_HOUR)
+        return student
 
     @classmethod
     def existed(cls, mobile):
@@ -139,4 +144,3 @@ class Student(db.Model):
 
     def clear_cache(self):
         mc.delete(self._student_cache_key % self.id)
-        mc.delete(self._remaining_viewcount_by_student_cache_key % self.id)

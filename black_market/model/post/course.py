@@ -1,13 +1,15 @@
+import pickle
 from datetime import datetime
 
 from black_market.ext import db
-from black_market.libs.cache.redis import mc, rd
+from black_market.libs.cache.redis import mc, rd, ONE_HOUR, ONE_DAY
 from black_market.model.user.student import Student
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.consts import PostStatus, OrderType
 from black_market.model.exceptions import (
-    SupplySameAsDemandError, InvalidPostError, DuplicatedPostError)
+    SupplySameAsDemandError, InvalidPostError,
+    DuplicatedPostError, CannotEditPostError)
 
 
 class CoursePost(db.Model):
@@ -16,6 +18,10 @@ class CoursePost(db.Model):
     _cache_key_prefix = 'course:post:'
     _course_post_by_id_cache_key = _cache_key_prefix + 'id:%s'
     _post_pv_by_id_cache_key = _cache_key_prefix + 'pv:id:%s'
+    _course_post_supply_by_post_id_cache_key = _cache_key_prefix + 'supply:id:%s'
+    _course_post_demand_by_post_id_cache_key = _cache_key_prefix + 'demand:id:%s'
+
+    MAX_EDIT_TIMES = 5
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'))
@@ -25,6 +31,7 @@ class CoursePost(db.Model):
     wechat = db.Column(db.String(80))
     message = db.Column(db.String(256))
     pv_ = db.Column(db.Integer, default=0)
+    editable = db.Column(db.SmallInteger, default=MAX_EDIT_TIMES)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
 
@@ -36,20 +43,22 @@ class CoursePost(db.Model):
         self.message = message
         self.status_ = status.value
 
-    def __repr__(self):
-        return '<CoursePost of %s at %s>' % (self.student_id, self.create_time)
-
     def dump(self):
         return dict(
             id=self.id, student_id=self.student.dump(), supply=self.supply.dump(),
             demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
             wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
-            create_time=self.create_time, update_time=self.update_time)
+            editable=self.editable, create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
         cache_key = cls._course_post_by_id_cache_key % id_
-        return mc.get(cache_key) if mc.get(cache_key) else CoursePost.query.get(id_)
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        post = CoursePost.query.get(id_)
+        mc.set(cache_key, pickle.dumps(post).hex())
+        mc.expire(cache_key, ONE_HOUR)
+        return post
 
     @classmethod
     def gets(cls, limit=5, offset=0, order=OrderType.descending, supply=None, demand=None):
@@ -116,11 +125,8 @@ class CoursePost(db.Model):
         post = CoursePost(student_id, switch, mobile, wechat, message)
         db.session.add(post)
         db.session.commit()
-        supply = CourseSupply(post.id, supply_course_id)
-        demand = CourseDemand(post.id, demand_course_id)
-        db.session.add(supply)
-        db.session.add(demand)
-        db.session.commit()
+        CourseSupply.add(post.id, supply_course_id)
+        CourseDemand.add(post.id, demand_course_id)
         return post
 
     @classmethod
@@ -136,8 +142,10 @@ class CoursePost(db.Model):
         if post_ids:
             sql = ('select id from course_post '
                    'where student_id=:student_id '
+                   'and status=:status '
                    'and id in :post_ids')
-            params = dict(student_id=student_id, post_ids=post_ids)
+            params = dict(
+                student_id=student_id, status=PostStatus.normal.value, post_ids=post_ids)
             rs = db.engine.execute(sql, params=params)
             return bool(rs)
         return False
@@ -162,11 +170,23 @@ class CoursePost(db.Model):
 
     @property
     def supply(self):
-        return CourseSupply.get_by_post(self.id)
+        cache_key = self._course_post_supply_by_post_id_cache_key % self.id
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        course_supply = CourseSupply.get_by_post(self.id)
+        mc.set(cache_key, pickle.dumps(course_supply).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return course_supply
 
     @property
     def demand(self):
-        return CourseDemand.get_by_post(self.id)
+        cache_key = self._course_post_demand_by_post_id_cache_key % self.id
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        course_demand = CourseDemand.get_by_post(self.id)
+        mc.set(cache_key, pickle.dumps(course_demand).hex())
+        mc.expire(cache_key, ONE_DAY)
+        return course_demand
 
     @property
     def status(self):
@@ -193,12 +213,11 @@ class CoursePost(db.Model):
     def update_self(self, data):
         if not data:
             return True
-        status = data.get('status')
+        if not self.editable:
+            raise CannotEditPostError()
         message = data.get('message')
         switch = data.get('switch')
         wechat = data.get('wechat')
-        if status is not None:
-            self.status_ = status
         if message:
             self.message = message
         if switch is not None:
@@ -206,22 +225,43 @@ class CoursePost(db.Model):
         if wechat is not None:
             self.wechat = wechat
         self.update_time = datetime.now()
+        self.editable -= 1
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
         return True
 
+    def update_status(self, status):
+        if status is PostStatus.normal:
+            self.to_normal()
+        if status is PostStatus.succeed:
+            self.to_succeed()
+        if status is PostStatus.abandoned:
+            self.to_abandoned()
+
     def to_normal(self):
         if self.status is not PostStatus.normal:
-            self.update_self(dict(status=PostStatus.normal.value))
+            self.status_ = PostStatus.normal.value
+            self.update_time = datetime.now()
+            db.session.add(self)
+            db.session.commit()
+            self.clear_cache()
 
     def to_succeed(self):
         if self.status is not PostStatus.succeed:
-            self.update_self(dict(status=PostStatus.succeed.value))
+            self.status_ = PostStatus.succeed.value
+            self.update_time = datetime.now()
+            db.session.add(self)
+            db.session.commit()
+            self.clear_cache()
 
     def to_abandoned(self):
         if self.status is not PostStatus.abandoned:
-            self.update_self(dict(status=PostStatus.abandoned.value))
+            self.status_ = PostStatus.abandoned.value
+            self.update_time = datetime.now()
+            db.session.add(self)
+            db.session.commit()
+            self.clear_cache()
 
     def update_supply(self, supply_course_id):
         supply = self.supply
@@ -247,3 +287,5 @@ class CoursePost(db.Model):
 
     def clear_cache(self):
         mc.delete(self._course_post_by_id_cache_key % self.id)
+        mc.delete(self._course_post_supply_by_post_id_cache_key % self.id)
+        mc.delete(self._course_post_demand_by_post_id_cache_key % self.id)
