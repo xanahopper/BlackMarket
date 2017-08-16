@@ -57,8 +57,9 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         post = CoursePost.query.get(id_)
-        mc.set(cache_key, pickle.dumps(post).hex())
-        mc.expire(cache_key, ONE_HOUR)
+        if post:
+            mc.set(cache_key, pickle.dumps(post).hex())
+            mc.expire(cache_key, ONE_HOUR)
         return post
 
     @classmethod
@@ -175,8 +176,9 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_supply = CourseSupply.get_by_post(self.id)
-        mc.set(cache_key, pickle.dumps(course_supply).hex())
-        mc.expire(cache_key, ONE_DAY)
+        if course_supply:
+            mc.set(cache_key, pickle.dumps(course_supply).hex())
+            mc.expire(cache_key, ONE_DAY)
         return course_supply
 
     @property
@@ -185,8 +187,9 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_demand = CourseDemand.get_by_post(self.id)
-        mc.set(cache_key, pickle.dumps(course_demand).hex())
-        mc.expire(cache_key, ONE_DAY)
+        if course_demand:
+            mc.set(cache_key, pickle.dumps(course_demand).hex())
+            mc.expire(cache_key, ONE_DAY)
         return course_demand
 
     @property

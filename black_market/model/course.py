@@ -44,8 +44,9 @@ class Course(db.Model):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         else:
             course = Course.query.get(id_)
-            mc.set(cache_key, pickle.dumps(course).hex())
-            mc.expire(cache_key, ONE_DAY)
+            if course:
+                mc.set(cache_key, pickle.dumps(course).hex())
+                mc.expire(cache_key, ONE_DAY)
             return course
 
     @classmethod
