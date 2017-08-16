@@ -62,8 +62,9 @@ class Student(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         student = cls.query.filter_by(id=id_).first()
-        mc.set(cache_key, pickle.dumps(student).hex())
-        mc.expire(cache_key, ONE_HOUR)
+        if student:
+            mc.set(cache_key, pickle.dumps(student).hex())
+            mc.expire(cache_key, ONE_HOUR)
         return student
 
     @classmethod
