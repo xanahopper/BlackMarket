@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 from black_market.libs.cache.redis import mc, rd
 from black_market.api.utils import normal_jsonify
+from black_market.config import RAW_SALT
 
 bp = Blueprint('market', __name__)
 
@@ -17,6 +18,10 @@ def index():
 
 @bp.route('/clear', methods=['GET'])
 def clear():
+    data = request.args
+    pwd = data.get('pwd')
+    if pwd != RAW_SALT:
+        return normal_jsonify({'status': 'failed'})
     from manage import init_database
     init_database()
     mc.flushdb()
@@ -39,5 +44,4 @@ def init_post(student_id):
         message = 'This is the message of student %s!' % student_id
         CoursePost.add(student_id, supply, demand, switch, mobile, wechat, message)
         return normal_jsonify({'status': 'ok'})
-
     return normal_jsonify({}, 'No student %s! Please create student before init post' % student_id)
