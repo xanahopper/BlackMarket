@@ -15,6 +15,7 @@ from envcfg.json.black_market import DISABLE_SESSION_CHECK
 from envcfg.json.black_market import QINIU_ACCESS_KEY
 from envcfg.json.black_market import QINIU_SECRET_KEY
 from envcfg.json.black_market import QINIU_BUCKET
+from envcfg.json.black_market import QINIU_DOMAIN
 
 
 APP = 'black_market'
@@ -41,4 +42,5 @@ __all__ = [
     'QINIU_ACCESS_KEY',
     'QINIU_SECRET_KEY',
     'QINIU_BUCKET',
+    'QINIU_DOMAIN',
 ]
