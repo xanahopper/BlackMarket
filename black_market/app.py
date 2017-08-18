@@ -4,7 +4,7 @@ from werkzeug.utils import import_string
 extensions = [
     'black_market.ext:db',
     'black_market.ext:ma',
-    'black_market.ext:oauth_server',
+    'black_market.ext:sentry',
 ]
 
 blueprints = [
