@@ -34,6 +34,7 @@ class UserBehaviorType(Enum):
     markdone_goods_post = 12
     view_other_profile = 13
     view_other_posts = 14
+    upload_photo = 15
 
 
 MIN_PASSWD_LEN = 6

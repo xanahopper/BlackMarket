@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import g
+from flask import g, request
 from qiniu import put_file, etag
 
 from .._bp import create_blueprint
@@ -41,15 +41,19 @@ def upload():
     file_name = 'bm-post-pic-s%s-t%s.%s' % (1, now, ext)
     token = qiniu_client.get_token(file_name=file_name)
     localfile = 'black_market/static/img/header.jpg'
-    ret, info = put_file(token, file_name, localfile)
-    print(info)
-    print(ret)
-    assert ret['key'] == file_name
-    assert ret['hash'] == etag(localfile)
+    put_file(token, file_name, localfile)
     return normal_jsonify({})
 
 
 @bp.route('/callback', methods=['POST'])
 @require_session_key()
 def callback():
+    data = request.get_json()
+    # filename = data.get('filename')
+    # filesize = data.get('filesize')
+    # key = data.get('key')
+    # hash = data.get('hash')
+    from black_market.model.user.behavior import UserBehavior
+    from black_market.model.user.consts import UserBehaviorType
+    UserBehavior.add(1, UserBehaviorType.upload_photo, data)
     return normal_jsonify()
