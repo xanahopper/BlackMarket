@@ -50,7 +50,6 @@ def upload():
 
 
 @bp.route('/callback', methods=['POST'])
-@require_session_key()
 def callback():
     data = request.get_json()
     # filename = data.get('filename')
