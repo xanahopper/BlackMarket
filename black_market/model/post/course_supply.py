@@ -25,6 +25,9 @@ class CourseSupply(db.Model):
     def dump(self):
         return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
 
+    def share_dump(self):
+        return dict(course_id=self.course_id)
+
     @classmethod
     def add(cls, post_id, course_id):
         supply = CourseSupply(post_id, course_id)

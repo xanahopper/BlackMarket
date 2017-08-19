@@ -63,6 +63,15 @@ def get_post(post_id):
     return normal_jsonify(dict(post=post.dump(), has_viewed_contact=has_viewed_contact))
 
 
+@bp.route('/<string:fuzzy_post_id>', methods=['GET'])
+@require_session_key()
+def get_post_from_fuzzy(fuzzy_post_id):
+    post_id = CoursePost.defuzzy(fuzzy_post_id)
+    post = CoursePost.get(post_id)
+    post.pv += 1
+    return normal_jsonify(dict(post=post.share_dump()))
+
+
 @bp.route('/<int:post_id>', methods=['PUT'])
 @require_session_key()
 def edit_post(post_id):

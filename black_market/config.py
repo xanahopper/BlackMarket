@@ -1,11 +1,13 @@
 from envcfg.json.black_market import DEBUG
 from envcfg.json.black_market import HTTP_HOST
 from envcfg.json.black_market import HTTP_PORT
+from envcfg.json.black_market import DOMAIN
 from envcfg.json.black_market import SECRET_KEY
 from envcfg.json.black_market import SENTRY_DSN
 from envcfg.json.black_market import MYSQL_DSN
 from envcfg.json.black_market import SQLALCHEMY_ECHO
 from envcfg.json.black_market import RAW_SALT
+from envcfg.json.black_market import FERNET_KEY
 from envcfg.json.black_market import OAUTH2_PROVIDER_TOKEN_EXPIRES_IN
 from envcfg.json.black_market import SMS_YUNPIAN_HTTP
 from envcfg.json.black_market import SMS_YUNPIAN_APIKEY
@@ -28,11 +30,13 @@ __all__ = [
     'DEBUG',
     'HTTP_HOST',
     'HTTP_PORT',
+    'DOMAIN',
     'SECRET_KEY',
     'SENTRY_DSN',
     'MYSQL_DSN',
     'SQLALCHEMY_ECHO',
     'RAW_SALT',
+    'FERNET_KEY',
     'OAUTH_TOKEN_TTL',
     'SMS_YUNPIAN_HTTP',
     'SMS_YUNPIAN_APIKEY',

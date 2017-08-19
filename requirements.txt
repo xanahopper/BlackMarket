@@ -29,3 +29,4 @@ PyCrypto
 gevent
 qiniu
 eventlet
+cryptography

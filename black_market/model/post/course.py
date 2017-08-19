@@ -8,6 +8,7 @@ from black_market.model.user.view_record import ViewRecord
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.consts import PostStatus, OrderType
+from black_market.model.utils.crypto import decrypt, encrypt
 from black_market.model.exceptions import (
     SupplySameAsDemandError, InvalidPostError,
     DuplicatedPostError, CannotEditPostError)
@@ -46,10 +47,17 @@ class CoursePost(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, student_id=self.student.dump(), supply=self.supply.dump(),
+            id=self.id, student=self.student.dump(), supply=self.supply.dump(),
             demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
             wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
-            editable=self.editable, create_time=self.create_time, update_time=self.update_time)
+            editable=self.editable, create_time=self.create_time, update_time=self.update_time,
+            fuzzy_id=self.fuzzy_id)
+
+    def share_dump(self):
+        return dict(
+            id=self.id, student=self.student.share_dump(), supply=self.supply.share_dump(),
+            demand=self.demand.share_dump(), message=self.message, pv=self.pv, status=self.status_,
+            create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
@@ -165,6 +173,14 @@ class CoursePost(db.Model):
 
         if not supply_course_id and not demand_course_id:
             raise InvalidPostError()
+
+    @classmethod
+    def defuzzy(cls, fuzzy_id):
+        return decrypt(fuzzy_id)
+
+    @property
+    def fuzzy_id(self):
+        return encrypt(str(self.id))
 
     @property
     def student(self):
