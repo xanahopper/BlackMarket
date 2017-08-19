@@ -20,7 +20,7 @@ class QiniuBucket():
         # 上传文件到七牛后， 七牛将文件名和文件大小回调给业务服务器。
         policy = {
             'callbackUrl': callback_url,
-            'callbackBody': 'filename=$(fname)&filesize=$(fsize)&key=$(key)&hash=$(etag)',
+            'callbackBody': 'filesize=$(fsize)&key=$(key)&hash=$(etag)',
             'callbackBodyType': 'application/json'
         }
 
