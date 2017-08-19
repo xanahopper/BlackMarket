@@ -1,11 +1,11 @@
 from datetime import datetime
-from flask import g
+from flask import request, g
 from qiniu import put_file
 
 from .._bp import create_blueprint
 from black_market.api.utils import normal_jsonify
 from black_market.api.decorator import require_session_key
-from black_market.api.schema.qiniu import GetUploadTokenSchema, QiniuCallbackSchema
+from black_market.api.schema.qiniu import GetUploadTokenSchema
 from black_market.libs.qiniu.qiniu import qiniu_client
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
@@ -33,11 +33,12 @@ def get_token():
 
 
 @bp.route('/upload', methods=['GET'])
-def upload():
+def this_method_will_be_removed():
     now = datetime.now().strftime('%y%m%d%H%M%S')
     ext = 'jpg'
     file_name = 'bm-post-pic-s%s-t%s.%s' % (1, now, ext)
     token = qiniu_client.get_token(file_name=file_name)
+    id_ = FilePhoto.add(1, qiniu_client.bucket_name, file_name)
     localfile = 'black_market/static/img/header.jpg'
     ret, _ = put_file(token, file_name, localfile)
     return normal_jsonify({})
@@ -45,7 +46,7 @@ def upload():
 
 @bp.route('/callback', methods=['POST'])
 def callback():
-    data = QiniuCallbackSchema().fill()
+    data = request.form
     key = data.get('key')
     filesize = data.get('filesize')
     hash = data.get('hash')
