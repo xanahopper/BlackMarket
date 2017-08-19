@@ -41,10 +41,11 @@ def upload():
     file_name = 'bm-post-pic-s%s-t%s.%s' % (1, now, ext)
     token = qiniu_client.get_token(file_name=file_name)
     localfile = 'black_market/static/img/header.jpg'
-    ret, info = put_file(token, file_name, localfile)
+    ret, _ = put_file(token, file_name, localfile)
+    print(ret)
     from black_market.model.user.behavior import UserBehavior
     from black_market.model.user.consts import UserBehaviorType
-    UserBehavior.add(1, UserBehaviorType.upload_photo, dict(ret=ret, info=info))
+    UserBehavior.add(1, UserBehaviorType.upload_photo, dict(ret=ret))
     return normal_jsonify({})
 
 
@@ -56,6 +57,7 @@ def callback():
     # filesize = data.get('filesize')
     # key = data.get('key')
     # hash = data.get('hash')
+    print(data)
     from black_market.model.user.behavior import UserBehavior
     from black_market.model.user.consts import UserBehaviorType
     UserBehavior.add(1, UserBehaviorType.upload_photo, data)
