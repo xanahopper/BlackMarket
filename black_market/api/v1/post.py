@@ -64,7 +64,6 @@ def get_post(post_id):
 
 
 @bp.route('/<string:fuzzy_post_id>', methods=['GET'])
-@require_session_key()
 def get_post_from_fuzzy(fuzzy_post_id):
     post_id = CoursePost.defuzzy(fuzzy_post_id)
     post = CoursePost.get(post_id)
