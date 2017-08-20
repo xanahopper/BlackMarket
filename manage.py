@@ -62,6 +62,8 @@ def init_database():
         courses, course_schedules = _init_courses()
         for course in courses:
             db.session.add(course)
+        for course_schedule in course_schedules:
+            db.session.add(course_schedule)
         db.session.commit()
 
 
