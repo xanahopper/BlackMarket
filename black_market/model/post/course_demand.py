@@ -67,3 +67,11 @@ class CourseDemand(db.Model):
     @property
     def course_teacher(self):
         return self.course.teacher
+
+    def clear_cache(self):
+        mc.delete(self._course_post_demand_by_id_cache_key % self.id)
+
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()

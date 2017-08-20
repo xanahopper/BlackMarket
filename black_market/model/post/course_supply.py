@@ -73,4 +73,8 @@ class CourseSupply(db.Model):
 
     def clear_cache(self):
         mc.delete(self._course_post_supply_by_id_cache_key % self.id)
-        mc.delete(self._course_post_supply_by_post_id_cache_key % self.post_id)
+
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()

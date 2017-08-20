@@ -17,7 +17,7 @@ def index():
 
 
 @bp.route('/clear', methods=['GET'])
-def clear():
+def clear_all():
     data = request.args
     pwd = data.get('pwd')
     if pwd != RAW_SALT:
@@ -29,17 +29,23 @@ def clear():
 
 
 @bp.route('/clear/user/<int:id_>', methods=['GET'])
-def clear(id_):
+def clear_user(id_):
     data = request.args
     pwd = data.get('pwd')
     if pwd != RAW_SALT:
         return normal_jsonify({'status': 'failed'})
     from black_market.model.user.student import Student
     from black_market.model.wechat.session import WechatSession
+    from black_market.model.post.course import CoursePost
     student = Student.get(id_)
     name = student.username
     wechat_user = student.wechat_user
     wechat_session = WechatSession.get_by_open_id(wechat_user.open_id)
+
+    posts = CoursePost.gets_by_student(student.id, limit=100, offset=0)
+    for post in posts:
+        post.delete()
+
     student.delete()
     wechat_user.delete()
     wechat_session.delete()
