@@ -82,5 +82,10 @@ class WechatUser(db.Model):
         db.session.commit()
         self.clear_cache()
 
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()
+
     def clear_cache(self):
         mc.delete(self._wechat_user_by_open_id_cache_key % self.open_id)

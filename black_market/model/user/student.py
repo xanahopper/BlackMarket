@@ -149,5 +149,10 @@ class Student(db.Model):
         db.session.commit()
         self.clear_cache()
 
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()
+
     def clear_cache(self):
         mc.delete(self._student_cache_key % self.id)

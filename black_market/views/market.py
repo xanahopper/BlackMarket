@@ -28,6 +28,24 @@ def clear():
     return normal_jsonify({'status': 'ok'})
 
 
+@bp.route('/clear/user/<int:id_>', methods=['GET'])
+def clear(id_):
+    data = request.args
+    pwd = data.get('pwd')
+    if pwd != RAW_SALT:
+        return normal_jsonify({'status': 'failed'})
+    from black_market.model.user.student import Student
+    from black_market.model.wechat.session import WechatSession
+    student = Student.get(id_)
+    name = student.username
+    wechat_user = student.wechat_user
+    wechat_session = WechatSession.get_by_open_id(wechat_user.open_id)
+    student.delete()
+    wechat_user.delete()
+    wechat_session.delete()
+    return normal_jsonify({'status': 'Student %s has been removed.' % name})
+
+
 @bp.route('/init_post/<int:student_id>', methods=['GET'])
 def init_post(student_id):
     import random
