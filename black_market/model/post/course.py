@@ -47,16 +47,20 @@ class CoursePost(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, student=self.student.dump(), supply=self.supply.dump(),
-            demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
-            wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
-            editable=self.editable, create_time=self.create_time, update_time=self.update_time,
-            fuzzy_id=self.fuzzy_id)
+            id=self.id, student=self.student.dump(),
+            supply=self.supply.share_dump() if self.supply else dict(),
+            demand=self.demand.share_dump() if self.demand else dict(),
+            switch=self.switch, mobile=self.mobile, wechat=self.wechat,
+            message=self.message, pv=self.pv, status=self.status_,
+            editable=self.editable, create_time=self.create_time,
+            update_time=self.update_time, fuzzy_id=self.fuzzy_id)
 
     def share_dump(self):
         return dict(
-            id=self.id, student=self.student.share_dump(), supply=self.supply.share_dump(),
-            demand=self.demand.share_dump(), message=self.message, pv=self.pv, status=self.status_,
+            id=self.id, student=self.student.share_dump(),
+            supply=self.supply.share_dump() if self.supply else dict(),
+            demand=self.demand.share_dump() if self.demand else dict(),
+            message=self.message, pv=self.pv, status=self.status_,
             create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
