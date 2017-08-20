@@ -20,7 +20,7 @@ class CourseDemand(db.Model):
         self.course_id = course_id
 
     def dump(self):
-        return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
+        return dict(id=self.id, post_id=self.post_id, course=self.course.dump())
 
     def share_dump(self):
         return dict(course=self.course.dump())
