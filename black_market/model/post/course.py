@@ -196,10 +196,11 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_supply = CourseSupply.get_by_post(self.id)
-        if course_supply:
+        if course_supply and course_supply.course_id:
             mc.set(cache_key, pickle.dumps(course_supply).hex())
             mc.expire(cache_key, ONE_DAY)
-        return course_supply
+            return course_supply
+        return None
 
     @property
     def demand(self):
@@ -207,10 +208,11 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_demand = CourseDemand.get_by_post(self.id)
-        if course_demand:
+        if course_demand and course_demand.course_id:
             mc.set(cache_key, pickle.dumps(course_demand).hex())
             mc.expire(cache_key, ONE_DAY)
-        return course_demand
+            return course_demand
+        return None
 
     @property
     def status(self):
