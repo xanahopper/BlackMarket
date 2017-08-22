@@ -1,6 +1,5 @@
 from datetime import datetime
 from flask import request, g
-from qiniu import put_file
 
 from .._bp import create_blueprint
 from black_market.api.utils import normal_jsonify
@@ -30,18 +29,6 @@ def get_token():
     id_ = FilePhoto.add(student.id, qiniu_client.bucket_name, file_name)
     token = qiniu_client.get_token(file_name=file_name)
     return normal_jsonify(dict(id=id_, token=token))
-
-
-@bp.route('/upload', methods=['GET'])
-def this_method_will_be_removed():
-    now = datetime.now().strftime('%y%m%d%H%M%S')
-    ext = 'jpg'
-    file_name = 'bm-post-pic-s%s-t%s.%s' % (1, now, ext)
-    token = qiniu_client.get_token(file_name=file_name)
-    id_ = FilePhoto.add(1, qiniu_client.bucket_name, file_name)
-    localfile = 'black_market/static/img/header.jpg'
-    ret, _ = put_file(token, file_name, localfile)
-    return normal_jsonify({})
 
 
 @bp.route('/callback', methods=['POST'])

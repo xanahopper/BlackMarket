@@ -11,10 +11,11 @@ blueprints = [
     'black_market.views.market:bp',
     'black_market.api.health:bp',
     'black_market.api.error:bp',
+    'black_market.api.config:bp',
     'black_market.api.v1.student:bp',
     'black_market.api.v1.course:bp',
     'black_market.api.v1.course_post:bp',
-    # 'black_market.api.v1.goods_post:bp',
+    'black_market.api.v1.goods_post:bp',
     'black_market.api.v1.wechat:bp',
     'black_market.api.v1.qiniu:bp',
 ]

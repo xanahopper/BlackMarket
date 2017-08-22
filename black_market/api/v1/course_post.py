@@ -28,8 +28,9 @@ def get_posts():
     order = OrderType(data.get('order', 0))
     supply = data.get('supply', None)
     demand = data.get('demand', None)
+    closed = data.get('closed', 1)
     posts = CoursePost.gets(
-        limit=limit, offset=start, order=order, supply=supply, demand=demand)
+        limit=limit, offset=start, order=order, closed=closed, supply=supply, demand=demand)
     if posts:
         return normal_jsonify([post.dump() for post in posts])
     return normal_jsonify([])
