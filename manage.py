@@ -25,6 +25,7 @@ from black_market.model.post.course import CoursePost
 from black_market.model.post.course_demand import CourseDemand
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.goods import GoodsPost
+from black_market.model.file.photo import FilePhoto
 
 app = create_app()
 manager = Manager(app)
@@ -61,6 +62,8 @@ def init_database():
         courses, course_schedules = _init_courses()
         for course in courses:
             db.session.add(course)
+        for course_schedule in course_schedules:
+            db.session.add(course_schedule)
         db.session.commit()
 
 

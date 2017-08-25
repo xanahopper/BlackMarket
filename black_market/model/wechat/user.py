@@ -63,8 +63,9 @@ class WechatUser(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         wechat_user = cls.query.filter_by(open_id=open_id).first()
-        mc.set(cache_key, pickle.dumps(wechat_user).hex())
-        mc.expire(cache_key, ONE_DAY)
+        if wechat_user:
+            mc.set(cache_key, pickle.dumps(wechat_user).hex())
+            mc.expire(cache_key, ONE_DAY)
         return wechat_user
 
     def update(self, nickname, avatar_url, city, country,
@@ -80,6 +81,11 @@ class WechatUser(db.Model):
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
+
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()
 
     def clear_cache(self):
         mc.delete(self._wechat_user_by_open_id_cache_key % self.open_id)

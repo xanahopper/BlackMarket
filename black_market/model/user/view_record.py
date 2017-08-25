@@ -40,8 +40,9 @@ class ViewRecord(db.Model):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         records = cls.query.filter_by(
             student_id=student_id, post_id=post_id, post_type_=post_type.value).all()
-        mc.set(cache_key, pickle.dumps(records).hex())
-        mc.expire(cache_key, ONE_DAY)
+        if records:
+            mc.set(cache_key, pickle.dumps(records).hex())
+            mc.expire(cache_key, ONE_DAY)
         return records
 
     @classmethod
@@ -52,8 +53,9 @@ class ViewRecord(db.Model):
         record.clear_cache()
 
     @classmethod
-    def delete_records_by_post(cls, post_id):
-        cls.query.filter_by(post_id=post_id).delete()
+    def delete_records_by_post(cls, post_id, post_type):
+        cls.query.filter_by(post_id=post_id, post_type=post_type.value).delete(
+            synchronize_session='fetch')
 
     def clear_cache(self):
         mc.delete(self._records_by_student_and_post_and_type_cache_key % (

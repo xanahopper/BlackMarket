@@ -45,6 +45,11 @@ class Student(db.Model):
             avatar_url=self.avatar_url,
             create_time=self.create_time, update_time=self.update_time)
 
+    def share_dump(self):
+        return dict(
+            username=self.username, grade=self.grade,
+            type=self.type, avatar_url=self.avatar_url)
+
     @classmethod
     def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
         wechat_user = WechatUser.get_by_open_id(open_id)
@@ -143,6 +148,11 @@ class Student(db.Model):
         db.session.add(self)
         db.session.commit()
         self.clear_cache()
+
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()
 
     def clear_cache(self):
         mc.delete(self._student_cache_key % self.id)

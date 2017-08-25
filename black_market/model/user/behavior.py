@@ -9,7 +9,7 @@ class UserBehavior(db.Model):
     __tablename__ = 'user_behavior'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(80))
+    user_id = db.Column(db.Integer)
     type_ = db.Column(db.SmallInteger)
     detail = db.Column(db.Text)
     create_time = db.Column(db.DateTime, default=datetime.now)
@@ -40,3 +40,15 @@ class UserBehavior(db.Model):
     @classmethod
     def get(cls, id_):
         return cls.query.filter_by(id=id_).first()
+
+    @classmethod
+    def get_by_type(cls, type_):
+        return cls.query.filter_by(type_=type_.value).all()
+
+    @classmethod
+    def get_by_user(cls, user_id):
+        return cls.query.filter_by(user_id=user_id).all()
+
+    @classmethod
+    def get_by_user_and_type(cls, user_id, type_):
+        return cls.query.filter_by(user_id=user_id, type_=type_.value).all()

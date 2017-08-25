@@ -23,7 +23,10 @@ class CourseSupply(db.Model):
         return '<CourseSupply of Post %s>' % (self.post_id)
 
     def dump(self):
-        return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
+        return dict(id=self.id, post_id=self.post_id, course=self.course.dump())
+
+    def share_dump(self):
+        return dict(course=self.course.dump())
 
     @classmethod
     def add(cls, post_id, course_id):
@@ -38,8 +41,9 @@ class CourseSupply(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_supply = CourseSupply.query.get(id_)
-        mc.set(cache_key, pickle.dumps(course_supply).hex())
-        mc.expire(cache_key, ONE_DAY)
+        if course_supply:
+            mc.set(cache_key, pickle.dumps(course_supply).hex())
+            mc.expire(cache_key, ONE_DAY)
         return course_supply
 
     @classmethod
@@ -69,4 +73,8 @@ class CourseSupply(db.Model):
 
     def clear_cache(self):
         mc.delete(self._course_post_supply_by_id_cache_key % self.id)
-        mc.delete(self._course_post_supply_by_post_id_cache_key % self.post_id)
+
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()

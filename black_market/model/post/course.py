@@ -7,7 +7,8 @@ from black_market.model.user.student import Student
 from black_market.model.user.view_record import ViewRecord
 from black_market.model.post.course_supply import CourseSupply
 from black_market.model.post.course_demand import CourseDemand
-from black_market.model.post.consts import PostStatus, OrderType
+from black_market.model.post.consts import PostStatus, OrderType, PostType
+from black_market.model.utils.crypto import decrypt, encrypt
 from black_market.model.exceptions import (
     SupplySameAsDemandError, InvalidPostError,
     DuplicatedPostError, CannotEditPostError)
@@ -46,10 +47,21 @@ class CoursePost(db.Model):
 
     def dump(self):
         return dict(
-            id=self.id, student_id=self.student.dump(), supply=self.supply.dump(),
-            demand=self.demand.dump(), switch=self.switch, mobile=self.mobile,
-            wechat=self.wechat, message=self.message, pv=self.pv, status=self.status_,
-            editable=self.editable, create_time=self.create_time, update_time=self.update_time)
+            id=self.id, student=self.student.dump(),
+            supply=self.supply.share_dump() if self.supply else dict(),
+            demand=self.demand.share_dump() if self.demand else dict(),
+            switch=self.switch, mobile=self.mobile, wechat=self.wechat,
+            message=self.message, pv=self.pv, status=self.status_,
+            editable=self.editable, create_time=self.create_time,
+            update_time=self.update_time, fuzzy_id=self.fuzzy_id)
+
+    def share_dump(self):
+        return dict(
+            id=self.id, student=self.student.share_dump(),
+            supply=self.supply.share_dump() if self.supply else dict(),
+            demand=self.demand.share_dump() if self.demand else dict(),
+            message=self.message, pv=self.pv, status=self.status_,
+            create_time=self.create_time, update_time=self.update_time)
 
     @classmethod
     def get(cls, id_):
@@ -57,38 +69,60 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         post = CoursePost.query.get(id_)
-        mc.set(cache_key, pickle.dumps(post).hex())
-        mc.expire(cache_key, ONE_HOUR)
+        if post:
+            mc.set(cache_key, pickle.dumps(post).hex())
+            mc.expire(cache_key, ONE_HOUR)
         return post
 
     @classmethod
-    def gets(cls, limit=5, offset=0, order=OrderType.descending, supply=None, demand=None):
+    def gets(cls, limit=5, offset=0, order=OrderType.descending,
+             closed=1, supply=None, demand=None):
         if supply and demand:
-            return cls.gets_by_supply_and_demand(limit, offset, order, supply, demand)
+            return cls.gets_by_supply_and_demand(
+                limit, offset, order, supply, demand, closed)
         elif supply and not demand:
-            return cls.gets_by_supply(limit, offset, order, supply)
+            return cls.gets_by_supply(limit, offset, order, supply, closed)
         elif not supply and demand:
-            return cls.gets_by_demand(limit, offset, order, demand)
+            return cls.gets_by_demand(limit, offset, order, demand, closed)
         if order is OrderType.ascending:
-            return CoursePost.query.limit(limit).offset(offset).all()
-        return CoursePost.query.order_by(db.desc(cls.id)).limit(limit).offset(offset).all()
+            if closed:
+                return CoursePost.query.limit(limit).offset(offset).all()
+            elif not closed:
+                return CoursePost.query.filter_by(
+                    status_=PostStatus.normal.value).limit(limit).offset(offset).all()
+        if closed:
+            return CoursePost.query.order_by(db.desc(cls.id)).limit(limit).offset(offset).all()
+        elif not closed:
+            return CoursePost.query.filter_by(
+                status_=PostStatus.normal.value).order_by(
+                    db.desc(cls.id)).limit(limit).offset(offset).all()
 
     @classmethod
-    def gets_by_supply_and_demand(cls, limit, offset, order, supply, demand):
+    def gets_by_supply_and_demand(cls, limit, offset, order, supply, demand, closed):
         desc = 'desc' if order is OrderType.descending else ''
         sql = ('select course_supply.post_id as post_id '
-               'from course_supply join course_demand '
+               'from course_supply join course_demand'
                'where course_supply.post_id=course_demand.post_id '
                'and course_supply.course_id={supply} '
                'and course_demand.course_id={demand} '
                'order by post_id {desc} limit {offset}, {limit}'.format(
                    supply=supply, demand=demand, desc=desc,
                    offset=offset, limit=limit))
+        if not closed:
+            sql = ('select course_supply.post_id as post_id '
+                   'from course_supply join course_demand join course_post '
+                   'where course_supply.post_id=course_demand.post_id '
+                   'and course_supply.course_id={supply} '
+                   'and course_demand.course_id={demand} '
+                   'and course_post.status_={status} '
+                   'order by post_id {desc} limit {offset}, {limit}'.format(
+                       supply=supply, demand=demand, status=PostStatus.normal.value,
+                       desc=desc, offset=offset, limit=limit))
         rs = db.engine.execute(sql)
         return [CoursePost.get(post_id) for (post_id,) in rs]
 
     @classmethod
-    def gets_by_supply(cls, limit, offset, order, supply):
+    def gets_by_supply(cls, limit, offset, order, supply, closed):
         desc = 'desc' if order is OrderType.descending else ''
         sql = ('select course_supply.post_id as post_id '
                'from course_supply join course_demand '
@@ -96,11 +130,20 @@ class CoursePost(db.Model):
                'and course_supply.course_id={supply} '
                'order by post_id {desc} limit {offset}, {limit}'.format(
                    supply=supply, desc=desc, offset=offset, limit=limit))
+        if not closed:
+            sql = ('select course_supply.post_id as post_id '
+                   'from course_supply join course_demand join course_post '
+                   'where course_supply.post_id=course_demand.post_id '
+                   'and course_supply.course_id={supply} '
+                   'and course_post.status_={status} '
+                   'order by post_id {desc} limit {offset}, {limit}'.format(
+                       supply=supply, status=PostStatus.normal.value,
+                       desc=desc, offset=offset, limit=limit))
         rs = db.engine.execute(sql)
         return [CoursePost.get(post_id) for (post_id,) in rs]
 
     @classmethod
-    def gets_by_demand(cls, limit, offset, order, demand):
+    def gets_by_demand(cls, limit, offset, order, demand, closed):
         desc = 'desc' if order is OrderType.descending else ''
         sql = ('select course_supply.post_id as post_id '
                'from course_supply join course_demand '
@@ -108,6 +151,15 @@ class CoursePost(db.Model):
                'and course_demand.course_id={demand} '
                'order by post_id {desc} limit {offset}, {limit}'.format(
                    demand=demand, desc=desc, offset=offset, limit=limit))
+        if not closed:
+            sql = ('select course_supply.post_id as post_id '
+                   'from course_supply join course_demand join course_post '
+                   'where course_supply.post_id=course_demand.post_id '
+                   'and course_demand.course_id={demand} '
+                   'and course_post.status_={status} '
+                   'order by post_id {desc} limit {offset}, {limit}'.format(
+                       demand=demand, status=PostStatus.normal.value,
+                       desc=desc, offset=offset, limit=limit))
         rs = db.engine.execute(sql)
         return [CoursePost.get(post_id) for (post_id,) in rs]
 
@@ -165,6 +217,14 @@ class CoursePost(db.Model):
         if not supply_course_id and not demand_course_id:
             raise InvalidPostError()
 
+    @classmethod
+    def defuzzy(cls, fuzzy_id):
+        return decrypt(fuzzy_id)
+
+    @property
+    def fuzzy_id(self):
+        return encrypt(str(self.id))
+
     @property
     def student(self):
         return Student.get(self.student_id)
@@ -175,9 +235,11 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_supply = CourseSupply.get_by_post(self.id)
-        mc.set(cache_key, pickle.dumps(course_supply).hex())
-        mc.expire(cache_key, ONE_DAY)
-        return course_supply
+        if course_supply and course_supply.course_id:
+            mc.set(cache_key, pickle.dumps(course_supply).hex())
+            mc.expire(cache_key, ONE_DAY)
+            return course_supply
+        return None
 
     @property
     def demand(self):
@@ -185,9 +247,11 @@ class CoursePost(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_demand = CourseDemand.get_by_post(self.id)
-        mc.set(cache_key, pickle.dumps(course_demand).hex())
-        mc.expire(cache_key, ONE_DAY)
-        return course_demand
+        if course_demand and course_demand.course_id:
+            mc.set(cache_key, pickle.dumps(course_demand).hex())
+            mc.expire(cache_key, ONE_DAY)
+            return course_demand
+        return None
 
     @property
     def status(self):
@@ -289,7 +353,16 @@ class CoursePost(db.Model):
         self.clear_cache()
 
     def clear_related_view_records(self):
-        ViewRecord.delete_records_by_post(self.id)
+        ViewRecord.delete_records_by_post(self.id, PostType.course_post)
+
+    def delete(self):
+        self.clear_cache()
+        supply = CourseSupply.get_by_post(self.id)
+        demand = CourseDemand.get_by_post(self.id)
+        supply.delete()
+        demand.delete()
+        db.session.delete(self)
+        db.session.commit()
 
     def clear_cache(self):
         mc.delete(self._course_post_by_id_cache_key % self.id)

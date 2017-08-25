@@ -18,5 +18,5 @@ class OrderType(Enum):
 
 
 class PostType(Enum):
-    course_post = 0
-    goods_post = 1
+    course_post = 1
+    goods_post = 2

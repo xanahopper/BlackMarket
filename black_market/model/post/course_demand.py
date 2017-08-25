@@ -20,7 +20,10 @@ class CourseDemand(db.Model):
         self.course_id = course_id
 
     def dump(self):
-        return dict(id=self.id, post_id=self.post_id, course_id=self.course_id)
+        return dict(id=self.id, post_id=self.post_id, course=self.course.dump())
+
+    def share_dump(self):
+        return dict(course=self.course.dump())
 
     @classmethod
     def add(cls, post_id, course_id):
@@ -35,8 +38,9 @@ class CourseDemand(db.Model):
         if mc.get(cache_key):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         course_demand = CourseDemand.query.get(id_)
-        mc.set(cache_key, pickle.dumps(course_demand).hex())
-        mc.expire(cache_key, ONE_DAY)
+        if course_demand:
+            mc.set(cache_key, pickle.dumps(course_demand).hex())
+            mc.expire(cache_key, ONE_DAY)
         return course_demand
 
     @classmethod
@@ -63,3 +67,11 @@ class CourseDemand(db.Model):
     @property
     def course_teacher(self):
         return self.course.teacher
+
+    def clear_cache(self):
+        mc.delete(self._course_post_demand_by_id_cache_key % self.id)
+
+    def delete(self):
+        self.clear_cache()
+        db.session.delete(self)
+        db.session.commit()

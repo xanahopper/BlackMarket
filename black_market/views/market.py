@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 
 from black_market.libs.cache.redis import mc, rd
 from black_market.api.utils import normal_jsonify
+from black_market.config import RAW_SALT
 
 bp = Blueprint('market', __name__)
 
@@ -16,11 +17,39 @@ def index():
 
 
 @bp.route('/clear', methods=['GET'])
-def clear():
+def clear_all():
+    data = request.args
+    pwd = data.get('pwd')
+    if pwd != RAW_SALT:
+        return normal_jsonify({'status': 'failed'})
     from manage import init_database
     init_database()
     mc.flushdb()
     return normal_jsonify({'status': 'ok'})
+
+
+@bp.route('/clear/user/<int:id_>', methods=['GET'])
+def clear_user(id_):
+    data = request.args
+    pwd = data.get('pwd')
+    if pwd != RAW_SALT:
+        return normal_jsonify({'status': 'failed'})
+    from black_market.model.user.student import Student
+    from black_market.model.wechat.session import WechatSession
+    from black_market.model.post.course import CoursePost
+    student = Student.get(id_)
+    name = student.username
+    wechat_user = student.wechat_user
+    wechat_session = WechatSession.get_by_open_id(wechat_user.open_id)
+
+    posts = CoursePost.gets_by_student(student.id, limit=100, offset=0)
+    for post in posts:
+        post.delete()
+
+    student.delete()
+    wechat_user.delete()
+    wechat_session.delete()
+    return normal_jsonify({'status': 'Student %s has been removed.' % name})
 
 
 @bp.route('/init_post/<int:student_id>', methods=['GET'])
@@ -39,5 +68,4 @@ def init_post(student_id):
         message = 'This is the message of student %s!' % student_id
         CoursePost.add(student_id, supply, demand, switch, mobile, wechat, message)
         return normal_jsonify({'status': 'ok'})
-
     return normal_jsonify({}, 'No student %s! Please create student before init post' % student_id)
