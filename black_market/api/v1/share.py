@@ -14,7 +14,7 @@ def share_post():
     data = SharePostSchema().fill()
 
     post_id = data.get('post_id')
-    post_type = PostType(int(data.get('post_type')))
+    post_type = PostType(data.get('post_type'))
     student_id = data.get('student_id', 0)
     detail = dict(post_id=post_id, student_id=student_id)
     if post_type is PostType.course_post:
