@@ -22,19 +22,24 @@ class StudentType(Enum):
 class UserBehaviorType(Enum):
     create_account = 1
     edit_profile = 2
+
     view_course_post = 3
     view_course_post_contact = 4
     create_course_post = 5
     edit_course_post = 6
     markdone_course_post = 7
-    view_goods_post = 8
-    view_goods_post_contact = 9
-    create_goods_post = 10
-    edit_goods_post = 11
-    markdone_goods_post = 12
-    view_other_profile = 13
-    view_other_posts = 14
-    upload_photo = 15
+    share_course_post = 8
+
+    view_goods_post = 9
+    view_goods_post_contact = 10
+    create_goods_post = 11
+    edit_goods_post = 12
+    markdone_goods_post = 13
+    share_goods_post = 14
+
+    view_other_profile = 15
+    view_other_posts = 16
+    upload_photo = 17
 
 
 MIN_PASSWD_LEN = 6

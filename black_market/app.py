@@ -18,6 +18,7 @@ blueprints = [
     'black_market.api.v1.goods_post:bp',
     'black_market.api.v1.wechat:bp',
     'black_market.api.v1.qiniu:bp',
+    'black_market.api.v1.share:bp',
 ]
 
 
