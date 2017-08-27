@@ -47,7 +47,7 @@ class Student(db.Model):
 
     def share_dump(self):
         return dict(
-            username=self.username, grade=self.grade,
+            id=self.id, username=self.username, grade=self.grade,
             type=self.type, avatar_url=self.avatar_url)
 
     @classmethod

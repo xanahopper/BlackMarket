@@ -64,6 +64,14 @@ def get_posts_by_student(student_id):
     return jsonify([post.dump() for post in posts])
 
 
+@bp.route('/share/profile/<int:student_id>', methods=['GET'])
+def get_student_share_profile(student_id):
+    student = Student.get(student_id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    return jsonify(student.share_dump())
+
+
 @bp.route('/<int:student_id>', methods=['GET'])
 @require_session_key()
 def get_student(student_id):
