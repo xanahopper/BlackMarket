@@ -10,7 +10,7 @@ from black_market.libs.sms.templates import VERIFY_CODE_TEMPLATE
 from black_market.model.code.consts import SMSVerifyType
 from black_market.model.code.verify import SMSVerify
 from black_market.model.exceptions import (
-    InvalidSMSVerifyCodeError, AtemptTooManyTimesError)
+    InvalidSMSVerifyCodeError, AtemptTooManyTimesError, MobileAlreadyExistedError)
 from black_market.model.user.consts import AccountStatus, StudentType, UserBehaviorType
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
@@ -123,6 +123,8 @@ def send_register_code():
     data = student_schema.RegisterStudentSchema().fill()
     mobile = data.get('mobile')
     validator.validate_phone(mobile)
+    if Student.existed(mobile):
+        raise MobileAlreadyExistedError()
     code = SMSVerify.add(mobile, SMSVerifyType.register)
     msg = VERIFY_CODE_TEMPLATE.format(code=code)
     SMS.send(mobile, msg, tag='register')
