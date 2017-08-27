@@ -48,7 +48,7 @@ class Student(db.Model):
     def share_dump(self):
         return dict(
             id=self.id, username=self.username, grade=self.grade,
-            type=self.type, avatar_url=self.avatar_url)
+            type=self.type, avatar_url=self.avatar_url, create_time=self.create_time)
 
     @classmethod
     def add(cls, id_, mobile, open_id, type_, grade, status=AccountStatus.need_verify):
