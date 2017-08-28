@@ -19,7 +19,7 @@ def create_share_me_image(student):
 
     drawImage = ImageDraw.Draw(back_img)
     textSize = drawImage.textsize(student.username, font=font)
-    x = (background.size[0] - textSize[0]) / 2
+    x = (back_img.size[0] - textSize[0]) / 2
     drawImage.text((x, 550), student.username, font=font, fill='grey')
 
     student_id = student.id
@@ -32,8 +32,9 @@ def create_share_me_image(student):
     sentence = 'I am the No.%s Black Market user' % student_id
 
     font = ImageFont.truetype(path_prefix + 'font/Palatino.ttc', 34)
-
-    drawImage.text((220, 650), sentence, font=font, fill='grey')
+    textSize = drawImage.textsize(sentence, font=font)
+    x = (back_img.size[0] - textSize[0]) / 2
+    drawImage.text((x, 650), sentence, font=font, fill='grey')
 
     img_io = BytesIO()
     back_img.save(img_io, 'JPEG', quality=50)
@@ -51,5 +52,6 @@ def draw_circle_avatar(im, background):
     draw.ellipse((0, 0) + bigsize, fill=255)
     mask = mask.resize(im.size, Image.ANTIALIAS)
     im.putalpha(mask)
-    background.paste(im, (400, 350), im)
+    x = (background.size[0] - im.size[0]) / 2
+    background.paste(im, (x, 350), im)
     return background
