@@ -6,6 +6,7 @@ from black_market.model.post.consts import PostType
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
 from black_market.model.user.consts import UserBehaviorType
+from black_market.model.exceptions import UserNotFoundError
 from black_market.service.image.share_me import create_share_me_image
 from .._bp import create_blueprint
 
@@ -32,6 +33,9 @@ def share_me_image():
     data = ShareMeSchema().fill()
     student_id = data.get('student_id')
     student = Student.get(student_id)
+
+    if not student:
+        raise UserNotFoundError()
 
     img_io = create_share_me_image(student)
     img_io.seek(0)
