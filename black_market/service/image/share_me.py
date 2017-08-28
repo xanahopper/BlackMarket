@@ -18,8 +18,9 @@ def create_share_me_image(student):
     font = ImageFont.truetype(path_prefix + 'font/HelveticaNeue.dfont', 30)
 
     drawImage = ImageDraw.Draw(back_img)
-
-    drawImage.text((425, 550), student.username, font=font, fill='grey')
+    textSize = drawImage.textsize(student.username, font=font)
+    x = (background.size[0] - textSize[0]) / 2
+    drawImage.text((x, 550), student.username, font=font, fill='grey')
 
     student_id = student.id
     if len(str(student_id)) == 1:
