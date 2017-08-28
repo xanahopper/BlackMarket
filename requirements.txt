@@ -30,3 +30,6 @@ gevent
 qiniu
 eventlet
 cryptography
+Pillow
+celery
+tzlocal

@@ -7,20 +7,23 @@ class CourseSchedule(db.Model):
     day = db.Column(db.Integer)
     start = db.Column(db.Integer)
     end = db.Column(db.Integer)
+    frequency = db.Column(db.String(10))
 
-    def __init__(self, course_id, day, start, end):
+    def __init__(self, course_id, day, start, end, frequency):
         self.course_id = course_id
         self.day = day
         self.start = start
         self.end = end
+        self.frequency = frequency
 
     def dump(self):
         return dict(id=self.id, course_id=self.course_id,
-                    day=self.day, start=self.start, end=self.end)
+                    day=self.day, start=self.start, end=self.end,
+                    frequency=self.frequency)
 
     @classmethod
-    def add(cls, course_id, day, start, end):
-        schedule = CourseSchedule(course_id, day, start, end)
+    def add(cls, course_id, day, start, end, frequency):
+        schedule = CourseSchedule(course_id, day, start, end, frequency)
         db.session.add(schedule)
         db.session.commit()
 

@@ -54,8 +54,11 @@ class ViewRecord(db.Model):
 
     @classmethod
     def delete_records_by_post(cls, post_id, post_type):
-        cls.query.filter_by(post_id=post_id, post_type=post_type.value).delete(
-            synchronize_session='fetch')
+        sql = ('delete from user_view_record '
+               'where post_id={post_id} '
+               'and post_type_={post_type}'.format(
+                   post_id=post_id, post_type=post_type.value))
+        db.engine.execute(sql)
 
     def clear_cache(self):
         mc.delete(self._records_by_student_and_post_and_type_cache_key % (

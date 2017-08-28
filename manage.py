@@ -70,11 +70,8 @@ def init_database():
 def convert(raw_course):
     if '习题课' in raw_course.name:
         return
-    classroom = [dict(building=raw_course.classroom1[0:2],
-                      room=raw_course.classroom1[2:5])]
-    if raw_course.classroom2:
-        classroom.append(dict(building=raw_course.classroom2[0:2],
-                              room=raw_course.classroom2[2:5]))
+    classroom = [dict(building=raw_course.classroom[0:2],
+                      room=raw_course.classroom[2:5])]
     schedule = []
     days = {1: 'mon', 2: 'tue',
             3: 'wed', 4: 'thu',
@@ -83,10 +80,18 @@ def convert(raw_course):
     for i in range(1, 8):
         s = getattr(raw_course, (days.get(i)))
         if s and '--' in s:
+            # print(raw_course.name, s)
+            frequency = 'every'
+            if '（单周）' in s:
+                frequency = 'odd'
+                s = s.rstrip('（单周）')
+            elif '（双周）' in s:
+                frequency = 'even'
+                s = s.rstrip('（双周）')
             print(raw_course.name, s)
             start = s[:int(len(s) / 2)].replace('-', '')
             end = s[int(len(s) / 2):].replace('-', '')
-            schedule.append(dict(start=start, end=end, day=i))
+            schedule.append(dict(start=start, end=end, day=i, frequency=frequency))
     return dict(
         classroom=classroom,
         credit=int(raw_course.credit),
@@ -117,7 +122,7 @@ def _init_courses():
             Course(name, teacher, credit, course_type))
         for s in schedule:
             course_schedules.append(CourseSchedule(
-                id, s.get('day'), s.get('start'), s.get('end')))
+                id, s.get('day'), s.get('start'), s.get('end'), s.get('frequency')))
     return courses, course_schedules
 
 
@@ -130,7 +135,7 @@ def generate_json():
     RawCourse = namedtuple(
         'Course', ['number', 'name', 'type', 'prerequisites', 'credit',
                    'num_of_week', 'teacher', 'mon', 'tue', 'wed', 'thu',
-                   'fri', 'sat', 'sun', 'classroom1', 'classroom2'])
+                   'fri', 'sat', 'sun', 'classroom'])
 
     raw_courses = [
         RawCourse._make(table.row_values(i)) for i in range(1, nrows)]

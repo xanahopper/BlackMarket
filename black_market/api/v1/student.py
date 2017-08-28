@@ -10,7 +10,7 @@ from black_market.libs.sms.templates import VERIFY_CODE_TEMPLATE
 from black_market.model.code.consts import SMSVerifyType
 from black_market.model.code.verify import SMSVerify
 from black_market.model.exceptions import (
-    InvalidSMSVerifyCodeError, AtemptTooManyTimesError)
+    InvalidSMSVerifyCodeError, AtemptTooManyTimesError, MobileAlreadyExistedError)
 from black_market.model.user.consts import AccountStatus, StudentType, UserBehaviorType
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
@@ -64,6 +64,14 @@ def get_posts_by_student(student_id):
     return jsonify([post.dump() for post in posts])
 
 
+@bp.route('/share/profile/<int:student_id>', methods=['GET'])
+def get_student_share_profile(student_id):
+    student = Student.get(student_id)
+    if not student:
+        return normal_jsonify({}, 'Student Not Found', 404)
+    return jsonify(student.share_dump())
+
+
 @bp.route('/<int:student_id>', methods=['GET'])
 @require_session_key()
 def get_student(student_id):
@@ -99,6 +107,7 @@ def create_user():
     grade = data['grade']
     id_ = Student.add(wechat_user.id, mobile, open_id, type_, grade, AccountStatus.need_verify)
     student = Student.get(id_)
+    Student.cache_avatar.delay(student.id, student.avatar_url)
     return normal_jsonify(student.dump())
 
 
@@ -123,6 +132,8 @@ def send_register_code():
     data = student_schema.RegisterStudentSchema().fill()
     mobile = data.get('mobile')
     validator.validate_phone(mobile)
+    if Student.existed(mobile):
+        raise MobileAlreadyExistedError()
     code = SMSVerify.add(mobile, SMSVerifyType.register)
     msg = VERIFY_CODE_TEMPLATE.format(code=code)
     SMS.send(mobile, msg, tag='register')
