@@ -6,14 +6,14 @@ from black_market.config import RAW_SALT
 
 bp = Blueprint('market', __name__)
 
-index_page_view_count_cache_key = 'black:market:index:view:count'
+index_page_view_count_cache_key = 'black:market:index:page:view'
 
 
 @bp.route('/', methods=['GET'])
 def index():
     rd.incr(index_page_view_count_cache_key)
     page_view = int(rd.get(index_page_view_count_cache_key))
-    return render_template('index-temp.html', page_view=page_view)
+    return render_template('index.html', page_view=page_view)
 
 
 @bp.route('/clear', methods=['GET'])
