@@ -95,8 +95,8 @@ class Student(db.Model):
             return pickle.loads(bytes.fromhex(mc.get(cache_key)))
         return self.cache_avatar(self.id, self.avatar_url)
 
-    @app.task
     @staticmethod
+    @app.task
     def cache_avatar(student_id, avatar_url):
         cache_key = Student._avatar_cache_key % student_id
         response = requests.get(avatar_url)
