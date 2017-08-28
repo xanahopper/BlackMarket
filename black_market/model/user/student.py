@@ -1,8 +1,10 @@
 import pickle
+import requests
+from task.celery import app
 from datetime import datetime
 
 from black_market.ext import db
-from black_market.libs.cache.redis import mc, ONE_HOUR, ONE_DAY
+from black_market.libs.cache.redis import mc, ONE_HOUR, ONE_DAY, ONE_WEEK
 from black_market.model.wechat.user import WechatUser
 from black_market.model.utils import validator
 from black_market.model.user.consts import AccountStatus
@@ -27,6 +29,7 @@ class Student(db.Model):
 
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'
+    _avatar_cache_key = _cache_key_prefix + 'avatar:%s'
     _remaining_viewcount_by_student_cache_key = _cache_key_prefix + 'remaining:viewcount:id:%s'
 
     def __init__(self, id_, mobile, open_id, type_, grade, status):
@@ -84,6 +87,23 @@ class Student(db.Model):
     @property
     def avatar_url(self):
         return self.wechat_user.avatar_url
+
+    @property
+    def avatar(self):
+        cache_key = self._avatar_cache_key % self.id
+        if mc.get(cache_key):
+            return pickle.loads(bytes.fromhex(mc.get(cache_key)))
+        return self.cache_avatar(self.id, self.avatar_url)
+
+    @app.task
+    @staticmethod
+    def cache_avatar(student_id, avatar_url):
+        cache_key = Student._avatar_cache_key % student_id
+        response = requests.get(avatar_url)
+        image = response.content
+        mc.set(cache_key, pickle.dumps(image).hex())
+        mc.expire(cache_key, ONE_WEEK)
+        return image
 
     @property
     def username(self):
@@ -156,3 +176,5 @@ class Student(db.Model):
 
     def clear_cache(self):
         mc.delete(self._student_cache_key % self.id)
+        mc.delete(self._avatar_cache_key % self.id)
+        mc.delete(self._remaining_viewcount_by_student_cache_key % self.id)
