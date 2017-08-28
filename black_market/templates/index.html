@@ -1,61 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Black Market | Coming This Fall</title>
-	<!-- Bootstrap -->
-	<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.css">
-	<!-- Owl -->
-	<link rel="stylesheet" type="text/css" href="../static/css/owl.css">
-	<!-- Animate.css -->
-	<link rel="stylesheet" type="text/css" href="../static/css/animate.css">
-	<!-- Font Awesome -->
-	<link rel="stylesheet" type="text/css" href="../static/fonts/font-awesome-4.1.0/css/font-awesome.min.css">
-	<!-- Elegant Icons -->
-	<link rel="stylesheet" type="text/css" href="../static/fonts/eleganticons/et-icons.css">
-	<!-- Main style -->
-	<link rel="stylesheet" type="text/css" href="../static/css/cardio.css">
-    <link rel="shortcut icon" href="../static/img/favicon.ico">
+  <head>
 
-</head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Black Market">
+    <meta name="author" content="Wang Zhihao">
 
-<body>
-	<header id="intro">
-		<div class="container">
-			<div class="table">
-				<div class="header-text">
-					<div class="row">
-						<div class="col-md-12 text-center">
+    <title>Black Market | Exchange Courses and More</title>
 
-             <div id="CountMsg" class="white"> 
-               <h1 class="light white"><br>Next Version of Black Market Is Upcoming!</h1>
-			</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</header>
-	<!-- Holder for mobile navigation -->
-	<div class="mobile-nav">
-		<ul>
-		</ul>
-		<a href="#" class="close-link"><i class="arrow_up"></i></a>
-	</div>
-	<script type="text/javascript">
+    <!-- Bootstrap core CSS -->
+    <link href="../static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    </script>
-	<!-- Scripts -->
-	<script src="../static/js/jquery-1.11.1.min.js"></script>
-	<script src="../static/js/owl.carousel.min.js"></script>
-	<script src="../static/js/bootstrap.min.js"></script>
-	<script src="../static/js/wow.min.js"></script>
-	<script src="../static/js/typewriter.js"></script>
-	<script src="../static/js/jquery.onepagenav.js"></script>
-	<script src="../static/js/main.js"></script>
-</body>
+    <!-- Custom fonts for this template -->
+    <link href="../static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+
+    <!-- Custom styles for this template -->
+    <link href="../static/css/grayscale.min.css" rel="stylesheet">
+
+  </head>
+
+  <body id="page-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Black Market</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          Menu
+          <i class="fa fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#get-started">Get Started</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#contact">Contact</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="masthead">
+      <div class="intro-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8 mx-auto">
+              <h1 class="brand-heading">Black Market</h1>
+              <p class="intro-text">An information exchange platform that helps NSDers trade their courses and more.</p>
+                <p></p>
+                <p style="font-size: small; color:lightgrey">Pgae View: {{ page_view }}</p>
+                <a href="#get-started" class="btn btn-circle js-scroll-trigger">
+                <i class="fa fa-angle-double-down animated"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Get Started Section -->
+    <section id="get-started" class="content-section text-center">
+      <div class="container">
+        <div class="col-lg-8 mx-auto">
+          <h2>Get Started</h2>
+          <p>Open WeChat App, then scan the QRCodes below.</p>
+        </div>
+
+
+        <ul class="list-inline banner-social-buttons">
+              <li class="list-inline-item">
+                <img src="../static/img/app-qrcode.jpg" id="app-qrcode", class="img-responsive" alt="Responsive image">
+              </li>
+              <li class="list-inline-item">
+                <img src="../static/img/qrcode.jpg" id="qrcode", class="img-responsive" alt="Responsive image">
+              </li>
+            </ul>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="download-section content-section text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>About Black Market</h2>
+            <p>Black Market, "a spontaneous supply of public goods produced by the market"(<a href="http://zhiyu.co/">Fu</a>, 2017), is a third-party information exchange platform that helps students enrolled in the <a href="http://www.nsd.pku.edu.cn/projects/double-degree/introduct/index.htmls"><em><i>double major program of National School of Development</i></em></a> 'trade' their courses and more. The idea of Black Market was first Black Market came to <a href="https://www.linkedin.com/in/zhihao-wang/"><em><i>Wang Zhihao</i></em></a> in September last year when he noticed social media posts by fellow students looking for spots in courses and it was carried out with the help of <a href="https://www.linkedin.com/in/haosiyuan/"><em><i>Hao Siyuan</i></em></a>, an young product manager with rich experience. </p>
+
+            <p>The <a href="https://mp.weixin.qq.com/s/7y9gq3WjIWp8jL4XrCF8dA"><em><i>original version of Black Market</i></em></a></a> was basically a web application. <a href="https://www.linkedin.com/in/zhihao-wang/"><em><i>Wang Zhihao</i></em></a> considered that web application was not the best form for Black Market and it should be more easier to access. This year, all the codes were rewritten and with the help of <a href="https://www.linkedin.com/in/鲜明-崔-667abb97/"><em><i>Cui Xianming</i></em></a>, a new member of the Black Market team, Black Market has been reinvented.</p>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="content-section text-center" style="padding-bottom:0px">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>Contact Us</h2>
+            <p>Feel free to leave us a comment on the WeChat.</p>
+<!--             <ul class="list-inline banner-social-buttons">
+              <li class="list-inline-item">
+                <a href="" class="btn btn-default btn-lg">
+                  <i class="fa fa-twitter fa-fw"></i>
+                  <span class="network-name">Twitter</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="" class="btn btn-default btn-lg">
+                  <i class="fa fa-github fa-fw"></i>
+                  <span class="network-name">Github</span>
+                </a>
+              </li>
+              <li class="list-inline-item">
+                <a href="" class="btn btn-default btn-lg">
+                  <i class="fa fa-google-plus fa-fw"></i>
+                  <span class="network-name">Google+</span>
+                </a>
+              </li> 
+            </ul> -->
+
+
+        <ul class="list-inline banner-social-buttons">
+              <li class="list-inline-item">
+                <img src="../static/img/qrcode.jpg" id="qrcode", class="img-responsive" alt="Responsive image">
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container text-center">
+        <p>Copyright &copy; Black Market 2017</p>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="../static/vendor/jquery/jquery.min.js"></script>
+    <script src="../static/vendor/popper/popper.min.js"></script>
+    <script src="../static/vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="../static/js/grayscale.min.js"></script>
+
+  </body>
 
 </html>
