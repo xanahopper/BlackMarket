@@ -19,7 +19,7 @@ def create_share_me_image(student):
 
     drawImage = ImageDraw.Draw(back_img)
     textSize = drawImage.textsize(student.username, font=font)
-    x = (back_img.size[0] - textSize[0]) / 2
+    x = round((back_img.size[0] - textSize[0]) / 2)
     drawImage.text((x, 550), student.username, font=font, fill='grey')
 
     student_id = student.id
@@ -33,7 +33,7 @@ def create_share_me_image(student):
 
     font = ImageFont.truetype(path_prefix + 'font/Palatino.ttc', 34)
     textSize = drawImage.textsize(sentence, font=font)
-    x = (back_img.size[0] - textSize[0]) / 2
+    x = round((back_img.size[0] - textSize[0]) / 2)
     drawImage.text((x, 650), sentence, font=font, fill='grey')
 
     img_io = BytesIO()
@@ -52,6 +52,6 @@ def draw_circle_avatar(im, background):
     draw.ellipse((0, 0) + bigsize, fill=255)
     mask = mask.resize(im.size, Image.ANTIALIAS)
     im.putalpha(mask)
-    x = (background.size[0] - im.size[0]) / 2
+    x = round((background.size[0] - im.size[0]) / 2)
     background.paste(im, (x, 350), im)
     return background
