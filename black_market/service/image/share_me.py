@@ -15,7 +15,8 @@ def create_share_me_image(student):
 
     back_img = draw_circle_avatar(avatar, background)
 
-    font = ImageFont.truetype(path_prefix + 'font/HelveticaNeue.dfont', 30)
+    # font = ImageFont.truetype(path_prefix + 'font/HelveticaNeue.dfont', 30)
+    font = ImageFont.truetype(path_prefix + 'font/AdobeHeitiStd-Regular.otf', 30)
 
     drawImage = ImageDraw.Draw(back_img)
     textSize = drawImage.textsize(student.username, font=font)
