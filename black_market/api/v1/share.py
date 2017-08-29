@@ -1,6 +1,6 @@
 from flask import send_file
 
-from black_market.api.schema.share import SharePostSchema
+from black_market.api.schema.share import SharePostSchema, ShareStudentSchema
 from black_market.api.utils import normal_jsonify
 from black_market.model.post.consts import PostType
 from black_market.model.user.student import Student
@@ -28,6 +28,14 @@ def share_post():
     return normal_jsonify()
 
 
+@bp.route('/student', methods=['POST'])
+def share_student():
+    data = ShareStudentSchema().fill()
+    student_id = data.get('student_id')
+    UserBehavior.add(student_id, UserBehaviorType.share_me_to_friend)
+    return normal_jsonify()
+
+
 @bp.route('/student/<int:student_id>/image', methods=['GET'])
 def get_share_student_image(student_id):
     student = Student.get(student_id)
@@ -37,5 +45,7 @@ def get_share_student_image(student_id):
 
     img_io = create_share_me_image(student)
     img_io.seek(0)
+
+    UserBehavior.add(student_id, UserBehaviorType.get_share_me_image)
 
     return send_file(img_io, mimetype='image/jpeg')

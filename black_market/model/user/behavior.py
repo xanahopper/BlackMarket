@@ -31,7 +31,7 @@ class UserBehavior(db.Model):
         return self.behavior_type.name
 
     @classmethod
-    def add(cls, user_id, type_, detail):
+    def add(cls, user_id, type_, detail=None):
         detail = json.dumps(detail)
         behavior = UserBehavior(user_id, type_, detail)
         db.session.add(behavior)

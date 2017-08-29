@@ -15,31 +15,38 @@ class Gender(Enum):
 
 class StudentType(Enum):
     other = 0
-    double_major = 1
-    ppe = 2
+    # NSD 本科生
+    undergraduate = 1
+    # NSD 双学位项目学生
+    double_major = 2
+    # 元培政经哲学生
+    ppe = 3
 
 
 class UserBehaviorType(Enum):
-    create_account = 1
-    edit_profile = 2
+    create_account = 10
+    edit_profile = 11
+    share_me_to_friend = 12
+    get_share_me_image = 13
 
-    view_course_post = 3
-    view_course_post_contact = 4
-    create_course_post = 5
-    edit_course_post = 6
-    markdone_course_post = 7
-    share_course_post = 8
+    view_course_post = 20
+    view_course_post_contact = 21
+    create_course_post = 22
+    edit_course_post = 23
+    markdone_course_post = 24
+    share_course_post = 25
 
-    view_goods_post = 9
-    view_goods_post_contact = 10
-    create_goods_post = 11
-    edit_goods_post = 12
-    markdone_goods_post = 13
-    share_goods_post = 14
+    view_goods_post = 30
+    view_goods_post_contact = 30
+    create_goods_post = 31
+    edit_goods_post = 32
+    markdone_goods_post = 33
+    share_goods_post = 34
 
-    view_other_profile = 15
-    view_other_posts = 16
-    upload_photo = 17
+    view_other_profile = 40
+    view_other_posts = 41
+
+    upload_photo = 50
 
 
 MIN_PASSWD_LEN = 6
