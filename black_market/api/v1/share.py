@@ -74,8 +74,8 @@ def get_share_post_image(post_id):
 
     supply_course_name = None
     demand_course_name = None
-    supply_course = Course.get(supply)
-    demand_course = Course.get(demand)
+    supply_course = Course.get(supply) if supply else None
+    demand_course = Course.get(demand) if demand else None
     if supply_course:
         supply_course_name = supply_course.name
     if demand_course:
