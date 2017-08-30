@@ -9,7 +9,7 @@ def add_student_name_and_avatar(student, background, name_y_axis, avatar_y_axis)
     avatar_image = student.avatar
     avatar = Image.open(BytesIO(avatar_image))
     back_img = draw_circle_avatar(avatar, background, avatar_y_axis)
-    font = ImageFont.truetype(path_prefix + 'font/LanTingXiHeiGBK.TTF', 30)
+    font = ImageFont.truetype(path_prefix + 'font/AdobeHeitiStd-Regular.otf', 30)
     drawImage = ImageDraw.Draw(back_img)
     textSize = drawImage.textsize(student.username, font=font)
     x = round((back_img.size[0] - textSize[0]) / 2)
