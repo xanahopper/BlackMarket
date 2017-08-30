@@ -2,26 +2,17 @@ from io import BytesIO
 
 from PIL import Image, ImageFont, ImageDraw
 
+path_prefix = 'black_market/service/image/'
+
 
 def create_share_me_image(student, path):
 
-    path_prefix = 'black_market/service/image/'
+    template_file = path_prefix + 'template/BlackMarketShare.jpg'
 
-    background = Image.open(path_prefix + 'template/BlackMarketShareMe.jpg')
+    background = Image.open(template_file)
 
-    avatar_image = student.avatar
-
-    avatar = Image.open(BytesIO(avatar_image))
-
-    back_img = draw_circle_avatar(avatar, background)
-
-    # font = ImageFont.truetype(path_prefix + 'font/HelveticaNeue.dfont', 30)
-    font = ImageFont.truetype(path_prefix + 'font/AdobeHeitiStd-Regular.otf', 30)
-
+    back_img = add_student_name_and_avatar(student, background)
     drawImage = ImageDraw.Draw(back_img)
-    textSize = drawImage.textsize(student.username, font=font)
-    x = round((back_img.size[0] - textSize[0]) / 2)
-    drawImage.text((x, 550), student.username, font=font, fill='grey')
 
     student_id = student.id
     if len(str(student_id)) == 1:
@@ -40,16 +31,74 @@ def create_share_me_image(student, path):
     # TODO add app_qrcode_image to the back_img
     app_qrcode_image = get_app_qrcode_by_path(path)
 
-    qrcode_img = Image.open(BytesIO(app_qrcode_image.data)) # Here I don't sure how to access the image data...
+    qrcode_img = Image.open(BytesIO(app_qrcode_image.data))
 
-    # Default WeApp QRCode size is 430x430 that is just ok
     x = round((back_img.size[0] - qrcode_img.size[0]) / 2)
     background.paste(qrcode_img, (x, 745))
 
     img_io = BytesIO()
-    back_img.save(img_io, 'JPEG', quality=50)
+    back_img.save(img_io, 'JPEG', quality=80)
 
     return img_io
+
+
+def create_share_post_image(student, path, supply, demand):
+
+    template_file = path_prefix + 'template/BlackMarketShare.jpg'
+
+    background = Image.open(template_file)
+
+    back_img = add_student_name_and_avatar(student, background)
+    drawImage = ImageDraw.Draw(back_img)
+
+    if supply and demand:
+        sentence_supply = '供给: %s' % supply
+        sentence_demand = '需求: %s' % demand
+        font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 34)
+        textSize = drawImage.textsize(sentence_supply, font=font)
+        x = round((back_img.size[0] - textSize[0]) / 2)
+        drawImage.text((x, 625), sentence_supply, font=font, fill='grey')
+
+        textSize = drawImage.textsize(sentence_demand, font=font)
+        x = round((back_img.size[0] - textSize[0]) / 2)
+        drawImage.text((x, 690), sentence_demand, font=font, fill='grey')
+
+    elif supply and not demand:
+        sentence_supply = '供给: %s' % supply
+        font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 34)
+        textSize = drawImage.textsize(sentence_supply, font=font)
+        x = round((back_img.size[0] - textSize[0]) / 2)
+        drawImage.text((x, 650), sentence_supply, font=font, fill='grey')
+
+    elif demand and not supply:
+        sentence_demand = '需求: %s' % demand
+        font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 34)
+        textSize = drawImage.textsize(sentence_demand, font=font)
+        x = round((back_img.size[0] - textSize[0]) / 2)
+        drawImage.text((x, 650), sentence_demand, font=font, fill='grey')
+
+    app_qrcode_image = get_app_qrcode_by_path(path)
+    qrcode_img = Image.open(BytesIO(app_qrcode_image.data))
+
+    x = round((back_img.size[0] - qrcode_img.size[0]) / 2)
+    background.paste(qrcode_img, (x, 745))
+
+    img_io = BytesIO()
+    back_img.save(img_io, 'JPEG', quality=80)
+
+    return img_io
+
+
+def add_student_name_and_avatar(student, background):
+    avatar_image = student.avatar
+    avatar = Image.open(BytesIO(avatar_image))
+    back_img = draw_circle_avatar(avatar, background)
+    font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 30)
+    drawImage = ImageDraw.Draw(back_img)
+    textSize = drawImage.textsize(student.username, font=font)
+    x = round((back_img.size[0] - textSize[0]) / 2)
+    drawImage.text((x, 550), student.username, font=font, fill='grey')
+    return back_img
 
 
 def draw_circle_avatar(im, background):

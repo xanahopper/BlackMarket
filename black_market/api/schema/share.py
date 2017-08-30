@@ -15,3 +15,9 @@ class ShareStudentSchema(BaseSchema, FillHelperMixin):
 
 class GetShareStudentImageSchema(BaseSchema, FillHelperMixin):
     path = ma.String()
+
+
+class GetSharePostImageSchema(BaseSchema, FillHelperMixin):
+    path = ma.String()
+    supply = ma.String()
+    demand = ma.String()
