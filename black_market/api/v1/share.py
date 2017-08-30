@@ -6,6 +6,7 @@ from black_market.api.schema.share import (
 from black_market.api.utils import normal_jsonify
 from black_market.model.post.consts import PostType
 from black_market.model.post.course import CoursePost
+from black_market.model.course import Course
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
 from black_market.model.user.consts import UserBehaviorType
@@ -71,7 +72,16 @@ def get_share_post_image(post_id):
     if not student:
         raise UserNotFoundError()
 
-    img_io = create_share_post_image(student, path, supply, demand)
+    supply_course_name = None
+    demand_course_name = None
+    supply_course = Course.get(supply)
+    demand_course = Course.get(demand)
+    if supply_course:
+        supply_course_name = supply_course.name
+    if demand_course:
+        demand_course_name = demand_course.name
+
+    img_io = create_share_post_image(student, path, supply_course_name, demand_course_name)
     img_io.seek(0)
 
     UserBehavior.add(student_id or student.id, UserBehaviorType.get_share_course_post_image)
