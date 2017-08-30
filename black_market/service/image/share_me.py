@@ -1,13 +1,13 @@
-from PIL import Image, ImageFont, ImageDraw
-
 from io import BytesIO
 
+from PIL import Image, ImageFont, ImageDraw
 
-def create_share_me_image(student):
+
+def create_share_me_image(student, path):
 
     path_prefix = 'black_market/service/image/'
 
-    background = Image.open(path_prefix + 'template/share_me.jpg')
+    background = Image.open(path_prefix + 'template/BlackMarketShareMe.jpg')
 
     avatar_image = student.avatar
 
@@ -37,6 +37,9 @@ def create_share_me_image(student):
     x = round((back_img.size[0] - textSize[0]) / 2)
     drawImage.text((x, 650), sentence, font=font, fill='grey')
 
+    # TODO add app_qrcode_image to the back_img
+    app_qrcode_image = get_app_qrcode_by_path(path)
+
     img_io = BytesIO()
     back_img.save(img_io, 'JPEG', quality=50)
 
@@ -56,3 +59,8 @@ def draw_circle_avatar(im, background):
     x = round((background.size[0] - im.size[0]) / 2)
     background.paste(im, (x, 350), im)
     return background
+
+
+def get_app_qrcode_by_path(path):
+    from black_market.intergration.wechat import wechat
+    return wechat.get_app_qrcode_by_path(path)

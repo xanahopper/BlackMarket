@@ -11,3 +11,7 @@ class SharePostSchema(BaseSchema, FillHelperMixin):
 
 class ShareStudentSchema(BaseSchema, FillHelperMixin):
     student_id = ma.Integer(required=True)
+
+
+class GetShareStudentImageSchema(BaseSchema, FillHelperMixin):
+    path = ma.String()
