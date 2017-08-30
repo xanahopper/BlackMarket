@@ -7,11 +7,11 @@ from .common import add_student_name_and_avatar, get_app_qrcode_by_path, path_pr
 
 def create_share_me_image(student, path):
 
-    template_file = path_prefix + 'template/BlackMarketShare.jpg'
+    template_file = path_prefix + 'template/BlackMarketShareMe.jpg'
 
     background = Image.open(template_file)
 
-    back_img = add_student_name_and_avatar(student, background)
+    back_img = add_student_name_and_avatar(student, background, name_y_axis=550, avatar_y_axis=350)
     drawImage = ImageDraw.Draw(back_img)
 
     student_id = student.id

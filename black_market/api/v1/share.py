@@ -55,19 +55,25 @@ def get_share_student_image(student_id):
     return send_file(img_io, mimetype='image/jpeg')
 
 
-@bp.route('post/<int:post_id>/image', methods=['GET'])
+@bp.route('/post/<int:post_id>/image', methods=['GET'])
 def get_share_post_image(post_id):
     data = GetSharePostImageSchema().fill()
 
-    path = data.get('path', '')
+    path = data.get('path', 'pages/index?query=1')
     supply = data.get('supply', None)
     demand = data.get('demand', None)
     student_id = data.get('student_id', None)
 
-    post = CoursePost.get(post_id)
-    if not post:
-        raise PostNotFoundError()
-    student = Student.get(post.student_id)
+    # post = CoursePost.get(post_id)
+    # if not post:
+    #     raise PostNotFoundError()
+    # student = Student.get(post.student_id)
+
+    supply = data.get('supply', '中级计量经济学2班')
+    demand = data.get('demand', '经济学原理1班')
+
+    student_id = 2
+    student = Student.get(student_id)
     if not student:
         raise UserNotFoundError()
 

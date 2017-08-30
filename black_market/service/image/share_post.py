@@ -6,44 +6,44 @@ from .common import add_student_name_and_avatar, get_app_qrcode_by_path, path_pr
 
 def create_share_post_image(student, path, supply, demand):
 
-    template_file = path_prefix + 'template/BlackMarketShare.jpg'
+    template_file = path_prefix + 'template/BlackMarketSharePost.jpg'
 
     background = Image.open(template_file)
 
-    back_img = add_student_name_and_avatar(student, background)
+    back_img = add_student_name_and_avatar(student, background, name_y_axis=540, avatar_y_axis=330)
     drawImage = ImageDraw.Draw(back_img)
 
     if supply and demand:
         sentence_supply = '供给: %s' % supply
         sentence_demand = '需求: %s' % demand
-        font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 34)
+        font = ImageFont.truetype(path_prefix + 'font/Hiragino-Sans-GB-W6.ttc', 34)
         textSize = drawImage.textsize(sentence_supply, font=font)
         x = round((back_img.size[0] - textSize[0]) / 2)
-        drawImage.text((x, 625), sentence_supply, font=font, fill='grey')
+        drawImage.text((x, 185), sentence_supply, font=font, fill='grey')
 
         textSize = drawImage.textsize(sentence_demand, font=font)
         x = round((back_img.size[0] - textSize[0]) / 2)
-        drawImage.text((x, 690), sentence_demand, font=font, fill='grey')
+        drawImage.text((x, 250), sentence_demand, font=font, fill='grey')
 
     elif supply and not demand:
         sentence_supply = '供给: %s' % supply
-        font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 34)
+        font = ImageFont.truetype(path_prefix + 'font/Hiragino-Sans-GB-W6.ttc', 34)
         textSize = drawImage.textsize(sentence_supply, font=font)
         x = round((back_img.size[0] - textSize[0]) / 2)
-        drawImage.text((x, 650), sentence_supply, font=font, fill='grey')
+        drawImage.text((x, 210), sentence_supply, font=font, fill='grey')
 
     elif demand and not supply:
         sentence_demand = '需求: %s' % demand
-        font = ImageFont.truetype(path_prefix + 'font/AdobeSongStd-Light.otf', 34)
+        font = ImageFont.truetype(path_prefix + 'font/Hiragino-Sans-GB-W6.ttc', 34)
         textSize = drawImage.textsize(sentence_demand, font=font)
         x = round((back_img.size[0] - textSize[0]) / 2)
-        drawImage.text((x, 650), sentence_demand, font=font, fill='grey')
+        drawImage.text((x, 210), sentence_demand, font=font, fill='grey')
 
     app_qrcode_image = get_app_qrcode_by_path(path)
     qrcode_img = Image.open(BytesIO(app_qrcode_image.data))
 
     x = round((back_img.size[0] - qrcode_img.size[0]) / 2)
-    background.paste(qrcode_img, (x, 745))
+    background.paste(qrcode_img, (x, 600))
 
     img_io = BytesIO()
     back_img.save(img_io, 'JPEG', quality=80)
