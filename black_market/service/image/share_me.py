@@ -40,6 +40,12 @@ def create_share_me_image(student, path):
     # TODO add app_qrcode_image to the back_img
     app_qrcode_image = get_app_qrcode_by_path(path)
 
+    qrcode_img = Image.open(BytesIO(app_qrcode_image.data)) # Here I don't sure how to access the image data...
+
+    # Default WeApp QRCode size is 430x430 that is just ok
+    x = round((back_img.size[0] - qrcode_img.size[0]) / 2)
+    background.paste(qrcode_img, (x, 745))
+
     img_io = BytesIO()
     back_img.save(img_io, 'JPEG', quality=50)
 
