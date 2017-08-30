@@ -25,7 +25,7 @@ class Student(db.Model):
     status = db.Column(db.SmallInteger, default=AccountStatus.need_verify.value)
     create_time = db.Column(db.DateTime, default=datetime.now)
     update_time = db.Column(db.DateTime, default=datetime.now)
-    MAX_VIEWCOUNT = 10
+    MAX_VIEWCOUNT = 12
 
     _cache_key_prefix = 'student:'
     _student_cache_key = _cache_key_prefix + 'id:%s'

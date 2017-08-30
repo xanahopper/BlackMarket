@@ -2,26 +2,17 @@ from io import BytesIO
 
 from PIL import Image, ImageFont, ImageDraw
 
+from .common import add_student_name_and_avatar, get_app_qrcode_by_path, path_prefix
+
 
 def create_share_me_image(student, path):
 
-    path_prefix = 'black_market/service/image/'
+    template_file = path_prefix + 'template/BlackMarketShareMe.jpg'
 
-    background = Image.open(path_prefix + 'template/BlackMarketShareMe.jpg')
+    background = Image.open(template_file)
 
-    avatar_image = student.avatar
-
-    avatar = Image.open(BytesIO(avatar_image))
-
-    back_img = draw_circle_avatar(avatar, background)
-
-    # font = ImageFont.truetype(path_prefix + 'font/HelveticaNeue.dfont', 30)
-    font = ImageFont.truetype(path_prefix + 'font/AdobeHeitiStd-Regular.otf', 30)
-
+    back_img = add_student_name_and_avatar(student, background, name_y_axis=550, avatar_y_axis=350)
     drawImage = ImageDraw.Draw(back_img)
-    textSize = drawImage.textsize(student.username, font=font)
-    x = round((back_img.size[0] - textSize[0]) / 2)
-    drawImage.text((x, 550), student.username, font=font, fill='grey')
 
     student_id = student.id
     if len(str(student_id)) == 1:
@@ -40,33 +31,12 @@ def create_share_me_image(student, path):
     # TODO add app_qrcode_image to the back_img
     app_qrcode_image = get_app_qrcode_by_path(path)
 
-    qrcode_img = Image.open(BytesIO(app_qrcode_image.data)) # Here I don't sure how to access the image data...
+    qrcode_img = Image.open(BytesIO(app_qrcode_image.data))
 
-    # Default WeApp QRCode size is 430x430 that is just ok
     x = round((back_img.size[0] - qrcode_img.size[0]) / 2)
     background.paste(qrcode_img, (x, 745))
 
     img_io = BytesIO()
-    back_img.save(img_io, 'JPEG', quality=50)
+    back_img.save(img_io, 'JPEG', quality=80)
 
     return img_io
-
-
-def draw_circle_avatar(im, background):
-    im = im.resize((180, 180))
-    bigsize = (im.size[0] * 3, im.size[1] * 3)
-    # 遮罩对象
-    mask = Image.new('L', bigsize, 0)
-    draw = ImageDraw.Draw(mask)
-    # 画椭圆的方法
-    draw.ellipse((0, 0) + bigsize, fill=255)
-    mask = mask.resize(im.size, Image.ANTIALIAS)
-    im.putalpha(mask)
-    x = round((background.size[0] - im.size[0]) / 2)
-    background.paste(im, (x, 350), im)
-    return background
-
-
-def get_app_qrcode_by_path(path):
-    from black_market.intergration.wechat import wechat
-    return wechat.get_app_qrcode_by_path(path)
