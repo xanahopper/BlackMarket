@@ -5,12 +5,13 @@ from black_market.api.schema.share import (
     GetSharePostImageSchema)
 from black_market.api.utils import normal_jsonify
 from black_market.model.post.consts import PostType
+from black_market.model.post.course import CoursePost
 from black_market.model.user.student import Student
 from black_market.model.user.behavior import UserBehavior
 from black_market.model.user.consts import UserBehaviorType
-from black_market.model.exceptions import UserNotFoundError
-from black_market.service.image.share_me import (
-    create_share_me_image, create_share_post_image)
+from black_market.model.exceptions import UserNotFoundError, PostNotFoundError
+from black_market.service.image.share_me import create_share_me_image
+from black_market.service.image.share_post import create_share_post_image
 from .._bp import create_blueprint
 
 bp = create_blueprint('share', 'v1', __name__, url_prefix='/share')
@@ -54,20 +55,24 @@ def get_share_student_image(student_id):
     return send_file(img_io, mimetype='image/jpeg')
 
 
-@bp.route('/student/<int:student_id>/post/image', methods=['GET'])
-def get_share_post_image(student_id):
+@bp.route('post/<int:post_id>/image', methods=['GET'])
+def get_share_post_image(post_id):
     data = GetSharePostImageSchema().fill()
 
     path = data.get('path', '')
     supply = data.get('supply', None)
     demand = data.get('demand', None)
+    student_id = data.get('student_id', None)
 
-    student = Student.get(student_id)
+    post = CoursePost.get(post_id)
+    if not post:
+        raise PostNotFoundError()
+    student = Student.get(post.student_id)
     if not student:
         raise UserNotFoundError()
 
     img_io = create_share_post_image(student, path, supply, demand)
     img_io.seek(0)
 
-    UserBehavior.add(student_id, UserBehaviorType.get_share_me_image)
+    UserBehavior.add(student_id or student.id, UserBehaviorType.get_share_course_post_image)
     return send_file(img_io, mimetype='image/jpeg')

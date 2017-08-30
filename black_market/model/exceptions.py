@@ -105,6 +105,10 @@ class CannotViewPostContactError(BlackMarketError):
     _error = Error(411, '查看联系方式次数已用完，请稍候再试', 403)
 
 
+class PostNotFoundError(BlackMarketError):
+    _error = Error(412, '此Post不存在', 403)
+
+
 # 反馈类错误(850~599)
 class FeedbackTooLongError(BlackMarketError):
     _error = Error(850, '描述超过1000字，请重新编辑', 400)

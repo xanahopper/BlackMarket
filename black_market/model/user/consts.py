@@ -35,13 +35,15 @@ class UserBehaviorType(Enum):
     edit_course_post = 23
     markdone_course_post = 24
     share_course_post = 25
+    get_share_course_post_image = 26
 
     view_goods_post = 30
-    view_goods_post_contact = 30
-    create_goods_post = 31
-    edit_goods_post = 32
-    markdone_goods_post = 33
-    share_goods_post = 34
+    view_goods_post_contact = 31
+    create_goods_post = 32
+    edit_goods_post = 33
+    markdone_goods_post = 43
+    share_goods_post = 35
+    get_share_goods_post_image = 36
 
     view_other_profile = 40
     view_other_posts = 41
