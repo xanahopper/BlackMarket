@@ -107,6 +107,7 @@ def create_user():
     grade = data['grade']
     id_ = Student.add(wechat_user.id, mobile, open_id, type_, grade, AccountStatus.need_verify)
     student = Student.get(id_)
+    SMS.reg_complete.delay(mobile)
     Student.cache_avatar.delay(student.id, student.avatar_url)
     return normal_jsonify(student.dump())
 

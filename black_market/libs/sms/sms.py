@@ -1,6 +1,8 @@
+import requests
 from yunpian_python_sdk.model import constant as YC
 from yunpian_python_sdk.ypclient import YunpianClient
 
+from task.celery import app
 from black_market.config import SMS_YUNPIAN_APIKEY, DEBUG
 
 
@@ -34,3 +36,13 @@ class SMS(object):
             except:
                 return False
         return False
+
+    @classmethod
+    @app.task
+    def reg_complete(cls, mobile):
+        url = 'https://sms.yunpian.com/v2/sms/reg_complete.json'
+        json = dict(apikey=SMS_YUNPIAN_APIKEY, mobile=mobile)
+        try:
+            requests.post(url, json=json)
+        except Exception:
+            pass
