@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request
 
-from black_market.libs.cache.redis import mc, rd
+from black_market.libs.cache.redis import mc, rd2
 from black_market.api.utils import normal_jsonify
 from black_market.config import RAW_SALT
 
@@ -11,8 +11,8 @@ index_page_view_count_cache_key = 'black:market:index:page:view'
 
 @bp.route('/', methods=['GET'])
 def index():
-    rd.incr(index_page_view_count_cache_key)
-    page_view = int(rd.get(index_page_view_count_cache_key))
+    rd2.incr(index_page_view_count_cache_key)
+    page_view = int(rd2.get(index_page_view_count_cache_key))
     return render_template('index.html', page_view=page_view)
 
 
