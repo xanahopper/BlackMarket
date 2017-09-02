@@ -38,26 +38,10 @@ manager.add_command('alchemydumps', AlchemyDumpsCommand)
 @manager.command
 def init_database():
     with app.app_context():
+        db.engine.execute('SET FOREIGN_KEY_CHECKS=0;')
         db.reflect()
         db.drop_all()
         db.create_all()
-
-        # print('Adding Client `Web`')
-        # id_ = OAuthClient.add('web', AccountType.student, allowed_scopes=['student'])
-        # client = OAuthClient.get(id_)
-        # print('Client ID: %s' % client.client_id)
-
-        # print('\nAdding Student @mew_wzh')
-        # id_ = Student.add(
-        #     'mew_wzh', Gender.male, '2014',StudentType.double_major,
-        #     '19950629', '15600000000', AccountStatus.need_verify)
-        # student = Student.get(id_)
-        # print(student.dump())
-
-        # print('\nAdding token for user @mew_wzh')
-        # id_ = OAuthToken.add(client.id, id_, ['student'], generate_token(), generate_token())
-        # token = OAuthToken.get(id_)
-        # print(token.dump())
 
         courses, course_schedules = _init_courses()
         for course in courses:
