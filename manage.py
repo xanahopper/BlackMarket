@@ -9,6 +9,7 @@ from flask_script import Manager
 from flask_alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 
 from black_market.ext import db
+from black_market.libs.cache.redis import mc, rd
 from black_market.app import create_app
 from black_market.config import DEBUG, HTTP_HOST, HTTP_PORT
 
@@ -49,6 +50,9 @@ def init_database():
         for course_schedule in course_schedules:
             db.session.add(course_schedule)
         db.session.commit()
+
+        mc.flushdb()
+        rd.flushdb()
 
 
 def convert(raw_course):
