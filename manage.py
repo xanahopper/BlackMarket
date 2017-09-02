@@ -38,6 +38,11 @@ manager.add_command('alchemydumps', AlchemyDumpsCommand)
 
 @manager.command
 def init_database():
+
+    if not DEBUG:
+        print('NOT DEBUG MODE!!!')
+        return
+
     with app.app_context():
         db.engine.execute('SET FOREIGN_KEY_CHECKS=0;')
         db.reflect()
