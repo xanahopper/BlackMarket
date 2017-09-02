@@ -38,7 +38,6 @@ class SMS(object):
         return False
 
     @classmethod
-    @app.task
     def reg_complete(cls, mobile):
         url = 'https://sms.yunpian.com/v2/sms/reg_complete.json'
         json = dict(apikey=SMS_YUNPIAN_APIKEY, mobile=mobile)
