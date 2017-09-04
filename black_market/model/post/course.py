@@ -193,13 +193,23 @@ class CoursePost(db.Model):
         rs = db.engine.execute(sql)
         post_ids = [post_id for (post_id,) in rs]
         if post_ids:
-            sql = ('select id from course_post '
-                   'where student_id=:student_id '
-                   'and status_=:status '
-                   'and id in :post_ids')
-            params = dict(
-                student_id=student_id, status=PostStatus.normal.value, post_ids=post_ids)
-            rs = db.engine.execute(sql, params=params)
+            if len(post_ids) > 1:
+                sql = ('select id from course_post '
+                       'where student_id=:student_id '
+                       'and status_=:status '
+                       'and id in :post_ids')
+                params = dict(
+                    student_id=student_id, status=PostStatus.normal.value, post_ids=post_ids)
+                rs = db.engine.execute(sql, params=params)
+
+            elif len(post_ids) == 1:
+                sql = ('select id from course_post '
+                       'where student_id=:student_id '
+                       'and status_=:status '
+                       'and id=:post_id')
+                params = dict(
+                    student_id=student_id, status=PostStatus.normal.value, post_id=post_ids[0])
+                rs = db.engine.execute(sql, params=params)
             return bool(rs)
         return False
 
