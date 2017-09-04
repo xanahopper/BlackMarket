@@ -50,22 +50,3 @@ def clear_user(id_):
     wechat_user.delete()
     wechat_session.delete()
     return normal_jsonify({'status': 'Student %s has been removed.' % name})
-
-
-@bp.route('/init_post/<int:student_id>', methods=['GET'])
-def init_post(student_id):
-    import random
-    from black_market.model.user.student import Student
-    from black_market.model.post.course import CoursePost
-    from black_market.model.post.consts import PostMobileSwitch
-
-    student = Student.get(student_id)
-    if student:
-        supply, demand = random.sample(range(1, 31), 2)
-        mobile = student.mobile
-        wechat = 'fake_wecaht'
-        switch = PostMobileSwitch.on
-        message = 'This is the message of student %s!' % student_id
-        CoursePost.add(student_id, supply, demand, switch, mobile, wechat, message)
-        return normal_jsonify({'status': 'ok'})
-    return normal_jsonify({}, 'No student %s! Please create student before init post' % student_id)
