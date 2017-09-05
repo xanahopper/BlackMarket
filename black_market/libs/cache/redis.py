@@ -2,6 +2,7 @@ import redis
 
 mc = redis.StrictRedis(host='localhost', port=6379, db=0, decode_responses=True)
 rd = redis.StrictRedis(host='localhost', port=6379, db=1, decode_responses=True)
+rd2 = redis.StrictRedis(host='localhost', port=6379, db=2, decode_responses=True)
 
 ONE_MINUTE = 60
 HALF_HOUR = 1800

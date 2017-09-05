@@ -9,6 +9,7 @@ from flask_script import Manager
 from flask_alchemydumps import AlchemyDumps, AlchemyDumpsCommand
 
 from black_market.ext import db
+from black_market.libs.cache.redis import mc, rd
 from black_market.app import create_app
 from black_market.config import DEBUG, HTTP_HOST, HTTP_PORT
 
@@ -37,27 +38,16 @@ manager.add_command('alchemydumps', AlchemyDumpsCommand)
 
 @manager.command
 def init_database():
+
+    if not DEBUG:
+        print('NOT DEBUG MODE!!!')
+        return
+
     with app.app_context():
+        db.engine.execute('SET FOREIGN_KEY_CHECKS=0;')
         db.reflect()
         db.drop_all()
         db.create_all()
-
-        # print('Adding Client `Web`')
-        # id_ = OAuthClient.add('web', AccountType.student, allowed_scopes=['student'])
-        # client = OAuthClient.get(id_)
-        # print('Client ID: %s' % client.client_id)
-
-        # print('\nAdding Student @mew_wzh')
-        # id_ = Student.add(
-        #     'mew_wzh', Gender.male, '2014',StudentType.double_major,
-        #     '19950629', '15600000000', AccountStatus.need_verify)
-        # student = Student.get(id_)
-        # print(student.dump())
-
-        # print('\nAdding token for user @mew_wzh')
-        # id_ = OAuthToken.add(client.id, id_, ['student'], generate_token(), generate_token())
-        # token = OAuthToken.get(id_)
-        # print(token.dump())
 
         courses, course_schedules = _init_courses()
         for course in courses:
@@ -65,6 +55,9 @@ def init_database():
         for course_schedule in course_schedules:
             db.session.add(course_schedule)
         db.session.commit()
+
+        mc.flushdb()
+        rd.flushdb()
 
 
 def convert(raw_course):
