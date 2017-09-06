@@ -269,6 +269,8 @@ class CoursePost(db.Model):
     def _set_pv(self, pv_):
         rd.set(self._post_pv_by_id_cache_key % self.id, pv_)
         if pv_ % 7 == 0:
+            if self.pv_ > pv_:
+                pv_ += 7
             self.pv_ = pv_
             db.session.add(self)
             db.session.commit()
